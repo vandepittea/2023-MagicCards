@@ -121,6 +121,15 @@ namespace Howest.MagicCards.DAL
                 entity.Property(r => r.Code).HasColumnName("code").IsRequired();
                 entity.Property(r => r.Name).HasColumnName("name").IsRequired();
             });
+
+            modelBuilder.Entity<Set>(entity =>
+            {
+                entity.ToTable("sets");
+
+                entity.Property(s => s.Code).HasColumnName("code").IsRequired();
+                entity.Property(s => s.Name).HasColumnName("name").IsRequired();
+                entity.Property(s => s.ReleaseDate).HasColumnName("release_date").IsRequired();
+            });
         }
     }
 }
