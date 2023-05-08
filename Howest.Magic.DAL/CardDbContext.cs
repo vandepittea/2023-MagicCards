@@ -69,6 +69,14 @@ namespace Howest.MagicCards.DAL
                     .HasForeignKey(d => d.SetCode)
                     .HasConstraintName("cards_fk_set_code");
             });
+
+            modelBuilder.Entity<Artist>(entity =>
+            {
+                entity.ToTable("artists");
+
+                entity.Property(e => e.Id).HasColumnName("id");
+                entity.Property(e => e.FullName).HasColumnName("full_name").IsRequired();
+            });
         }
     }
 }
