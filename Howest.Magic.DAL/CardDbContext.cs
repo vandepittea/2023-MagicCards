@@ -25,6 +25,8 @@ namespace Howest.MagicCards.DAL
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<CardColor>().HasKey(cc => new { cc.CardId, cc.ColorId });
+            modelBuilder.Entity<CardType>().HasKey(ct => new { ct.CardId, ct.TypeId });
         }
     }
 }
