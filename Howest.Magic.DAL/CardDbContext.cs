@@ -27,6 +27,48 @@ namespace Howest.MagicCards.DAL
         {
             modelBuilder.Entity<CardColor>().HasKey(cc => new { cc.CardId, cc.ColorId });
             modelBuilder.Entity<CardType>().HasKey(ct => new { ct.CardId, ct.TypeId });
+
+            modelBuilder.Entity<Card>(entity =>
+            {
+                entity.ToTable("cards");
+
+                entity.Property(e => e.Id).HasColumnName("id");
+                entity.Property(e => e.Name).HasColumnName("name").IsRequired();
+                entity.Property(e => e.ManaCost).HasColumnName("mana_cost");
+                entity.Property(e => e.ConvertedManaCost).HasColumnName("converted_mana_cost").IsRequired();
+                entity.Property(e => e.Type).HasColumnName("type").IsRequired();
+                entity.Property(e => e.RarityCode).HasColumnName("rarity_code");
+                entity.Property(e => e.SetCode).HasColumnName("set_code").IsRequired();
+                entity.Property(e => e.Text).HasColumnName("text");
+                entity.Property(e => e.Flavor).HasColumnName("flavor");
+                entity.Property(e => e.ArtistId).HasColumnName("artist_id");
+                entity.Property(e => e.Number).HasColumnName("number").IsRequired();
+                entity.Property(e => e.Power).HasColumnName("power");
+                entity.Property(e => e.Toughness).HasColumnName("toughness");
+                entity.Property(e => e.Layout).HasColumnName("layout").IsRequired();
+                entity.Property(e => e.MultiverseId).HasColumnName("multiverse_id");
+                entity.Property(e => e.OriginalImageUrl).HasColumnName("original_image_url");
+                entity.Property(e => e.Image).HasColumnName("image").IsRequired();
+                entity.Property(e => e.OriginalText).HasColumnName("original_text");
+                entity.Property(e => e.OriginalType).HasColumnName("original_type");
+                entity.Property(e => e.MtgId).HasColumnName("mtg_id").IsRequired();
+                entity.Property(e => e.Variations).HasColumnName("variations");
+
+                entity.HasOne(d => d.Artist)
+                    .WithMany(p => p.Cards)
+                    .HasForeignKey(d => d.ArtistId)
+                    .HasConstraintName("cards_fk_artist_id");
+
+                entity.HasOne(d => d.Rarity)
+                    .WithMany(p => p.Cards)
+                    .HasForeignKey(d => d.RarityCode)
+                    .HasConstraintName("cards_fk_rarity_code");
+
+                entity.HasOne(d => d.Set)
+                    .WithMany(p => p.Cards)
+                    .HasForeignKey(d => d.SetCode)
+                    .HasConstraintName("cards_fk_set_code");
+            });
         }
     }
 }
