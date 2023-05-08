@@ -12,6 +12,6 @@ namespace Howest.MagicCards.DAL.Models
         public string Code { get; set; }
         public string Name { get; set; }
 
-        public virtual ICollection<CardColor> Cards { get; set; } = new List<CardColor>();
+        public virtual ICollection<CardColor> CardColors { get; set; } = new List<CardColor>();
     }
 }

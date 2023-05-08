@@ -12,6 +12,6 @@ namespace Howest.MagicCards.DAL.Models
         public string Name { get; set; }
         public string CardType { get; set; }
 
-        public virtual ICollection<CardType> Cards { get; set; } = new List<CardType>();
+        public virtual ICollection<CardType> CardTypes { get; set; } = new List<CardType>();
     }
 }

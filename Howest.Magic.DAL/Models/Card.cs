@@ -14,11 +14,8 @@ namespace Howest.MagicCards.DAL.Models
         public string ManaCost { get; set; }
         public string ConvertedManaCost { get; set; }
         public string Type { get; set; }
-        public string RarityCode { get; set; }
-        public string SetCode { get; set; }
         public string Text { get; set; }
         public string Flavor { get; set; }
-        public long? ArtistId { get; set; }
         public string Number { get; set; }
         public string Power { get; set; }
         public string Toughness { get; set; }
@@ -31,7 +28,11 @@ namespace Howest.MagicCards.DAL.Models
         public string MtgId { get; set; }
         public string Variations { get; set; }
 
-        public virtual ICollection<CardColor> Colors { get; set; } = new List<CardColor>();
-        public virtual ICollection<CardType> Types { get; set; } = new List<CardType>();
+        public virtual ICollection<CardColor> CardColors { get; set; } = new List<CardColor>();
+        public virtual ICollection<CardType> CardTypes { get; set; } = new List<CardType>();
+
+        public virtual Artist Artist { get; set; }
+        public virtual Rarity Rarity { get; set; }
+        public virtual Set Set { get; set; }
     }
 }
