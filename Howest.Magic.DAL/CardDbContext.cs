@@ -95,6 +95,24 @@ namespace Howest.MagicCards.DAL
                     .HasForeignKey(cc => cc.ColorId)
                     .HasConstraintName("card_colors_fk_color_id");
             });
+
+            modelBuilder.Entity<CardType>(entity =>
+            {
+                entity.ToTable("card_types");
+
+                entity.Property(ct => ct.CardId).HasColumnName("card_id");
+                entity.Property(ct => ct.TypeId).HasColumnName("type_id");
+
+                entity.HasOne(ct => ct.Card)
+                    .WithMany(c => c.CardTypes)
+                    .HasForeignKey(ct => ct.CardId)
+                    .HasConstraintName("card_types_fk_card_id");
+
+                entity.HasOne(ct => ct.Type)
+                    .WithMany(t => t.CardTypes)
+                    .HasForeignKey(ct => ct.TypeId)
+                    .HasConstraintName("card_types_fk_type_id");
+            });
         }
     }
 }
