@@ -113,6 +113,14 @@ namespace Howest.MagicCards.DAL
                     .HasForeignKey(ct => ct.TypeId)
                     .HasConstraintName("card_types_fk_type_id");
             });
+
+            modelBuilder.Entity<Rarity>(entity =>
+            {
+                entity.ToTable("rarities");
+
+                entity.Property(r => r.Code).HasColumnName("code").IsRequired();
+                entity.Property(r => r.Name).HasColumnName("name").IsRequired();
+            });
         }
     }
 }
