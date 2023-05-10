@@ -3,12 +3,7 @@ using Howest.MagicCards.Shared;
 using Howest.MagicCards.Shared.DTOs;
 using Howest.MagicCards.Shared.Enums;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore.Query;
 
 namespace Howest.MagicCards.DAL.Repositories
 {
@@ -25,7 +20,7 @@ namespace Howest.MagicCards.DAL.Repositories
         {
             filter.Validate();
 
-            var query = _context.Cards
+            IQueryable<Card> query = _context.Cards
                 .Include(c => c.Artist)
                 .Include(c => c.SetCodeNavigation)
                 .Include(c => c.RarityCodeNavigation)
@@ -41,7 +36,7 @@ namespace Howest.MagicCards.DAL.Repositories
 
             if (!string.IsNullOrEmpty(filter.Artist))
             {
-                query = query.Where(c => c.Artist.Name.Contains(filter.Artist));
+                query = query.Where(c => c.Artist.FullName.Contains(filter.Artist));
             }
 
             if (!string.IsNullOrEmpty(filter.Rarity))
@@ -51,7 +46,7 @@ namespace Howest.MagicCards.DAL.Repositories
 
             if (!string.IsNullOrEmpty(filter.CardType))
             {
-                query = query.Where(c => c.CardTypes.Any(ct => ct.Type.ShortName == filter.CardType));
+                query = query.Where(c => c.CardTypes.Any(ct => ct.Type.Name == filter.CardType));
             }
 
             if (!string.IsNullOrEmpty(filter.Name))
@@ -69,14 +64,14 @@ namespace Howest.MagicCards.DAL.Repositories
 
         public async Task<int> GetTotalCardCount(CardParameterFilter filter)
         {
-            var query = ApplyCardFilter(filter);
+            IQueryable<Card> query = ApplyCardFilter(filter);
 
             return await query.CountAsync();
         }
 
         public async Task<IEnumerable<CardDto>> GetCards(CardParameterFilter filter)
         {
-            var query = ApplyCardFilter(filter);
+            IQueryable<Card> query = ApplyCardFilter(filter);
 
             if (filter.SortDirection == SortDirection.Descending)
             {
