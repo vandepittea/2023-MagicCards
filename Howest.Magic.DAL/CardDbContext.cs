@@ -1,149 +1,358 @@
-﻿using Howest.MagicCards.DAL.Models;
+﻿using System;
+using System.Collections.Generic;
+using Howest.MagicCards.DAL.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace Howest.MagicCards.DAL
+namespace Howest.MagicCards.DAL;
+
+public partial class CardDbContext : DbContext
 {
-    public class CardDbContext : DbContext
+    public CardDbContext()
     {
-        public CardDbContext()
-        {
-        }
-
-        public CardDbContext(DbContextOptions<CardDbContext> options) : base(options)
-        {
-        }
-
-        public DbSet<Card> Cards { get; set; }
-        public DbSet<Artist> Artists { get; set; }
-        public DbSet<CardColor> CardColors { get; set; }
-        public DbSet<CardType> CardTypes { get; set; }
-        public DbSet<Color> Colors { get; set; }
-        public DbSet<Rarity> Rarities { get; set; }
-        public DbSet<Set> Sets { get; set; }
-        public DbSet<Models.Type> Types { get; set; }
-
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            modelBuilder.Entity<Card>(entity =>
-            {
-                entity.ToTable("cards");
-
-                entity.HasKey(e => e.Id).HasName("pk_card");
-
-                entity.Property(e => e.Id).HasColumnName("id");
-                entity.Property(e => e.Name).HasColumnName("name").IsRequired().HasMaxLength(255);
-                entity.Property(e => e.ManaCost).HasColumnName("mana_cost").HasMaxLength(255);
-                entity.Property(e => e.ConvertedManaCost).HasColumnName("converted_mana_cost").IsRequired().HasColumnType("decimal(18,2)");
-                entity.Property(e => e.Type).HasColumnName("type").IsRequired().HasMaxLength(255);
-                entity.Property(e => e.Rarity).HasColumnName("rarity_code");
-                entity.Property(e => e.Set).HasColumnName("set_code").IsRequired();
-                entity.Property(e => e.Text).HasColumnName("text").HasMaxLength(255);
-                entity.Property(e => e.Flavor).HasColumnName("flavor").HasMaxLength(255);
-                entity.Property(e => e.Artist).HasColumnName("artist_id");
-                entity.Property(e => e.Number).HasColumnName("number").IsRequired();
-                entity.Property(e => e.Power).HasColumnName("power");
-                entity.Property(e => e.Toughness).HasColumnName("toughness");
-                entity.Property(e => e.Layout).HasColumnName("layout").IsRequired();
-                entity.Property(e => e.MultiverseId).HasColumnName("multiverse_id");
-                entity.Property(e => e.OriginalImageUrl).HasColumnName("original_image_url").HasMaxLength(255);
-                entity.Property(e => e.Image).HasColumnName("image").IsRequired();
-                entity.Property(e => e.OriginalText).HasColumnName("original_text").HasMaxLength(255);
-                entity.Property(e => e.OriginalType).HasColumnName("original_type").HasMaxLength(255);
-                entity.Property(e => e.MtgId).HasColumnName("mtg_id").IsRequired();
-                entity.Property(e => e.Variations).HasColumnName("variations");
-
-                entity.HasOne(d => d.Artist)
-                    .WithMany(p => p.Cards)
-                    .HasForeignKey(d => d.Artist)
-                    .HasConstraintName("cards_fk_artist_id")
-                    .OnDelete(DeleteBehavior.SetNull);
-
-                entity.HasOne(d => d.Rarity)
-                    .WithMany(p => p.Cards)
-                    .HasForeignKey(d => d.Rarity)
-                    .HasConstraintName("cards_fk_rarity_code")
-                    .OnDelete(DeleteBehavior.SetNull);
-
-                entity.HasOne(d => d.Set)
-                    .WithMany(p => p.Cards)
-                    .HasForeignKey(d => d.Set)
-                    .HasConstraintName("cards_fk_set_code")
-                    .OnDelete(DeleteBehavior.Cascade);
-            });
-
-            modelBuilder.Entity<Artist>(entity =>
-            {
-                entity.ToTable("artists");
-
-                entity.HasKey(e => e.Id).HasName("pk_artist");
-
-                entity.Property(e => e.Id).HasColumnName("id");
-                entity.Property(e => e.FullName).HasColumnName("full_name").IsRequired();
-            });
-
-            modelBuilder.Entity<CardColor>(entity =>
-            {
-                entity.ToTable("card_colors");
-
-                entity.HasKey(cc => new { cc.CardId, cc.ColorId }).HasName("pk_card_colors");
-
-                entity.Property(e => e.CardId).HasColumnName("card_id");
-                entity.Property(e => e.ColorId).HasColumnName("color_id");
-
-                entity.HasOne(cc => cc.Card)
-                    .WithMany(c => c.CardColors)
-                    .HasForeignKey(cc => cc.CardId)
-                    .HasConstraintName("card_colors_fk_card_id")
-                    .OnDelete(DeleteBehavior.Cascade);
-
-                entity.HasOne(cc => cc.Color)
-                    .WithMany(c => c.CardColors)
-                    .HasForeignKey(cc => cc.ColorId)
-                    .HasConstraintName("card_colors_fk_color_id")
-                    .OnDelete(DeleteBehavior.Cascade);
-            });
-
-            modelBuilder.Entity<CardType>(entity =>
-            {
-                entity.ToTable("card_types");
-
-                entity.HasKey(ct => new { ct.CardId, ct.TypeId }).HasName("pk_card_type");
-
-                entity.Property(ct => ct.CardId).HasColumnName("card_id");
-                entity.Property(ct => ct.TypeId).HasColumnName("type_id");
-
-                entity.HasOne(ct => ct.Card)
-                    .WithMany(c => c.CardTypes)
-                    .HasForeignKey(ct => ct.CardId)
-                    .HasConstraintName("card_types_fk_card_id")
-                    .OnDelete(DeleteBehavior.Cascade);
-
-                entity.HasOne(ct => ct.Type)
-                    .WithMany(t => t.CardTypes)
-                    .HasForeignKey(ct => ct.TypeId)
-                    .HasConstraintName("card_types_fk_type_id")
-                    .OnDelete(DeleteBehavior.Cascade);
-            });
-
-            modelBuilder.Entity<Rarity>(entity =>
-            {
-                entity.ToTable("rarities");
-
-                entity.HasKey(e => e.Code).HasName("pk_rarities");
-
-                entity.Property(r => r.Code).HasColumnName("code").IsRequired();
-                entity.Property(r => r.Name).HasColumnName("name").IsRequired();
-            });
-
-            modelBuilder.Entity<Set>(entity =>
-            {
-                entity.ToTable("sets");
-
-                entity.HasKey(e => e.Code).HasName("pk_set");
-
-                entity.Property(s => s.Code).HasColumnName("code").IsRequired();
-                entity.Property(s => s.Name).HasColumnName("name").IsRequired();
-            });
-        }
     }
+
+    public CardDbContext(DbContextOptions<CardDbContext> options)
+        : base(options)
+    {
+    }
+
+    public virtual DbSet<Artist> Artists { get; set; }
+
+    public virtual DbSet<Card> Cards { get; set; }
+
+    public virtual DbSet<CardColor> CardColors { get; set; }
+
+    public virtual DbSet<CardType> CardTypes { get; set; }
+
+    public virtual DbSet<Color> Colors { get; set; }
+
+    public virtual DbSet<Migration> Migrations { get; set; }
+
+    public virtual DbSet<PersonalAccessToken> PersonalAccessTokens { get; set; }
+
+    public virtual DbSet<Rarity> Rarities { get; set; }
+
+    public virtual DbSet<Set> Sets { get; set; }
+
+    public virtual DbSet<Type> Types { get; set; }
+
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
+        => optionsBuilder.UseSqlServer("Server=DELLXPS15\\SQLEXPRESS;Database=mtg_v1;Integrated Security=True;TrustServerCertificate=True");
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.UseCollation("SQL_Latin1_General_CP1_CI_AS");
+
+        modelBuilder.Entity<Artist>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__artists__3213E83FC867953C");
+
+            entity.ToTable("artists");
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.CreatedAt)
+                .HasColumnType("datetime")
+                .HasColumnName("created_at");
+            entity.Property(e => e.FullName)
+                .IsRequired()
+                .HasMaxLength(255)
+                .HasColumnName("full_name");
+            entity.Property(e => e.UpdatedAt)
+                .HasColumnType("datetime")
+                .HasColumnName("updated_at");
+        });
+
+        modelBuilder.Entity<Card>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__cards__3213E83F03749037");
+
+            entity.ToTable("cards");
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.ArtistId).HasColumnName("artist_id");
+            entity.Property(e => e.ConvertedManaCost)
+                .IsRequired()
+                .HasMaxLength(255)
+                .HasColumnName("converted_mana_cost");
+            entity.Property(e => e.CreatedAt)
+                .HasColumnType("datetime")
+                .HasColumnName("created_at");
+            entity.Property(e => e.Flavor).HasColumnName("flavor");
+            entity.Property(e => e.Image)
+                .IsRequired()
+                .HasMaxLength(255)
+                .HasColumnName("image");
+            entity.Property(e => e.Layout)
+                .IsRequired()
+                .HasMaxLength(255)
+                .HasColumnName("layout");
+            entity.Property(e => e.ManaCost)
+                .HasMaxLength(255)
+                .HasColumnName("mana_cost");
+            entity.Property(e => e.MtgId)
+                .IsRequired()
+                .HasMaxLength(255)
+                .HasColumnName("mtg_id");
+            entity.Property(e => e.MultiverseId).HasColumnName("multiverse_id");
+            entity.Property(e => e.Name)
+                .IsRequired()
+                .HasMaxLength(255)
+                .HasColumnName("name");
+            entity.Property(e => e.Number)
+                .IsRequired()
+                .HasMaxLength(255)
+                .HasColumnName("number");
+            entity.Property(e => e.OriginalImageUrl)
+                .HasMaxLength(255)
+                .HasColumnName("original_image_url");
+            entity.Property(e => e.OriginalText).HasColumnName("original_text");
+            entity.Property(e => e.OriginalType)
+                .HasMaxLength(255)
+                .HasColumnName("original_type");
+            entity.Property(e => e.Power)
+                .HasMaxLength(255)
+                .HasColumnName("power");
+            entity.Property(e => e.RarityCode)
+                .HasMaxLength(255)
+                .HasColumnName("rarity_code");
+            entity.Property(e => e.SetCode)
+                .IsRequired()
+                .HasMaxLength(255)
+                .HasColumnName("set_code");
+            entity.Property(e => e.Text).HasColumnName("text");
+            entity.Property(e => e.Toughness)
+                .HasMaxLength(255)
+                .HasColumnName("toughness");
+            entity.Property(e => e.Type)
+                .IsRequired()
+                .HasMaxLength(255)
+                .HasColumnName("type");
+            entity.Property(e => e.UpdatedAt)
+                .HasColumnType("datetime")
+                .HasColumnName("updated_at");
+            entity.Property(e => e.Variations).HasColumnName("variations");
+
+            entity.HasOne(d => d.Artist).WithMany(p => p.Cards)
+                .HasForeignKey(d => d.ArtistId)
+                .HasConstraintName("FK_cards_artists");
+
+            entity.HasOne(d => d.RarityCodeNavigation).WithMany(p => p.Cards)
+                .HasPrincipalKey(p => p.Code)
+                .HasForeignKey(d => d.RarityCode)
+                .HasConstraintName("FK_cards_rarities");
+
+            entity.HasOne(d => d.SetCodeNavigation).WithMany(p => p.Cards)
+                .HasPrincipalKey(p => p.Code)
+                .HasForeignKey(d => d.SetCode)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_cards_sets");
+        });
+
+        modelBuilder.Entity<CardColor>(entity =>
+        {
+            entity.HasKey(e => new { e.CardId, e.ColorId }).HasName("card_colors_card_id_color_id_primary");
+
+            entity.ToTable("card_colors");
+
+            entity.HasIndex(e => new { e.CardId, e.ColorId }, "card_colors_card_id_color_id_unique").IsUnique();
+
+            entity.Property(e => e.CardId).HasColumnName("card_id");
+            entity.Property(e => e.ColorId).HasColumnName("color_id");
+            entity.Property(e => e.CreatedAt)
+                .HasColumnType("datetime")
+                .HasColumnName("created_at");
+            entity.Property(e => e.UpdatedAt)
+                .HasColumnType("datetime")
+                .HasColumnName("updated_at");
+
+            entity.HasOne(d => d.Card).WithMany(p => p.CardColors)
+                .HasForeignKey(d => d.CardId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_card_colors_cards");
+
+            entity.HasOne(d => d.Color).WithMany(p => p.CardColors)
+                .HasForeignKey(d => d.ColorId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_card_colors_colors");
+        });
+
+        modelBuilder.Entity<CardType>(entity =>
+        {
+            entity.HasKey(e => new { e.CardId, e.TypeId }).HasName("card_types_card_id_type_id_primary");
+
+            entity.ToTable("card_types");
+
+            entity.HasIndex(e => new { e.CardId, e.TypeId }, "card_types_card_id_type_id_unique").IsUnique();
+
+            entity.Property(e => e.CardId).HasColumnName("card_id");
+            entity.Property(e => e.TypeId).HasColumnName("type_id");
+            entity.Property(e => e.CreatedAt)
+                .HasColumnType("datetime")
+                .HasColumnName("created_at");
+            entity.Property(e => e.UpdatedAt)
+                .HasColumnType("datetime")
+                .HasColumnName("updated_at");
+
+            entity.HasOne(d => d.Card).WithMany(p => p.CardTypes)
+                .HasForeignKey(d => d.CardId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_card_types_cards");
+
+            entity.HasOne(d => d.Type).WithMany(p => p.CardTypes)
+                .HasForeignKey(d => d.TypeId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_card_types_types");
+        });
+
+        modelBuilder.Entity<Color>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__colors__3213E83F2D3B99AB");
+
+            entity.ToTable("colors");
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Code)
+                .IsRequired()
+                .HasMaxLength(255)
+                .HasColumnName("code");
+            entity.Property(e => e.CreatedAt)
+                .HasColumnType("datetime")
+                .HasColumnName("created_at");
+            entity.Property(e => e.Name)
+                .IsRequired()
+                .HasMaxLength(255)
+                .HasColumnName("name");
+            entity.Property(e => e.UpdatedAt)
+                .HasColumnType("datetime")
+                .HasColumnName("updated_at");
+        });
+
+        modelBuilder.Entity<Migration>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__migratio__3213E83FC12ED5C9");
+
+            entity.ToTable("migrations");
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Batch).HasColumnName("batch");
+            entity.Property(e => e.Migration1)
+                .IsRequired()
+                .HasMaxLength(255)
+                .HasColumnName("migration");
+        });
+
+        modelBuilder.Entity<PersonalAccessToken>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__personal__3213E83FF1366E32");
+
+            entity.ToTable("personal_access_tokens");
+
+            entity.HasIndex(e => e.Token, "personal_access_tokens_token_unique").IsUnique();
+
+            entity.HasIndex(e => new { e.TokenableType, e.TokenableId }, "personal_access_tokens_tokenable_type_tokenable_id_index");
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Abilities).HasColumnName("abilities");
+            entity.Property(e => e.CreatedAt)
+                .HasColumnType("datetime")
+                .HasColumnName("created_at");
+            entity.Property(e => e.LastUsedAt)
+                .HasColumnType("datetime")
+                .HasColumnName("last_used_at");
+            entity.Property(e => e.Name)
+                .IsRequired()
+                .HasMaxLength(255)
+                .HasColumnName("name");
+            entity.Property(e => e.Token)
+                .IsRequired()
+                .HasMaxLength(64)
+                .HasColumnName("token");
+            entity.Property(e => e.TokenableId).HasColumnName("tokenable_id");
+            entity.Property(e => e.TokenableType)
+                .IsRequired()
+                .HasMaxLength(255)
+                .HasColumnName("tokenable_type");
+            entity.Property(e => e.UpdatedAt)
+                .HasColumnType("datetime")
+                .HasColumnName("updated_at");
+        });
+
+        modelBuilder.Entity<Rarity>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__rarities__3213E83F710C9509");
+
+            entity.ToTable("rarities");
+
+            entity.HasIndex(e => e.Code, "rarities_code_unique").IsUnique();
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Code)
+                .IsRequired()
+                .HasMaxLength(255)
+                .HasColumnName("code");
+            entity.Property(e => e.CreatedAt)
+                .HasColumnType("datetime")
+                .HasColumnName("created_at");
+            entity.Property(e => e.Name)
+                .IsRequired()
+                .HasMaxLength(255)
+                .HasColumnName("name");
+            entity.Property(e => e.UpdatedAt)
+                .HasColumnType("datetime")
+                .HasColumnName("updated_at");
+        });
+
+        modelBuilder.Entity<Set>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__sets__3213E83F0F72A017");
+
+            entity.ToTable("sets");
+
+            entity.HasIndex(e => e.Code, "sets_code_unique").IsUnique();
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Code)
+                .IsRequired()
+                .HasMaxLength(255)
+                .HasColumnName("code");
+            entity.Property(e => e.CreatedAt)
+                .HasColumnType("datetime")
+                .HasColumnName("created_at");
+            entity.Property(e => e.Name)
+                .IsRequired()
+                .HasMaxLength(255)
+                .HasColumnName("name");
+            entity.Property(e => e.UpdatedAt)
+                .HasColumnType("datetime")
+                .HasColumnName("updated_at");
+        });
+
+        modelBuilder.Entity<Type>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__types__3213E83F62126D10");
+
+            entity.ToTable("types");
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.CreatedAt)
+                .HasColumnType("datetime")
+                .HasColumnName("created_at");
+            entity.Property(e => e.Name)
+                .IsRequired()
+                .HasMaxLength(255)
+                .HasColumnName("name");
+            entity.Property(e => e.Type1)
+                .IsRequired()
+                .HasMaxLength(255)
+                .HasColumnName("type");
+            entity.Property(e => e.UpdatedAt)
+                .HasColumnType("datetime")
+                .HasColumnName("updated_at");
+        });
+
+        OnModelCreatingPartial(modelBuilder);
+    }
+
+    partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
 }

@@ -1,16 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Howest.MagicCards.DAL.Models
+namespace Howest.MagicCards.DAL.Models;
+
+public partial class Artist
 {
-    public class Artist
-    {
-        public long Id { get; set; }
-        public string FullName { get; set; }
+    public long Id { get; set; }
 
-        public virtual ICollection<Card> Cards { get; set; } = new List<Card>();
-    }
+    public string FullName { get; set; }
+
+    public DateTime? CreatedAt { get; set; }
+
+    public DateTime? UpdatedAt { get; set; }
+
+    public virtual ICollection<Card> Cards { get; set; } = new List<Card>();
 }

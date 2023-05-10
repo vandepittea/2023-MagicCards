@@ -1,18 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Howest.MagicCards.DAL.Models
+namespace Howest.MagicCards.DAL.Models;
+
+public partial class CardColor
 {
-    public class CardColor
-    {
-        public long CardId { get; set; }
-        public long ColorId { get; set; }
+    public long CardId { get; set; }
 
-        public virtual Card Card { get; set; }
-        public virtual Color Color { get; set; }
-    }
+    public long ColorId { get; set; }
+
+    public DateTime? CreatedAt { get; set; }
+
+    public DateTime? UpdatedAt { get; set; }
+
+    public virtual Card Card { get; set; }
+
+    public virtual Color Color { get; set; }
 }

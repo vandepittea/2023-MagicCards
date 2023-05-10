@@ -1,17 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Howest.MagicCards.DAL.Models
+namespace Howest.MagicCards.DAL.Models;
+
+public partial class Type
 {
-    public class Type
-    {
-        public long Id { get; set; }
-        public string Name { get; set; }
-        public string CardType { get; set; }
+    public long Id { get; set; }
 
-        public virtual ICollection<CardType> CardTypes { get; set; } = new List<CardType>();
-    }
+    public string Name { get; set; }
+
+    public string Type1 { get; set; }
+
+    public DateTime? CreatedAt { get; set; }
+
+    public DateTime? UpdatedAt { get; set; }
+
+    public virtual ICollection<CardType> CardTypes { get; set; } = new List<CardType>();
 }
