@@ -17,6 +17,7 @@ namespace Howest.MagicCards.WebAPI.Controllers
         }
 
         [HttpGet]
+        [ProducesResponseType(typeof(PagedResponse<CardDto>), 200)]
         public async Task<IActionResult> GetCards(
             [FromQuery] string setName,
             [FromQuery] string artistName,
@@ -25,13 +26,15 @@ namespace Howest.MagicCards.WebAPI.Controllers
             [FromQuery] string searchQuery,
             [FromQuery] string sortBy,
             [FromQuery] bool sortAscending = true,
-            [FromQuery] int page = 1,
+            [FromQuery] int pageNumber = 1,
             [FromQuery] int pageSize = 50)
         {
-            var cards = await _cardRepository.GetFilteredAndSortedCards(setName, artistName, rarity, type, searchQuery, sortBy, sortAscending, page, pageSize);
+            var paginationFilter = new PaginationFilter { PageNumber = pageNumber, PageSize = pageSize };
+            var cards = await _cardRepository.GetFilteredAndSortedCards(setName, artistName, rarity, type, searchQuery, sortBy, sortAscending, paginationFilter.PageNumber, paginationFilter.PageSize);
             var totalCards = cards.Count();
-            var pagedCards = cards.Skip((page - 1) * pageSize).Take(pageSize).ToList();
-            var pagedResponse = new PagedResponse<IEnumerable<Card>>(pagedCards, page, pageSize, totalCards);
+            var pagedCards = cards.Skip((paginationFilter.PageNumber - 1) * paginationFilter.PageSize).Take(paginationFilter.PageSize).ToList();
+            var cardDtos = pagedCards.Select(card => new CardDto(card));
+            var pagedResponse = new PagedResponse<CardDto>(cardDtos, paginationFilter.PageNumber, paginationFilter.PageSize, totalCards);
             return Ok(pagedResponse);
         }
     }
