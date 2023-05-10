@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Howest.MagicCards.Shared.DTOs;
 
 namespace Howest.MagicCards.Shared
 {
@@ -15,11 +16,31 @@ namespace Howest.MagicCards.Shared
         public string SearchQuery { get; set; }
         public string SortBy { get; set; }
         public bool SortAscending { get; set; } = true;
+
+        public CardFilter(CardFilterDto filterDto)
+        {
+            if (filterDto != null)
+            {
+                PageNumber = filterDto.PageNumber;
+                PageSize = filterDto.PageSize;
+                SetName = filterDto.SetName;
+                ArtistName = filterDto.ArtistName;
+                Rarity = filterDto.Rarity;
+                Type = filterDto.Type;
+                SearchQuery = filterDto.SearchQuery;
+                SortBy = filterDto.SortBy;
+                SortAscending = filterDto.SortAscending;
+            }
+        }
     }
 
     public class CardParameterFilter : CardFilter
     {
         private new readonly int _maxPageSize = PaginationFilter._maxPageSize;
+
+        public CardParameterFilter(CardFilterDto filterDto) : base(filterDto)
+        {
+        }
 
         public void Validate()
         {
