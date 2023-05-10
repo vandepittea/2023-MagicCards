@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Howest.MagicCards.Shared.Enums;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,20 +7,20 @@ using System.Threading.Tasks;
 
 namespace Howest.MagicCards.Shared.DTOs
 {
-    public class CardFilterDto : PaginationFilterDto
+public class CardFilterDto : PaginationFilterDto
     {
-        public string SetName { get; set; }
-        public string ArtistName { get; set; }
+        public string Set { get; set; }
+        public string Artist { get; set; }
         public string Rarity { get; set; }
-        public string Type { get; set; }
-        public string SearchQuery { get; set; }
-        public string SortBy { get; set; }
-        public bool SortAscending { get; set; } = true;
+        public string CardType { get; set; }
+        public string Name { get; set; }
+        public string Text { get; set; }
+        public SortDirection SortDirection { get; set; } = SortDirection.Ascending;
     }
-
+    
     public abstract class PaginationFilterDto
     {
-        public int PageNumber { get; set; }
-        public int PageSize { get; set; }
+        public int PageNumber { get; set; } = 1;
+        public int PageSize { get; set; } = 10;
     }
 }

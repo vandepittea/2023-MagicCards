@@ -4,18 +4,19 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Howest.MagicCards.Shared.DTOs;
+using Howest.MagicCards.Shared.Enums;
 
 namespace Howest.MagicCards.Shared
 {
     public class CardFilter : PaginationFilter
     {
-        public string SetName { get; set; }
-        public string ArtistName { get; set; }
+        public string Set { get; set; }
+        public string Artist { get; set; }
         public string Rarity { get; set; }
-        public string Type { get; set; }
-        public string SearchQuery { get; set; }
-        public string SortBy { get; set; }
-        public bool SortAscending { get; set; } = true;
+        public string CardType { get; set; }
+        public string Name { get; set; }
+        public string Text { get; set; }
+        public SortDirection SortDirection { get; set; } = SortDirection.Ascending;
 
         public CardFilter(CardFilterDto filterDto)
         {
@@ -23,13 +24,13 @@ namespace Howest.MagicCards.Shared
             {
                 PageNumber = filterDto.PageNumber;
                 PageSize = filterDto.PageSize;
-                SetName = filterDto.SetName;
-                ArtistName = filterDto.ArtistName;
+                Set = filterDto.Set;
+                Artist = filterDto.Artist;
                 Rarity = filterDto.Rarity;
-                Type = filterDto.Type;
-                SearchQuery = filterDto.SearchQuery;
-                SortBy = filterDto.SortBy;
-                SortAscending = filterDto.SortAscending;
+                CardType = filterDto.CardType;
+                Name = filterDto.Name;
+                Text = filterDto.Text;
+                SortDirection = filterDto.SortDirection;
             }
         }
     }
@@ -51,15 +52,15 @@ namespace Howest.MagicCards.Shared
 
             if (PageSize < 1 || PageSize > _maxPageSize)
             {
-                throw new ArgumentException("Page size must be between 1 and 150.");
+                throw new ArgumentException($"Page size must be between 1 and {_maxPageSize}.");
             }
 
-            if (!string.IsNullOrEmpty(SetName) && SetName.Length > 50)
+            if (!string.IsNullOrEmpty(Set) && Set.Length > 50)
             {
                 throw new ArgumentException("Set name cannot exceed 50 characters.");
             }
 
-            if (!string.IsNullOrEmpty(ArtistName) && ArtistName.Length > 50)
+            if (!string.IsNullOrEmpty(Artist) && Artist.Length > 50)
             {
                 throw new ArgumentException("Artist name cannot exceed 50 characters.");
             }
@@ -69,19 +70,19 @@ namespace Howest.MagicCards.Shared
                 throw new ArgumentException("Rarity cannot exceed 20 characters.");
             }
 
-            if (!string.IsNullOrEmpty(Type) && Type.Length > 50)
+            if (!string.IsNullOrEmpty(CardType) && CardType.Length > 50)
             {
-                throw new ArgumentException("Type cannot exceed 50 characters.");
+                throw new ArgumentException("Card type cannot exceed 50 characters.");
             }
 
-            if (!string.IsNullOrEmpty(SearchQuery) && SearchQuery.Length > 100)
+            if (!string.IsNullOrEmpty(Name) && Name.Length > 200)
             {
-                throw new ArgumentException("Search query cannot exceed 100 characters.");
+                throw new ArgumentException("Card name cannot exceed 200 characters.");
             }
 
-            if (!string.IsNullOrEmpty(SortBy) && SortBy.Length > 50)
+            if (!string.IsNullOrEmpty(Text) && Text.Length > 500)
             {
-                throw new ArgumentException("SortBy parameter cannot exceed 50 characters.");
+                throw new ArgumentException("Card text cannot exceed 500 characters.");
             }
         }
     }

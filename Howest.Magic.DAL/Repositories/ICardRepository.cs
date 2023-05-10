@@ -1,4 +1,6 @@
 ﻿using Howest.MagicCards.DAL.Models;
+using Howest.MagicCards.Shared;
+using Howest.MagicCards.Shared.DTOs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,13 +11,7 @@ namespace Howest.MagicCards.DAL.Repositories
 {
     public interface ICardRepository
     {
-        Task<IEnumerable<Card>> GetAllCards();
-        Task<Card> GetCardById(int id);
-        Task<IEnumerable<Artist>> GetAllArtists();
-        Task<Artist> GetArtistById(int id);
-        Task<IEnumerable<Card>> GetFilteredAndSortedCards(string setName = null, string artistName = null, string rarity = null, string type = null, string searchQuery = null, string sortBy = null, bool sortAscending = true, int? page = null, int? pageSize = null);
-        Task<Card> AddCard(Card card);
-        Task<Card> UpdateCard(Card card);
-        Task DeleteCard(int id);
+        Task<IEnumerable<CardDto>> GetCards(CardParameterFilter filter);
+        Task<int> GetTotalCardCount(CardParameterFilter filter);
     }
 }
