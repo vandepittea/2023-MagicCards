@@ -18,7 +18,7 @@ namespace Howest.MagicCards.Shared
         public string Text { get; set; }
         public SortDirection SortDirection { get; set; } = SortDirection.Ascending;
 
-        public CardFilter(CardFilterDto filterDto)
+        public CardFilter(CardDetailDto filterDto)
         {
             Set = filterDto.Set;
             Artist = filterDto.Artist;
@@ -27,43 +27,6 @@ namespace Howest.MagicCards.Shared
             Name = filterDto.Name;
             Text = filterDto.Text;
             SortDirection = filterDto.SortDirection;
-        }
-
-        public IQueryable<CardFilterDto> ApplyFilter(IQueryable<CardFilterDto> query)
-        {
-            if (!string.IsNullOrEmpty(Set))
-            {
-                query = query.Where(c => c.SetCode == Set);
-            }
-
-            if (!string.IsNullOrEmpty(Artist))
-            {
-                query = query.Where(c => c.Artist.FullName.Contains(Artist));
-            }
-
-            if (!string.IsNullOrEmpty(Rarity))
-            {
-                query = query.Where(c => c.RarityCodeNavigation.Code == Rarity);
-            }
-
-            if (!string.IsNullOrEmpty(CardType))
-            {
-                query = query.Where(c => c.CardTypes.Any(ct => ct.Type.Name == CardType));
-            }
-
-            if (!string.IsNullOrEmpty(Name))
-            {
-                query = query.Where(c => c.Name.Contains(Name));
-            }
-
-            if (!string.IsNullOrEmpty(Text))
-            {
-                query = query.Where(c => c.Text.Contains(Text));
-            }
-
-            return SortDirection == SortDirection.Ascending
-                ? query.OrderBy(c => c.Name)
-                : query.OrderByDescending(c => c.Name);
         }
     }
 }
