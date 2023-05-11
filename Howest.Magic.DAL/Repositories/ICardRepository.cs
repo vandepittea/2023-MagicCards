@@ -11,7 +11,7 @@ namespace Howest.MagicCards.DAL.Repositories
 {
     public interface ICardRepository
     {
-        Task<IEnumerable<CardDto>> GetCards(CardParameterFilter filter);
-        Task<int> GetTotalCardCount(CardParameterFilter filter);
+        Task<IEnumerable<Card>> GetCards();
+        Task<Card> GetCardById(int id);
     }
 }

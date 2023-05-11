@@ -5,13 +5,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Howest.MagicCards.DAL;
 
-public partial class CardDbContext : DbContext
+public partial class MtgDbContext : DbContext
 {
-    public CardDbContext()
+    public MtgDbContext()
     {
     }
 
-    public CardDbContext(DbContextOptions<CardDbContext> options)
+    public MtgDbContext(DbContextOptions<MtgDbContext> options)
         : base(options)
     {
     }
