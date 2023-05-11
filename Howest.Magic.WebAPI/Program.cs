@@ -7,7 +7,8 @@ using Howest.MagicCards.Shared.Validation;
 using Microsoft.EntityFrameworkCore;
 using AutoMapper;
 
-var builder = WebApplication.CreateBuilder(args);
+WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
+ConfigurationManager config = builder.Configuration;
 
 // Add services to the container.
 builder.Services.AddControllers()
@@ -18,6 +19,10 @@ builder.Services.AddControllers()
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddDbContext<MtgDbContext>
+    (options => options.UseSqlServer(config.GetConnectionString("CardDb")));
+
 
 builder.Services.AddScoped<ICardRepository, CardRepository>();
 
