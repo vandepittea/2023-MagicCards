@@ -8,10 +8,12 @@ namespace Howest.MagicCards.Shared
 {
     public class PaginationFilter
     {
-        public static readonly int _maxPageSize = 150;
+        const int _maxPageSize = 150;
 
         private int _pageSize = _maxPageSize;
         private int _pageNumber = 1;
+
+        public int MaxPageSize { get; set; } = _maxPageSize;
 
         public int PageNumber
         {
@@ -21,8 +23,9 @@ namespace Howest.MagicCards.Shared
 
         public int PageSize
         {
-            get { return _pageSize; }
-            set { _pageSize = (value > _maxPageSize || value < 1) ? _maxPageSize : value; }
+            get { return _pageSize > MaxPageSize ? MaxPageSize : _pageSize; }
+            set { _pageSize = (value > MaxPageSize || value < 1) ? MaxPageSize : value; }
         }
     }
+
 }
