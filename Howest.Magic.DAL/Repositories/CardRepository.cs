@@ -1,4 +1,6 @@
-﻿using Howest.MagicCards.DAL.Models;
+﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
+using Howest.MagicCards.DAL.Models;
 using Howest.MagicCards.Shared;
 using Howest.MagicCards.Shared.DTOs;
 using Howest.MagicCards.Shared.Enums;
@@ -10,10 +12,12 @@ namespace Howest.MagicCards.DAL.Repositories
     public class CardRepository : ICardRepository
     {
         private readonly CardDbContext _context;
+        private readonly IMapper _mapper;
 
-        public CardRepository()
+        public CardRepository(IMapper mapper)
         {
             _context = new CardDbContext();
+            _mapper = mapper;
         }
 
         public IQueryable<Card> ApplyCardFilter(CardParameterFilter filter)
@@ -82,34 +86,9 @@ namespace Howest.MagicCards.DAL.Repositories
                 query = query.OrderBy(c => c.Name);
             }
 
-            var pagedQuery = query.Skip((filter.PageNumber - 1) * filter.PageSize).Take(filter.PageSize);
+            IQueryable<Card> pagedQuery = query.Skip((filter.PageNumber - 1) * filter.PageSize).Take(filter.PageSize);
 
-            var cards = await pagedQuery.Select(c => new CardDto
-            {
-                Id = c.Id,
-                Name = c.Name,
-                ManaCost = c.ManaCost,
-                ConvertedManaCost = c.ConvertedManaCost,
-                Type = c.Type,
-                Rarity = c.RarityCodeNavigation.Name,
-                Set = c.SetCodeNavigation.Name,
-                Text = c.Text,
-                Flavor = c.Flavor,
-                ArtistName = c.Artist.FullName,
-                Number = c.Number,
-                Power = c.Power,
-                Toughness = c.Toughness,
-                Layout = c.Layout,
-                MultiverseId = c.MultiverseId,
-                OriginalImageUrl = c.OriginalImageUrl,
-                Image = c.Image,
-                OriginalText = c.OriginalText,
-                OriginalType = c.OriginalType,
-                MtgId = c.MtgId,
-                Variations = c.Variations,
-                Colors = c.CardColors.Select(cc => cc.Color.Name).ToList(),
-                Types = c.CardTypes.Select(ct => ct.Type.Name).ToList()
-            }).ToListAsync();
+            IEnumerable<CardDto> cards = await pagedQuery.ProjectTo<CardDto>(_mapper.ConfigurationProvider).ToListAsync();
 
             return cards;
         }

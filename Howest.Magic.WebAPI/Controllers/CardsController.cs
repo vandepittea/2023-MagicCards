@@ -4,6 +4,7 @@ using Howest.MagicCards.DAL.Repositories;
 using Howest.MagicCards.DAL.Models;
 using Howest.MagicCards.Shared;
 using Howest.MagicCards.Shared.DTOs;
+using FluentValidation;
 
 namespace Howest.MagicCards.WebAPI.Controllers
 {
@@ -12,10 +13,12 @@ namespace Howest.MagicCards.WebAPI.Controllers
     public class CardsController : ControllerBase
     {
         private readonly CardRepository _cardRepository;
+        private readonly CardValidator _validator;
 
-        public CardsController(ICardRepository cardRepository)
+        public CardsController(CardRepository cardRepository, CardValidator validator)
         {
-            _cardRepository = new CardRepository();
+            _cardRepository = cardRepository;
+            _validator = validator;
         }
 
         [HttpGet]
@@ -23,6 +26,12 @@ namespace Howest.MagicCards.WebAPI.Controllers
         public async Task<IActionResult> GetCards(
             [FromQuery] CardFilterDto filterDto)
         {
+            var validationResult = _validator.Validate(filterDto);
+            if (!validationResult.IsValid)
+            {
+                return BadRequest(validationResult.Errors);
+            }
+
             var filter = new CardParameterFilter(filterDto);
             var cards = await _cardRepository.GetCards(filter);
 

@@ -20,70 +20,50 @@ namespace Howest.MagicCards.Shared
 
         public CardFilter(CardFilterDto filterDto)
         {
-            if (filterDto != null)
-            {
-                PageNumber = filterDto.PageNumber;
-                PageSize = filterDto.PageSize;
-                Set = filterDto.Set;
-                Artist = filterDto.Artist;
-                Rarity = filterDto.Rarity;
-                CardType = filterDto.CardType;
-                Name = filterDto.Name;
-                Text = filterDto.Text;
-                SortDirection = filterDto.SortDirection;
-            }
-        }
-    }
-
-    public class CardParameterFilter : CardFilter
-    {
-        private new readonly int _maxPageSize = PaginationFilter._maxPageSize;
-
-        public CardParameterFilter(CardFilterDto filterDto) : base(filterDto)
-        {
+            Set = filterDto.Set;
+            Artist = filterDto.Artist;
+            Rarity = filterDto.Rarity;
+            CardType = filterDto.CardType;
+            Name = filterDto.Name;
+            Text = filterDto.Text;
+            SortDirection = filterDto.SortDirection;
         }
 
-        public void Validate()
+        public IQueryable<CardFilterDto> ApplyFilter(IQueryable<CardFilterDto> query)
         {
-            if (PageNumber < 1)
+            if (!string.IsNullOrEmpty(Set))
             {
-                throw new ArgumentException("Page number cannot be less than 1.");
+                query = query.Where(c => c.SetCode == Set);
             }
 
-            if (PageSize < 1 || PageSize > _maxPageSize)
+            if (!string.IsNullOrEmpty(Artist))
             {
-                throw new ArgumentException($"Page size must be between 1 and {_maxPageSize}.");
+                query = query.Where(c => c.Artist.FullName.Contains(Artist));
             }
 
-            if (!string.IsNullOrEmpty(Set) && Set.Length > 50)
+            if (!string.IsNullOrEmpty(Rarity))
             {
-                throw new ArgumentException("Set name cannot exceed 50 characters.");
+                query = query.Where(c => c.RarityCodeNavigation.Code == Rarity);
             }
 
-            if (!string.IsNullOrEmpty(Artist) && Artist.Length > 50)
+            if (!string.IsNullOrEmpty(CardType))
             {
-                throw new ArgumentException("Artist name cannot exceed 50 characters.");
+                query = query.Where(c => c.CardTypes.Any(ct => ct.Type.Name == CardType));
             }
 
-            if (!string.IsNullOrEmpty(Rarity) && Rarity.Length > 20)
+            if (!string.IsNullOrEmpty(Name))
             {
-                throw new ArgumentException("Rarity cannot exceed 20 characters.");
+                query = query.Where(c => c.Name.Contains(Name));
             }
 
-            if (!string.IsNullOrEmpty(CardType) && CardType.Length > 50)
+            if (!string.IsNullOrEmpty(Text))
             {
-                throw new ArgumentException("Card type cannot exceed 50 characters.");
+                query = query.Where(c => c.Text.Contains(Text));
             }
 
-            if (!string.IsNullOrEmpty(Name) && Name.Length > 200)
-            {
-                throw new ArgumentException("Card name cannot exceed 200 characters.");
-            }
-
-            if (!string.IsNullOrEmpty(Text) && Text.Length > 500)
-            {
-                throw new ArgumentException("Card text cannot exceed 500 characters.");
-            }
+            return SortDirection == SortDirection.Ascending
+                ? query.OrderBy(c => c.Name)
+                : query.OrderByDescending(c => c.Name);
         }
     }
 }
