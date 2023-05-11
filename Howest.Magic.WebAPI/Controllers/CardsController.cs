@@ -24,7 +24,7 @@ namespace Howest.MagicCards.WebAPI.Controllers
         [HttpGet]
         [ProducesResponseType(typeof(PagedResponse<IEnumerable<CardDto>>), 200)]
         public async Task<IActionResult> GetCards(
-            [FromQuery] CardFilterDto filterDto)
+            [FromQuery] CardDetailDto filterDto)
         {
             var validationResult = _validator.Validate(filterDto);
             if (!validationResult.IsValid)

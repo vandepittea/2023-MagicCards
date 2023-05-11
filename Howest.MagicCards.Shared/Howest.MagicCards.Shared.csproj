@@ -14,4 +14,8 @@
     <Folder Include="Filters\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Howest.Magic.DAL\Howest.MagicCards.DAL.csproj" />
+  </ItemGroup>
+
 </Project>
