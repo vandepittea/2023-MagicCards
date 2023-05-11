@@ -2,9 +2,9 @@
 using Microsoft.AspNetCore.Mvc;
 using Howest.MagicCards.DAL.Repositories;
 using Howest.MagicCards.DAL.Models;
-using Howest.MagicCards.Shared;
 using Howest.MagicCards.Shared.DTOs;
 using FluentValidation;
+using Howest.MagicCards.Shared.Validation;
 
 namespace Howest.MagicCards.WebAPI.Controllers
 {
