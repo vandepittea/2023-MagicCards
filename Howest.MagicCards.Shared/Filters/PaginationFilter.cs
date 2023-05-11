@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Howest.MagicCards.Shared
+namespace Howest.MagicCards.Shared.Filters
 {
     public class PaginationFilter
     {
@@ -18,13 +18,13 @@ namespace Howest.MagicCards.Shared
         public int PageNumber
         {
             get { return _pageNumber; }
-            set { _pageNumber = (value < 1) ? 1 : value; }
+            set { _pageNumber = value < 1 ? 1 : value; }
         }
 
         public int PageSize
         {
             get { return _pageSize > MaxPageSize ? MaxPageSize : _pageSize; }
-            set { _pageSize = (value > MaxPageSize || value < 1) ? MaxPageSize : value; }
+            set { _pageSize = value > MaxPageSize || value < 1 ? MaxPageSize : value; }
         }
     }
 
