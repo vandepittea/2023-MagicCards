@@ -28,9 +28,17 @@ namespace Howest.MagicCards.DAL.Repositories
                 .ToListAsync();
         }
 
-        public Task<Card> GetCardById(int id)
+        public async Task<Card> GetCardById(int id)
         {
-            throw new NotImplementedException();
+            return await _dbContext.Cards
+                .Include(c => c.SetCodeNavigation)
+                .Include(c => c.RarityCodeNavigation)
+                .Include(c => c.CardColors)
+                    .ThenInclude(cc => cc.Color)
+                .Include(c => c.CardTypes)
+                    .ThenInclude(ct => ct.Type)
+                .FirstOrDefaultAsync(c => c.Id == id);
         }
+
     }
 }
