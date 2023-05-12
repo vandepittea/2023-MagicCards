@@ -1,6 +1,4 @@
 ﻿using Howest.MagicCards.DAL.Models;
-using Howest.MagicCards.Shared;
-using Howest.MagicCards.Shared.DTOs;
 using System;
 using System.Collections.Generic;
 using System.Linq;

@@ -1,9 +1,6 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Howest.MagicCards.DAL.Models;
-using Howest.MagicCards.Shared;
-using Howest.MagicCards.Shared.DTOs;
-using Howest.MagicCards.Shared.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
 
