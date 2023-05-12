@@ -103,7 +103,6 @@ namespace Howest.MagicCards.WebAPI.Controllers.V2
         [ProducesResponseType(typeof(string), 404)]
         [ProducesResponseType(typeof(string), 500)]
         public async Task<ActionResult<PagedResponse<IQueryable<CardDto>>>> GetCards([FromQuery] CardFilter filter,
-            [FromQuery] bool sortOrder,
             [FromServices] IConfiguration config)
         {
             try
