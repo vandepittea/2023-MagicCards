@@ -194,5 +194,57 @@ namespace Howest.MagicCards.WebAPI.Controllers.V2
                     });
             }
         }
+
+        [HttpGet("{id:int}", Name = "GetCardById")]
+        [ProducesResponseType(typeof(CardDetailDto), 200)]
+        [ProducesResponseType(typeof(string), 404)]
+        [ProducesResponseType(typeof(string), 500)]
+        public async Task<ActionResult<CardDetailDto>> GetCard(int id)
+        {
+            try
+            {
+                string cacheKey = $"card_{id}";
+                string cachedData = await _cache.GetStringAsync(cacheKey);
+
+                if (cachedData != null)
+                {
+                    CardDetailDto cachedCard = JsonSerializer.Deserialize<CardDetailDto>(cachedData);
+                    return cachedCard;
+                }
+
+                Card card = await _cardRepository.GetCardById(id);
+
+                if (card == null)
+                {
+                    return NotFound(new Response<CardDetailDto>()
+                    {
+                        Errors = new string[] { "404" },
+                        Message = "Card not found"
+                    });
+                }
+
+                CardDetailDto cardDetailDto = _mapper.Map<CardDetailDto>(card);
+                string responseData = JsonSerializer.Serialize(cardDetailDto);
+
+                DistributedCacheEntryOptions cacheOptions = new DistributedCacheEntryOptions()
+                {
+                    AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(5)
+                };
+
+                await _cache.SetStringAsync(cacheKey, responseData, cacheOptions);
+
+                return Ok(cardDetailDto);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    new Response<CardDetailDto>()
+                    {
+                        Succeeded = false,
+                        Errors = new string[] { $"Status code: {StatusCodes.Status500InternalServerError}" },
+                        Message = $"({ex.Message}) "
+                    });
+            }
+        }
     }
 }
