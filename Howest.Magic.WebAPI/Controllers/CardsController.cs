@@ -5,6 +5,11 @@ using Howest.MagicCards.DAL.Models;
 using Howest.MagicCards.Shared.DTOs;
 using FluentValidation;
 using Howest.MagicCards.Shared.Validation;
+using AutoMapper;
+using Howest.MagicCards.Shared.Filters;
+using Howest.MagicCards.Shared.Extensions;
+using AutoMapper.QueryableExtensions;
+
 
 namespace Howest.MagicCards.WebAPI.Controllers
 {
@@ -13,33 +18,50 @@ namespace Howest.MagicCards.WebAPI.Controllers
     public class CardsController : ControllerBase
     {
         private readonly CardRepository _cardRepository;
-        private readonly CardValidator _validator;
+        private readonly IMapper _mapper;
 
-        public CardsController(CardRepository cardRepository, CardValidator validator)
+        public CardsController(CardRepository cardRepository, IMapper mapper)
         {
             _cardRepository = cardRepository;
-            _validator = validator;
+            _mapper = mapper;
         }
 
         [HttpGet]
-        [ProducesResponseType(typeof(PagedResponse<IEnumerable<CardDto>>), 200)]
-        public async Task<IActionResult> GetCards(
-            [FromQuery] CardDetailDto filterDto)
+        public async Task<ActionResult<PagedResponse<IQueryable<CardDto>>>> GetCards([FromQuery] CardFilter filter,
+            [FromQuery] bool sortOrder,
+            [FromServices] IConfiguration config)
         {
-            var validationResult = _validator.Validate(filterDto);
-            if (!validationResult.IsValid)
+            filter.MaxPageSize = int.Parse(config["maxPageSize"]);
+
+            IQueryable<Card> allCards = (IQueryable<Card>)await _cardRepository.GetCards();
+
+            if (allCards == null)
             {
-                return BadRequest(validationResult.Errors);
+                return NotFound(new Response<CardDto>()
+                {
+                    Errors = new string[] { "404" },
+                    Message = "No cards found"
+                });
             }
 
-            var filter = new CardParameterFilter(filterDto);
-            var cards = await _cardRepository.GetCards(filter);
+            IQueryable<Card> filteredCards = allCards
+                .FilterBySet(filter.SetCode)
+                .FilterByArtist(filter.ArtistName)
+                .FilterByRarity(filter.RarityCode)
+                .FilterByCardType(filter.CardType)
+                .FilterByCardName(filter.CardName)
+                .FilterByCardText(filter.CardText)
+                .Sort(filter.SortBy);
 
-            var totalCards = await _cardRepository.GetTotalCardCount(filter);
-            var totalPages = (int)Math.Ceiling((double)totalCards / filterDto.PageSize);
-            var pagedResponse = new PagedResponse<CardDto>(cards, filterDto.PageNumber, filterDto.PageSize, totalPages, totalCards);
+            IEnumerable<CardDto> pagedCards = filteredCards
+                .ToPagedList<Card>(filter.PageNumber, filter.PageSize)
+                .ProjectTo<CardDto>(_mapper.ConfigurationProvider)
+                .ToList();
 
-            return Ok(pagedResponse);
+            int totalCount = filteredCards.Count();
+            var totalPages = (int)Math.Ceiling(totalCount / (double)filter.PageSize);
+
+            return Ok(new PagedResponse<CardDto>(pagedCards, filter.PageNumber, filter.PageSize, totalCount, totalPages));
         }
     }
 }

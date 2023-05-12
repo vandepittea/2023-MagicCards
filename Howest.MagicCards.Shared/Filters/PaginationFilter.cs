@@ -21,6 +21,8 @@ namespace Howest.MagicCards.Shared.Filters
             set { _pageNumber = value < 1 ? 1 : value; }
         }
 
+        public string SortBy { get; set; }
+
         public int PageSize
         {
             get { return _pageSize > MaxPageSize ? MaxPageSize : _pageSize; }
