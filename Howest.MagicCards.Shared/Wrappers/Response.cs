@@ -1,4 +1,4 @@
-﻿namespace Howest.MagicCards.DAL.Models
+﻿namespace Howest.MagicCards.Shared.Wrappers
 {
     public class Response<T>
     {

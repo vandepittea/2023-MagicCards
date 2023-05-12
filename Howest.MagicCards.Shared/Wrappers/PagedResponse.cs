@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Howest.MagicCards.DAL.Models
+namespace Howest.MagicCards.Shared.Wrappers
 {
     public class PagedResponse<T>
     {
