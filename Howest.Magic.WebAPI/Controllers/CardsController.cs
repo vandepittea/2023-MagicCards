@@ -27,41 +27,56 @@ namespace Howest.MagicCards.WebAPI.Controllers
         }
 
         [HttpGet]
+        [ProducesResponseType(typeof(string), 404)]
+        [ProducesResponseType(typeof(string), 500)]
         public async Task<ActionResult<PagedResponse<IQueryable<CardDto>>>> GetCards([FromQuery] CardFilter filter,
             [FromQuery] bool sortOrder,
             [FromServices] IConfiguration config)
         {
-            filter.MaxPageSize = int.Parse(config["maxPageSize"]);
-
-            IQueryable<Card> allCards = (IQueryable<Card>)await _cardRepository.GetCards();
-
-            if (allCards == null)
+            try
             {
-                return NotFound(new Response<CardDto>()
+                filter.MaxPageSize = int.Parse(config["maxPageSize"]);
+
+                IQueryable<Card> allCards = (IQueryable<Card>)await _cardRepository.GetCards();
+
+                if (allCards == null)
                 {
-                    Errors = new string[] { "404" },
-                    Message = "No cards found"
-                });
+                    return NotFound(new Response<CardDto>()
+                    {
+                        Errors = new string[] { "404" },
+                        Message = "No cards found"
+                    });
+                }
+
+                IQueryable<Card> filteredCards = allCards
+                    .FilterBySet(filter.SetCode)
+                    .FilterByArtist(filter.ArtistName)
+                    .FilterByRarity(filter.RarityCode)
+                    .FilterByCardType(filter.CardType)
+                    .FilterByCardName(filter.CardName)
+                    .FilterByCardText(filter.CardText)
+                    .Sort(filter.SortBy);
+
+                IEnumerable<CardDto> pagedCards = filteredCards
+                    .ToPagedList<Card>(filter.PageNumber, filter.PageSize)
+                    .ProjectTo<CardDto>(_mapper.ConfigurationProvider)
+                    .ToList();
+
+                int totalCount = filteredCards.Count();
+                int totalPages = (int)Math.Ceiling(totalCount / (double)filter.PageSize);
+
+                return Ok(new PagedResponse<CardDto>(pagedCards, filter.PageNumber, filter.PageSize, totalCount, totalPages));
             }
-
-            IQueryable<Card> filteredCards = allCards
-                .FilterBySet(filter.SetCode)
-                .FilterByArtist(filter.ArtistName)
-                .FilterByRarity(filter.RarityCode)
-                .FilterByCardType(filter.CardType)
-                .FilterByCardName(filter.CardName)
-                .FilterByCardText(filter.CardText)
-                .Sort(filter.SortBy);
-
-            IEnumerable<CardDto> pagedCards = filteredCards
-                .ToPagedList<Card>(filter.PageNumber, filter.PageSize)
-                .ProjectTo<CardDto>(_mapper.ConfigurationProvider)
-                .ToList();
-
-            int totalCount = filteredCards.Count();
-            var totalPages = (int)Math.Ceiling(totalCount / (double)filter.PageSize);
-
-            return Ok(new PagedResponse<CardDto>(pagedCards, filter.PageNumber, filter.PageSize, totalCount, totalPages));
+            catch(Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    new Response<CardDto>()
+                    {
+                        Succeeded = false,
+                        Errors = new string[] { $"Status code: {StatusCodes.Status500InternalServerError}" },
+                        Message = $"({ex.Message}) "
+                    });
+            }
         }
     }
 }
