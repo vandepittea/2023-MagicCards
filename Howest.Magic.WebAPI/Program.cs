@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.OpenApi.Models;
+using StackExchange.Redis;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 ConfigurationManager config = builder.Configuration;
@@ -45,6 +46,12 @@ builder.Services.AddDbContext<MtgDbContext>
 builder.Services.AddScoped<ICardRepository, CardRepository>();
 
 builder.Services.AddScoped<IValidator<CardDto>, CardValidator>();
+
+builder.Services.AddStackExchangeRedisCache(options =>
+{
+    options.Configuration = config.GetConnectionString("Redis");
+    options.InstanceName = "Redis_";
+});
 
 builder.Services.AddAutoMapper(typeof(Howest.MagicCards.Shared.Mappings.CardProfile));
 
