@@ -39,11 +39,11 @@ namespace Howest.MagicCards.Shared.DTO
 
             [Required(ErrorMessage = "The CardColors field is required.")]
             [MinLength(1, ErrorMessage = "The CardColors field must contain at least one element.")]
-            public IEnumerable<string> CardColors { get; set; }
+            public IEnumerable<long> CardColors { get; set; }
 
             [Required(ErrorMessage = "The CardTypes field is required.")]
             [MinLength(1, ErrorMessage = "The CardTypes field must contain at least one element.")]
-            public IEnumerable<string> CardTypes { get; set; }
+            public IEnumerable<long> CardTypes { get; set; }
 
             [StringLength(500, ErrorMessage = "The Text field must be a string with a maximum length of {1}.")]
             public string Text { get; set; }
