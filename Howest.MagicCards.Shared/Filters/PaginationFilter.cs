@@ -1,19 +1,26 @@
-﻿using System;
+﻿using Microsoft.Extensions.Configuration;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace Howest.MagicCards.Shared.Filters
 {
     public class PaginationFilter
     {
-        const int _maxPageSize = 150;
+        private readonly int _maxPageSize;
 
-        private int _pageSize = _maxPageSize;
+        private int _pageSize;
         private int _pageNumber = 1;
 
-        public int MaxPageSize { get; set; } = _maxPageSize;
+        public PaginationFilter(IConfiguration config)
+        {
+            _maxPageSize = int.Parse(config.GetSection("appSettings")["maxPageSize"]);
+        }
+
+        [JsonIgnore]
 
         public int PageNumber
         {
@@ -23,8 +30,8 @@ namespace Howest.MagicCards.Shared.Filters
 
         public int PageSize
         {
-            get { return _pageSize > MaxPageSize ? MaxPageSize : _pageSize; }
-            set { _pageSize = value > MaxPageSize || value < 1 ? MaxPageSize : value; }
+            get { return _pageSize > _maxPageSize ? _maxPageSize : _pageSize; }
+            set { _pageSize = value > _maxPageSize || value < 1 ? _maxPageSize : value; }
         }
 
         public string SortBy { get; set; }

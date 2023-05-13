@@ -24,25 +24,24 @@ namespace Howest.MagicCards.WebAPI.Controllers.V1
         private readonly IDistributedCache _cache;
         private readonly CardRepository _cardRepository;
         private readonly IMapper _mapper;
+        private readonly IConfiguration _config;
 
-        public CardsController(CardRepository cardRepository, IMapper mapper, IDistributedCache memoryCache)
+        public CardsController(CardRepository cardRepository, IMapper mapper, IDistributedCache memoryCache, IConfiguration config)
         {
             _cardRepository = cardRepository;
             _mapper = mapper;
             _cache = memoryCache;
+            _config = config;
         }
 
         [HttpGet]
         [ProducesResponseType(typeof(CardDto), 200)]
         [ProducesResponseType(typeof(string), 404)]
         [ProducesResponseType(typeof(string), 500)]
-        public async Task<ActionResult<PagedResponse<IQueryable<CardDto>>>> GetCards([FromQuery] CardFilter filter,
-            [FromServices] IConfiguration config)
+        public async Task<ActionResult<PagedResponse<IQueryable<CardDto>>>> GetCards([FromQuery] CardFilter filter)
         {
             try
             {
-                filter.MaxPageSize = int.Parse(config["maxPageSize"]);
-
                 string cacheKey = $"cards_{JsonSerializer.Serialize(filter)}_{filter.SortBy}";
                 string cachedData = await _cache.GetStringAsync(cacheKey);
 
@@ -115,25 +114,24 @@ namespace Howest.MagicCards.WebAPI.Controllers.V2
         private readonly IDistributedCache _cache;
         private readonly CardRepository _cardRepository;
         private readonly IMapper _mapper;
+        private readonly IConfiguration _config;
 
-        public CardsController(CardRepository cardRepository, IMapper mapper, IDistributedCache memoryCache)
+        public CardsController(CardRepository cardRepository, IMapper mapper, IDistributedCache memoryCache, IConfiguration config)
         {
             _cardRepository = cardRepository;
             _mapper = mapper;
             _cache = memoryCache;
+            _config = config;
         }
 
         [HttpGet]
         [ProducesResponseType(typeof(CardDto), 200)]
         [ProducesResponseType(typeof(string), 404)]
         [ProducesResponseType(typeof(string), 500)]
-        public async Task<ActionResult<PagedResponse<IQueryable<CardDto>>>> GetCards([FromQuery] CardFilter filter,
-            [FromServices] IConfiguration config)
+        public async Task<ActionResult<PagedResponse<IQueryable<CardDto>>>> GetCards([FromQuery] CardFilter filter)
         {
             try
             {
-                filter.MaxPageSize = int.Parse(config["maxPageSize"]);
-
                 string cacheKey = $"cards_{JsonSerializer.Serialize(filter)}_{filter.SortBy}";
                 string cachedData = await _cache.GetStringAsync(cacheKey);
 
