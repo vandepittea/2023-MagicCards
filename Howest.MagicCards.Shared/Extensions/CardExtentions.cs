@@ -1,11 +1,4 @@
-﻿using Howest.MagicCards.DAL.Models;
-using System;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Reflection;
-using System.Text;
-
-namespace Howest.MagicCards.Shared.Extensions
+﻿namespace Howest.MagicCards.Shared.Extensions
 {
     public static class CardExtensions
     {

@@ -1,18 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Howest.MagicCards.DAL.Repositories;
-using Howest.MagicCards.DAL.Models;
-using Howest.MagicCards.Shared.DTOs;
-using FluentValidation;
-using Howest.MagicCards.Shared.Validation;
-using AutoMapper;
-using Howest.MagicCards.Shared.Filters;
-using Howest.MagicCards.Shared.Extensions;
-using AutoMapper.QueryableExtensions;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Distributed;
 using System.Text.Json;
-using StackExchange.Redis;
-using Microsoft.Extensions.Caching.Memory;
 
 namespace Howest.MagicCards.WebAPI.Controllers.V1
 {
@@ -24,14 +12,12 @@ namespace Howest.MagicCards.WebAPI.Controllers.V1
         private readonly IDistributedCache _cache;
         private readonly CardRepository _cardRepository;
         private readonly IMapper _mapper;
-        private readonly IConfiguration _config;
 
-        public CardsController(CardRepository cardRepository, IMapper mapper, IDistributedCache memoryCache, IConfiguration config)
+        public CardsController(CardRepository cardRepository, IMapper mapper, IDistributedCache memoryCache)
         {
             _cardRepository = cardRepository;
             _mapper = mapper;
             _cache = memoryCache;
-            _config = config;
         }
 
         [HttpGet]
@@ -78,7 +64,7 @@ namespace Howest.MagicCards.WebAPI.Controllers.V1
                 int totalCount = filteredCards.Count();
                 int totalPages = (int)Math.Ceiling(totalCount / (double)filter.PageSize);
 
-                PagedResponse<CardDto> response = new PagedResponse<CardDto>(pagedCards, filter.PageNumber, filter.PageSize, totalCount, totalPages);
+                PagedResponse<IEnumerable<CardDto>> response = new PagedResponse<IEnumerable<CardDto>>(pagedCards, filter.PageNumber, filter.PageSize, totalCount, totalPages);
                 string responseData = JsonSerializer.Serialize(response);
 
                 DistributedCacheEntryOptions cacheOptions = new DistributedCacheEntryOptions()
@@ -114,14 +100,12 @@ namespace Howest.MagicCards.WebAPI.Controllers.V2
         private readonly IDistributedCache _cache;
         private readonly CardRepository _cardRepository;
         private readonly IMapper _mapper;
-        private readonly IConfiguration _config;
 
-        public CardsController(CardRepository cardRepository, IMapper mapper, IDistributedCache memoryCache, IConfiguration config)
+        public CardsController(CardRepository cardRepository, IMapper mapper, IDistributedCache memoryCache)
         {
             _cardRepository = cardRepository;
             _mapper = mapper;
             _cache = memoryCache;
-            _config = config;
         }
 
         [HttpGet]
@@ -169,7 +153,7 @@ namespace Howest.MagicCards.WebAPI.Controllers.V2
                 int totalCount = filteredCards.Count();
                 int totalPages = (int)Math.Ceiling(totalCount / (double)filter.PageSize);
 
-                PagedResponse<CardDto> response = new PagedResponse<CardDto>(pagedCards, filter.PageNumber, filter.PageSize, totalCount, totalPages);
+                PagedResponse<IEnumerable<CardDto>> response = new PagedResponse<IEnumerable<CardDto>>(pagedCards, filter.PageNumber, filter.PageSize, totalCount, totalPages);
                 string responseData = JsonSerializer.Serialize(response);
 
                 DistributedCacheEntryOptions cacheOptions = new DistributedCacheEntryOptions()

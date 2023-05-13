@@ -1,8 +1,5 @@
-﻿using AutoMapper;
-using AutoMapper.QueryableExtensions;
-using Howest.MagicCards.DAL.Models;
+﻿using Howest.MagicCards.DAL.Models;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Query;
 
 namespace Howest.MagicCards.DAL.Repositories
 {

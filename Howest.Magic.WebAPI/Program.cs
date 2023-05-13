@@ -1,14 +1,9 @@
 using FluentValidation;
 using FluentValidation.AspNetCore;
-using Howest.MagicCards.DAL;
-using Howest.MagicCards.DAL.Repositories;
-using Howest.MagicCards.Shared.DTOs;
-using Howest.MagicCards.Shared.Validation;
 using Microsoft.EntityFrameworkCore;
-using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.OpenApi.Models;
-using StackExchange.Redis;
+using Howest.MagicCards.DAL;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 ConfigurationManager config = builder.Configuration;
