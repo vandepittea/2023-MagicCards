@@ -12,9 +12,16 @@ namespace Howest.MagicCards.MinimalAPI.Mappings
         {
             app.MapPost($"{urlPrefix}/cards", (MongoDbCardRepository cardRepo, CardWriteDto newCardDto) =>
             {
-                Card newCard = mapper.Map<CardWriteDto, Card>(newCardDto);
-                cardRepo.AddCard(newCard);
-                return Results.Created($"{urlPrefix}/cards/{newCard.Id}", newCard);
+                try
+                {
+                    Card newCard = mapper.Map<CardWriteDto, Card>(newCardDto);
+                    cardRepo.AddCard(newCard);
+                    return Results.Created($"{urlPrefix}/cards/{newCard.Id}", newCard);
+                }
+                catch (Exception ex)
+                {
+                    return Results.BadRequest($"Error adding card: {ex.Message}");
+                }
             })
             .WithTags("Add a new card")
             .Accepts<CardWriteDto>("application/json")
@@ -23,16 +30,23 @@ namespace Howest.MagicCards.MinimalAPI.Mappings
 
             app.MapPut($"{urlPrefix}/cards/{{id}}", (SqlCardRepository sqlCardRepo, MongoDbCardRepository mongoCardRepo, CardUpdateDto updatedCardDto) =>
             {
-                Card foundCard = sqlCardRepo.GetCardById(updatedCardDto.Id).Result;
-                if (foundCard == null)
+                try
                 {
-                    return Results.NotFound($"No card with id {updatedCardDto.Id} found");
+                    Card foundCard = sqlCardRepo.GetCardById(updatedCardDto.Id).Result;
+                    if (foundCard == null)
+                    {
+                        return Results.NotFound($"No card with id {updatedCardDto.Id} found");
+                    }
+
+                    Card updatedCard = mapper.Map<CardUpdateDto, Card>(updatedCardDto);
+
+                    mongoCardRepo.UpdateCard(updatedCard);
+                    return Results.Ok(updatedCard);
                 }
-
-                Card updatedCard = mapper.Map<CardUpdateDto, Card>(updatedCardDto);
-
-                mongoCardRepo.UpdateCard(updatedCard);
-                return Results.Ok(updatedCard);
+                catch (Exception ex)
+                {
+                    return Results.BadRequest($"Error updating card: {ex.Message}");
+                }
             })
             .WithTags("Update an existing card")
             .Accepts<CardUpdateDto>("application/json")
@@ -41,14 +55,21 @@ namespace Howest.MagicCards.MinimalAPI.Mappings
 
             app.MapDelete($"{urlPrefix}/cards/{{id}}", (SqlCardRepository sqlCardRepo, MongoDbCardRepository mongoCardRepo, long id) =>
             {
-                Card foundCard = sqlCardRepo.GetCardById(id).Result;
-                if (foundCard == null)
+                try
                 {
-                    return Results.NotFound($"No card with id {id} found");
-                }
+                    Card foundCard = sqlCardRepo.GetCardById(id).Result;
+                    if (foundCard == null)
+                    {
+                        return Results.NotFound($"No card with id {id} found");
+                    }
 
-                mongoCardRepo.DeleteCard(id);
-                return Results.Ok($"Card with id {id} is deleted!");
+                    mongoCardRepo.DeleteCard(id);
+                    return Results.Ok($"Card with id {id} is deleted!");
+                }
+                catch (Exception ex)
+                {
+                    return Results.BadRequest($"Error deleting card: {ex.Message}");
+                }
             })
             .WithTags("Delete an existing card")
             .Produces(StatusCodes.Status200OK)
