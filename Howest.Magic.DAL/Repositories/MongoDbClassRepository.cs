@@ -26,15 +26,15 @@ namespace Howest.MagicCards.DAL.Repositories
             _cards.InsertOne(newCard);
         }
 
-        public void UpdateCard(Card updatedCard, string id)
+        public void UpdateCard(Card updatedCard)
         {
-            FilterDefinition<Card> filter = Builders<Card>.Filter.Eq("_id", ObjectId.Parse(id));
+            FilterDefinition<Card> filter = Builders<Card>.Filter.Eq("_id", updatedCard.Id);
             _cards.ReplaceOne(filter, updatedCard);
         }
 
-        public void DeleteCard(string id)
+        public void DeleteCard(long id)
         {
-            FilterDefinition<Card> filter = Builders<Card>.Filter.Eq("_id", ObjectId.Parse(id));
+            FilterDefinition<Card> filter = Builders<Card>.Filter.Eq("_id", id);
             _cards.DeleteOne(filter);
         }
 
@@ -43,7 +43,7 @@ namespace Howest.MagicCards.DAL.Repositories
             throw new NotImplementedException();
         }
 
-        public Task<Card> GetCardById(int id)
+        public Task<Card> GetCardById(long id)
         {
             throw new NotImplementedException();
         }

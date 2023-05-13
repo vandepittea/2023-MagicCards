@@ -11,11 +11,11 @@
 
   <ItemGroup>
     <Folder Include="DatabaseScript\" />
-    <Folder Include="Mappings\" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Howest.Magic.DAL\Howest.MagicCards.DAL.csproj" />
+    <ProjectReference Include="..\Howest.MagicCards.Shared\Howest.MagicCards.Shared.csproj" />
   </ItemGroup>
 
 </Project>

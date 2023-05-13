@@ -13,6 +13,8 @@ namespace Howest.MagicCards.Shared.DTO
     {
         public class CardUpdateDto
         {
+            public long Id { get; set; }
+
             [StringLength(50, ErrorMessage = "The Name field must be a string with a maximum length of {1}.", MinimumLength = 1)]
             public string Name { get; set; }
 

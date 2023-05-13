@@ -10,9 +10,9 @@ namespace Howest.MagicCards.DAL.Repositories
     public interface ICardRepository
     {
         Task<IEnumerable<Card>> GetCards();
-        Task<Card> GetCardById(int id);
+        Task<Card> GetCardById(long id);
         void AddCard(Card newCard);
-        void UpdateCard(Card updatedCard, string id);
-        void DeleteCard(string id);
+        void UpdateCard(Card updatedCard, long id);
+        void DeleteCard(long id);
     }
 }

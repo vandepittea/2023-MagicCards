@@ -25,7 +25,7 @@ namespace Howest.MagicCards.DAL.Repositories
                 .ToListAsync();
         }
 
-        public async Task<Card> GetCardById(int id)
+        public async Task<Card> GetCardById(long id)
         {
             return await _dbContext.Cards
                 .Include(c => c.SetCodeNavigation)
@@ -42,12 +42,12 @@ namespace Howest.MagicCards.DAL.Repositories
             throw new NotImplementedException();
         }
 
-        public void UpdateCard(Card updatedCard, string id)
+        public void UpdateCard(Card updatedCard, long id)
         {
             throw new NotImplementedException();
         }
 
-        public void DeleteCard(string id)
+        public void DeleteCard(long id)
         {
             throw new NotImplementedException();
         }
