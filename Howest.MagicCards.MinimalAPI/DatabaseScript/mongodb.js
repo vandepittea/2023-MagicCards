@@ -111,11 +111,17 @@ db.cards.insertOne({
     name: "Example Card",
     manaCost: "{X}{Y}",
     type: "Creature - Example",
-    setCode: "EX",
-    rarityCode: "C",
+    set: ObjectId(db.sets.findOne({ code: "ZNR" })._id),
+    rarity: ObjectId(db.rarities.findOne({ name: "Common" })._id),
     image: "https://example.com/cardimage.jpg",
-    cardColors: ["Red", "Blue"],
-    cardTypes: ["Creature", "Artifact"],
+    colors: [
+        ObjectId(db.colors.findOne({ name: "Red" })._id),
+        ObjectId(db.colors.findOne({ name: "Blue" })._id)
+    ],
+    types: [
+        ObjectId(db.types.findOne({ name: "Creature" })._id),
+        ObjectId(db.types.findOne({ name: "Sorcery" })._id)
+    ],
     text: "Example text.",
     flavor: "Example flavor text.",
     number: "001",
@@ -127,8 +133,8 @@ db.cards.insertOne({
     originalText: "Example original text.",
     originalType: "Example original type.",
     mtgId: "123abc",
-    variations: ["456def", "789ghi"],
-    artistId: ObjectId(),
+    variations: "Example variation",
+    artist: ObjectId(db.artists.findOne({ fullName: "John Smith" })._id),
     createdAt: ISODate(),
     updatedAt: ISODate()
 });
