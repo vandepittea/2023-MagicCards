@@ -2,16 +2,17 @@
 using Howest.MagicCards.DAL.Models;
 using Howest.MagicCards.DAL.Repositories;
 using Howest.MagicCards.Shared.DTO.Howest.MagicCards.Shared.DTO;
+using Howest.MagicCards.Shared.Mappings;
 
 namespace Howest.MagicCards.MinimalAPI.Mappings
 {
     public static class CardsEndpoints
     {
-        public static void MapCardsEndpoints(this WebApplication app, string urlPrefix)
+        public static void MapCardsEndpoints(this WebApplication app, string urlPrefix, IMapper mapper)
         {
             app.MapPost($"{urlPrefix}/cards", (MongoDbCardRepository cardRepo, CardWriteDto newCardDto) =>
             {
-                Card newCard = Mapper.Map<CardWriteDto, Card>(newCardDto);
+                Card newCard = mapper.Map<CardWriteDto, Card>(newCardDto);
                 cardRepo.AddCard(newCard);
                 return Results.Created($"{urlPrefix}/cards/{newCard.Id}", newCard);
             })
@@ -28,7 +29,7 @@ namespace Howest.MagicCards.MinimalAPI.Mappings
                     return Results.NotFound($"No card with id {updatedCardDto.Id} found");
                 }
 
-                Card updatedCard = Mapper.Map<CardUpdateDto, Card>(updatedCardDto);
+                Card updatedCard = mapper.Map<CardUpdateDto, Card>(updatedCardDto);
 
                 mongoCardRepo.UpdateCard(updatedCard);
                 return Results.Ok(updatedCard);

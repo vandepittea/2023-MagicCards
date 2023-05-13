@@ -1,4 +1,5 @@
 using Howest.MagicCards.MinimalAPI.Mappings;
+using Howest.MagicCards.Shared.Mappings;
 
 const string commonPrefix = "/api";
 
@@ -8,6 +9,7 @@ WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 builder.Services.AddCardsServices();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddAutoMapper(typeof(CardProfile));
 
 WebApplication app = builder.Build();
 ConfigurationManager config = builder.Configuration;
