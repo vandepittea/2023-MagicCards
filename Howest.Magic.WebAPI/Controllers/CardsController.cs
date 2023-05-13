@@ -10,10 +10,10 @@ namespace Howest.MagicCards.WebAPI.Controllers.V1
     public class CardsController : ControllerBase
     {
         private readonly IDistributedCache _cache;
-        private readonly CardRepository _cardRepository;
+        private readonly SqlCardRepository _cardRepository;
         private readonly IMapper _mapper;
 
-        public CardsController(CardRepository cardRepository, IMapper mapper, IDistributedCache memoryCache)
+        public CardsController(SqlCardRepository cardRepository, IMapper mapper, IDistributedCache memoryCache)
         {
             _cardRepository = cardRepository;
             _mapper = mapper;
@@ -98,10 +98,10 @@ namespace Howest.MagicCards.WebAPI.Controllers.V2
     public class CardsController : ControllerBase
     {
         private readonly IDistributedCache _cache;
-        private readonly CardRepository _cardRepository;
+        private readonly SqlCardRepository _cardRepository;
         private readonly IMapper _mapper;
 
-        public CardsController(CardRepository cardRepository, IMapper mapper, IDistributedCache memoryCache)
+        public CardsController(SqlCardRepository cardRepository, IMapper mapper, IDistributedCache memoryCache)
         {
             _cardRepository = cardRepository;
             _mapper = mapper;

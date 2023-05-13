@@ -38,7 +38,7 @@ builder.Services.AddDbContext<MtgDbContext>
     (options => options.UseSqlServer(config.GetConnectionString("CardDb")));
 
 
-builder.Services.AddScoped<ICardRepository, CardRepository>();
+builder.Services.AddScoped<ICardRepository, SqlCardRepository>();
 
 builder.Services.AddScoped<IValidator<CardDto>, CardValidator>();
 
