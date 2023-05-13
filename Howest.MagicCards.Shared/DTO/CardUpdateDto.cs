@@ -33,9 +33,9 @@ namespace Howest.MagicCards.Shared.DTO
             [StringLength(255, ErrorMessage = "The Image field must be a string with a maximum length of {1}.", MinimumLength = 1)]
             public string Image { get; set; }
 
-            public IEnumerable<string> CardColors { get; set; }
+            public IEnumerable<long> CardColors { get; set; }
 
-            public IEnumerable<string> CardTypes { get; set; }
+            public IEnumerable<long> CardTypes { get; set; }
 
             [StringLength(500, ErrorMessage = "The Text field must be a string with a maximum length of {1}.")]
             public string Text { get; set; }

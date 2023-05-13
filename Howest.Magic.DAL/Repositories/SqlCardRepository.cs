@@ -42,7 +42,7 @@ namespace Howest.MagicCards.DAL.Repositories
             throw new NotImplementedException();
         }
 
-        public void UpdateCard(Card updatedCard, long id)
+        public void UpdateCard(Card updatedCard)
         {
             throw new NotImplementedException();
         }
