@@ -17,7 +17,7 @@ namespace Howest.MagicCards.DAL.Repositories
             _deck = database.GetCollection<CardInDeck>("deck");
         }
 
-        public List<CardInDeck> GetDeck()
+        public List<CardInDeck> GetCards()
         {
             return _deck.Find(new BsonDocument()).ToList();
         }

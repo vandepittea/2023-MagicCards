@@ -17,7 +17,11 @@
                            opt => opt.MapFrom(c => c.Artist.FullName))
                 .ReverseMap();
 
-            CreateMap<CardCUDto, CardInDeck>()
+            CreateMap<CardInDeckDto, CardInDeck>()
+                .ForMember(dest => dest.CardId, opt => opt.MapFrom(src => src.CardId))
+                .ForMember(dest => dest.Count, opt => opt.MapFrom(src => src.Count));
+
+            CreateMap<CardInDeck, CardInDeckDto>()
                 .ForMember(dest => dest.CardId, opt => opt.MapFrom(src => src.CardId))
                 .ForMember(dest => dest.Count, opt => opt.MapFrom(src => src.Count));
         }

@@ -9,7 +9,7 @@ namespace Howest.MagicCards.DAL.Repositories
 {
     public interface IDeckRepository
     {
-        List<CardInDeck> GetDeck();
+        List<CardInDeck> GetCards();
         void AddCardToDeck(int cardId);
         void IncrementCardCount(int cardId);
         void RemoveCardFromDeck(int cardId);
