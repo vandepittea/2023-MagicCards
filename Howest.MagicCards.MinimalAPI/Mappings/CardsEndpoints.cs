@@ -31,13 +31,18 @@ namespace Howest.MagicCards.MinimalAPI.Mappings
             {
                 try
                 {
-                    if (!int.TryParse(request.RouteValues["id"] as string, out int id))
+                    CardInDeckDto? cardInDeckDto = JsonSerializer.Deserialize<CardInDeckDto>(request.Body);
+
+                    if (cardInDeckDto == null)
                     {
-                        return Results.BadRequest("Invalid card id provided");
+                        return Results.BadRequest("Invalid card provided");
                     }
 
-                    deckRepo.AddCardToDeck(id);
-                    return Results.Ok($"Card with id {id} added to deck");
+                    CardInDeck cardInDeck = mapper.Map<CardInDeck>(cardInDeckDto);
+
+                    deckRepo.AddCardToDeck(cardInDeck);
+
+                    return Results.Ok($"Card with id {cardInDeck.CardId} added to deck");
                 }
                 catch (Exception ex)
                 {
@@ -52,13 +57,17 @@ namespace Howest.MagicCards.MinimalAPI.Mappings
             {
                 try
                 {
-                    if (!int.TryParse(request.RouteValues["id"] as string, out int id))
+                    CardInDeckDto? cardInDeckDto = JsonSerializer.Deserialize<CardInDeckDto>(request.Body);
+
+                    if (cardInDeckDto == null)
                     {
-                        return Results.BadRequest("Invalid card id provided");
+                        return Results.BadRequest("Invalid card provided");
                     }
 
-                    deckRepo.IncrementCardCount(id);
-                    return Results.Ok($"Card with id {id} is incremented");
+                    CardInDeck cardInDeck = mapper.Map<CardInDeck>(cardInDeckDto);
+
+                    deckRepo.IncrementCardCount(cardInDeck);
+                    return Results.Ok($"Card with id {cardInDeck.CardId} is incremented");
                 }
                 catch (ArgumentException ex)
                 {
