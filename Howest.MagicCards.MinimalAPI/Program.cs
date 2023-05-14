@@ -35,14 +35,11 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
-builder.Services.AddDbContext<MtgDbContext>
-    (options => options.UseSqlServer(config.GetConnectionString("CardDb")));
 builder.Services.AddSingleton<IMongoClient>(new MongoClient(config.GetConnectionString("MongoDb")));
 
 builder.Services.AddAutoMapper(typeof(CardProfile));
 builder.Services.AddScoped<IValidator<CardDto>, CardValidator>();
-builder.Services.AddScoped<ICardRRepository, SqlCardRepository>();
-builder.Services.AddScoped<ICardCUDRepository, MongoDbCardRepository>();
+builder.Services.AddScoped<IDeckRepository, DeckRepository>();
 
 builder.Services.AddApiVersioning(o =>
 {
