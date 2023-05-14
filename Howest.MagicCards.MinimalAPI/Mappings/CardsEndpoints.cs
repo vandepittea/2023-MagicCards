@@ -63,7 +63,7 @@ namespace Howest.MagicCards.MinimalAPI.Mappings
                 }
                 catch (ArgumentException ex)
                 {
-                    return Results.BadRequest($"Error updating card count: {ex.Message}");
+                    return Results.NotFound($"Error updating card count: {ex.Message}");
                 }
                 catch (Exception ex)
                 {
@@ -75,7 +75,31 @@ namespace Howest.MagicCards.MinimalAPI.Mappings
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status404NotFound);
 
+            app.MapDelete($"{urlPrefix}/deck/{{id}}", (DeckRepository deckRepo, HttpRequest request) =>
+            {
+                try
+                {
+                    if (!int.TryParse(request.RouteValues["id"] as string, out int id))
+                    {
+                        return Results.BadRequest("Invalid card id provided");
+                    }
 
+                    deckRepo.RemoveCardFromDeck(id);
+                    return Results.Ok($"Card with id {id} is deleted");
+                }
+                catch (ArgumentException ex)
+                {
+                    return Results.NotFound($"Error removing card: {ex.Message}");
+                }
+                catch (Exception ex)
+                {
+                    return Results.BadRequest($"Error removing card: {ex.Message}");
+                }
+            })
+            .WithTags("Update the count of a card in the deck")
+            .Produces(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status400BadRequest)
+            .Produces(StatusCodes.Status404NotFound);
         }
     }
 }
