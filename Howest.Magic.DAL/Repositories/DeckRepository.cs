@@ -63,7 +63,14 @@ namespace Howest.MagicCards.DAL.Repositories
                 else
                 {
                     cardInDeck.Count--;
+                    FilterDefinition<CardInDeck> filter = Builders<CardInDeck>.Filter.Eq(x => x.CardId, cardId);
+                    UpdateDefinition<CardInDeck> update = Builders<CardInDeck>.Update.Set(x => x.Count, cardInDeck.Count);
+                    _deck.UpdateOne(filter, update);
                 }
+            }
+            else
+            {
+                throw new ArgumentException("This card isn't part of the deck.");
             }
         }
 
