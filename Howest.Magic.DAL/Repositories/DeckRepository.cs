@@ -22,27 +22,27 @@ namespace Howest.MagicCards.DAL.Repositories
             return _deck.Find(new BsonDocument()).ToList();
         }
 
-        public void AddCardToDeck(int cardId)
+        public void AddCardToDeck(CardInDeck cardInDeck)
         {
-            var cardInDeck = _deck.Find(x => x.CardId == cardId).FirstOrDefault();
-            if (cardInDeck == null)
+            CardInDeck foundCard = _deck.Find(x => x.CardId == cardInDeck.CardId).FirstOrDefault();
+            if (foundCard == null)
             {
-                _deck.InsertOne(new CardInDeck { CardId = cardId, Count = 1 });
+                _deck.InsertOne(cardInDeck);
             }
             else
             {
-                IncrementCardCount(cardId);
+                IncrementCardCount(foundCard);
             }
         }
 
-        public void IncrementCardCount(int cardId)
+        public void IncrementCardCount(CardInDeck cardInDeck)
         {
-            CardInDeck cardInDeck = _deck.Find(x => x.CardId == cardId).FirstOrDefault();
-            if (cardInDeck != null)
+            CardInDeck foundCard = _deck.Find(x => x.CardId == cardInDeck.CardId).FirstOrDefault();
+            if (foundCard != null)
             {
-                cardInDeck.Count++;
-                FilterDefinition<CardInDeck> filter = Builders<CardInDeck>.Filter.Eq(x => x.CardId, cardId);
-                UpdateDefinition<CardInDeck> update = Builders<CardInDeck>.Update.Set(x => x.Count, cardInDeck.Count);
+                foundCard.Count++;
+                FilterDefinition<CardInDeck> filter = Builders<CardInDeck>.Filter.Eq(x => x.CardId, foundCard.CardId);
+                UpdateDefinition<CardInDeck> update = Builders<CardInDeck>.Update.Set(x => x.Count, foundCard.Count);
                 _deck.UpdateOne(filter, update);
             }
             else
