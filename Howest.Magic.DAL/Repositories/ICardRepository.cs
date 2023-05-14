@@ -11,8 +11,5 @@ namespace Howest.MagicCards.DAL.Repositories
     {
         Task<IEnumerable<Card>> GetCards();
         Task<Card> GetCardById(long id);
-        void AddCard(Card newCard);
-        void UpdateCard(Card updatedCard);
-        void DeleteCard(long id);
     }
 }

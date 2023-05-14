@@ -9,11 +9,7 @@ WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 ConfigurationManager config = builder.Configuration;
 
 // Add services to the container.
-builder.Services.AddControllers()
-    .AddFluentValidation(v =>
-    {
-        v.RegisterValidatorsFromAssemblyContaining<CardValidator>();
-    });
+builder.Services.AddControllers();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
@@ -38,9 +34,7 @@ builder.Services.AddDbContext<MtgDbContext>
     (options => options.UseSqlServer(config.GetConnectionString("CardDb")));
 
 
-builder.Services.AddScoped<ICardRepository, SqlCardRepository>();
-
-builder.Services.AddScoped<IValidator<CardDto>, CardValidator>();
+builder.Services.AddScoped<ICardRepository, CardRepository>();
 
 builder.Services.AddStackExchangeRedisCache(options =>
 {
@@ -48,7 +42,7 @@ builder.Services.AddStackExchangeRedisCache(options =>
     options.InstanceName = "Redis_";
 });
 
-builder.Services.AddAutoMapper(typeof(Howest.MagicCards.Shared.Mappings.CardProfile));
+builder.Services.AddAutoMapper(typeof(CardProfile));
 
 builder.Services.AddApiVersioning(o =>
 {

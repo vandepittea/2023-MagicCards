@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Howest.MagicCards.DAL.Repositories
 {
-    public class SqlCardRepository : ICardRepository
+    public class SqlCardRepository : ICardRRepository
     {
         private readonly MtgDbContext _dbContext;
 
@@ -35,21 +35,6 @@ namespace Howest.MagicCards.DAL.Repositories
                 .Include(c => c.CardTypes)
                     .ThenInclude(ct => ct.Type)
                 .FirstOrDefaultAsync(c => c.Id == id);
-        }
-
-        public void AddCard(Card newCard)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void UpdateCard(Card updatedCard)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void DeleteCard(long id)
-        {
-            throw new NotImplementedException();
         }
     }
 }
