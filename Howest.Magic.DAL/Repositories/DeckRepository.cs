@@ -13,7 +13,7 @@ namespace Howest.MagicCards.DAL.Repositories
         public DeckRepository()
         {
             MongoClient client = new MongoClient();
-            IMongoDatabase database = client.GetDatabase("mtg_v1");
+            IMongoDatabase database = client.GetDatabase("mtg_v1_deck");
             _deck = database.GetCollection<CardInDeck>("deck");
         }
 
