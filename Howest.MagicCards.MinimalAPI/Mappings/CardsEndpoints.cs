@@ -46,8 +46,7 @@ namespace Howest.MagicCards.MinimalAPI.Mappings
             })
             .WithTags("Add a card to the deck")
             .Produces(StatusCodes.Status200OK)
-            .Produces(StatusCodes.Status400BadRequest)
-            .Produces(StatusCodes.Status404NotFound);
+            .Produces(StatusCodes.Status400BadRequest);
 
             app.MapPut($"{urlPrefix}/deck/{{id}}", (DeckRepository deckRepo, HttpRequest request) =>
             {
@@ -100,6 +99,22 @@ namespace Howest.MagicCards.MinimalAPI.Mappings
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status404NotFound);
+
+            app.MapDelete("$\"{urlPrefix}/deck/clear", (IDeckRepository repository) =>
+            {
+                try
+                {
+                    repository.ClearDeck();
+                    return Results.Ok("Deck cleared successfully");
+                }
+                catch (Exception ex)
+                {
+                    return Results.BadRequest(ex.Message);
+                }
+            })
+            .WithTags("Clear the deck")
+            .Produces(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status400BadRequest);
         }
     }
 }
