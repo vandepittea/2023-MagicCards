@@ -42,6 +42,10 @@ namespace Howest.MagicCards.DAL.Repositories
             {
                 cardInDeck.Count++;
             }
+            else
+            {
+                throw new ArgumentException("This card isn't part of the deck.");
+            }
         }
 
         public void RemoveCardFromDeck(int cardId)

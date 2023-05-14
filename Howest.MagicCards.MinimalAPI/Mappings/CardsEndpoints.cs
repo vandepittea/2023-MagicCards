@@ -27,7 +27,7 @@ namespace Howest.MagicCards.MinimalAPI.Mappings
             .Produces<List<CardInDeck>>(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest);
 
-            app.MapPut($"{urlPrefix}/deck/{{id}}", (DeckRepository deckRepo, HttpRequest request) =>
+            app.MapPost($"{urlPrefix}/deck/{{id}}", (DeckRepository deckRepo, HttpRequest request) =>
             {
                 try
                 {
@@ -48,6 +48,34 @@ namespace Howest.MagicCards.MinimalAPI.Mappings
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status404NotFound);
+
+            app.MapPut($"{urlPrefix}/deck/{{id}}", (DeckRepository deckRepo, HttpRequest request) =>
+            {
+                try
+                {
+                    if (!int.TryParse(request.RouteValues["id"] as string, out int id))
+                    {
+                        return Results.BadRequest("Invalid card id provided");
+                    }
+
+                    deckRepo.IncrementCardCount(id);
+                    return Results.Ok($"Card with id {id} is incremented");
+                }
+                catch (ArgumentException ex)
+                {
+                    return Results.BadRequest($"Error updating card count: {ex.Message}");
+                }
+                catch (Exception ex)
+                {
+                    return Results.BadRequest($"Error updating card count: {ex.Message}");
+                }
+            })
+            .WithTags("Update the count of a card in the deck")
+            .Produces(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status400BadRequest)
+            .Produces(StatusCodes.Status404NotFound);
+
+
         }
     }
 }
