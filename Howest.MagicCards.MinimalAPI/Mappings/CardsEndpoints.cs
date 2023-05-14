@@ -26,6 +26,28 @@ namespace Howest.MagicCards.MinimalAPI.Mappings
             .WithTags("Get the current deck")
             .Produces<List<CardInDeck>>(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest);
+
+            app.MapPut($"{urlPrefix}/deck/{{id}}", (DeckRepository deckRepo, HttpRequest request) =>
+            {
+                try
+                {
+                    if (!int.TryParse(request.RouteValues["id"] as string, out int id))
+                    {
+                        return Results.BadRequest("Invalid card id provided");
+                    }
+
+                    deckRepo.AddCardToDeck(id);
+                    return Results.Ok($"Card with id {id} added to deck");
+                }
+                catch (Exception ex)
+                {
+                    return Results.BadRequest($"Error adding card to deck: {ex.Message}");
+                }
+            })
+            .WithTags("Add a card to the deck")
+            .Produces(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status400BadRequest)
+            .Produces(StatusCodes.Status404NotFound);
         }
     }
 }

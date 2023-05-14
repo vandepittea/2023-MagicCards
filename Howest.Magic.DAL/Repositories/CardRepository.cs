@@ -3,11 +3,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Howest.MagicCards.DAL.Repositories
 {
-    public class SqlCardRepository : ICardRRepository
+    public class CardRepository : ICardRepository
     {
         private readonly MtgDbContext _dbContext;
 
-        public SqlCardRepository(MtgDbContext dbContext)
+        public CardRepository(MtgDbContext dbContext)
         {
             _dbContext = dbContext;
         }
