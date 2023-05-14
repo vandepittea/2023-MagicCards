@@ -37,10 +37,13 @@ namespace Howest.MagicCards.DAL.Repositories
 
         public void IncrementCardCount(int cardId)
         {
-            var cardInDeck = _deck.Find(x => x.CardId == cardId).FirstOrDefault();
+            CardInDeck cardInDeck = _deck.Find(x => x.CardId == cardId).FirstOrDefault();
             if (cardInDeck != null)
             {
                 cardInDeck.Count++;
+                FilterDefinition<CardInDeck> filter = Builders<CardInDeck>.Filter.Eq(x => x.CardId, cardId);
+                UpdateDefinition<CardInDeck> update = Builders<CardInDeck>.Update.Set(x => x.Count, cardInDeck.Count);
+                _deck.UpdateOne(filter, update);
             }
             else
             {
