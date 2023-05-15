@@ -2,10 +2,14 @@
 using Howest.MagicCards.DAL.Models;
 using Howest.MagicCards.DAL.Repositories;
 using Howest.MagicCards.Shared.DTO;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using MongoDB.Bson;
 using System.Text.Json;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using FluentValidation.Results;
+using FluentValidation;
 
 namespace Howest.MagicCards.MinimalAPI.Mappings
 {
@@ -13,6 +17,16 @@ namespace Howest.MagicCards.MinimalAPI.Mappings
     {
         public static void MapCardsEndpoints(this WebApplication app, string urlPrefix, IMapper mapper, IConfiguration configuration)
         {
+            ModelStateDictionary BuildModelState(IEnumerable<ValidationFailure> validationErrors)
+            {
+                ModelStateDictionary modelState = new ModelStateDictionary();
+                foreach (ValidationFailure error in validationErrors)
+                {
+                    modelState.AddModelError(error.PropertyName, error.ErrorMessage);
+                }
+                return modelState;
+            }
+
             app.MapGet($"{urlPrefix}/deck", (IDeckRepository deckRepo) =>
             {
                 try
@@ -30,15 +44,24 @@ namespace Howest.MagicCards.MinimalAPI.Mappings
             .Produces<List<CardInDeck>>(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest);
 
-            app.MapPost($"{urlPrefix}/deck/{{card}}", (IDeckRepository deckRepo, CardInDeckDto cardInDeckDto) =>
+            app.MapPost($"{urlPrefix}/deck/{{card}}", (IDeckRepository deckRepo, CardInDeckDto cardInDeckDto, IValidator<CardInDeckDto> validator) =>
             {
                 try
                 {
-                    CardInDeck cardInDeck = mapper.Map<CardInDeck>(cardInDeckDto);
+                    ValidationResult validationResult = validator.Validate(cardInDeckDto);
 
-                    deckRepo.AddCardToDeck(cardInDeck, configuration.GetValue<int>("AppSettings:MaxCardsDeck"));
+                    if (validationResult.IsValid)
+                    {
+                        CardInDeck cardInDeck = mapper.Map<CardInDeck>(cardInDeckDto);
 
-                    return Results.Ok($"Card with id {cardInDeck.Id} with count {cardInDeck.Count} added to deck");
+                        deckRepo.AddCardToDeck(cardInDeck, configuration.GetValue<int>("AppSettings:MaxCardsDeck"));
+
+                        return Results.Ok($"Card with id {cardInDeck.Id} with count {cardInDeck.Count} added to deck");
+                    }
+                    else
+                    {
+                        return Results.BadRequest(BuildModelState(validationResult.Errors));
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -50,14 +73,23 @@ namespace Howest.MagicCards.MinimalAPI.Mappings
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest);
 
-            app.MapPut($"{urlPrefix}/deck/{{card}}", (IDeckRepository deckRepo, CardInDeckDto cardInDeckDto) =>
+            app.MapPut($"{urlPrefix}/deck/{{card}}", (IDeckRepository deckRepo, CardInDeckDto cardInDeckDto, IValidator<CardInDeckDto> validator) =>
             {
                 try
                 {
-                    CardInDeck cardInDeck = mapper.Map<CardInDeck>(cardInDeckDto);
+                    ValidationResult validationResult = validator.Validate(cardInDeckDto);
 
-                    deckRepo.UpdateCardCount(cardInDeck);
-                    return Results.Ok($"Card with id {cardInDeck.Id} has a count of {cardInDeck.Count}");
+                    if (validationResult.IsValid)
+                    {
+                        CardInDeck cardInDeck = mapper.Map<CardInDeck>(cardInDeckDto);
+
+                        deckRepo.UpdateCardCount(cardInDeck);
+                        return Results.Ok($"Card with id {cardInDeck.Id} has a count of {cardInDeck.Count}");
+                    }
+                    else
+                    {
+                        return Results.BadRequest(BuildModelState(validationResult.Errors));
+                    }
                 }
                 catch (ArgumentException ex)
                 {
@@ -69,6 +101,7 @@ namespace Howest.MagicCards.MinimalAPI.Mappings
                 }
             })
             .WithTags("Deck actions")
+            .Accepts<CardInDeckDto>("application/json")
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status404NotFound);

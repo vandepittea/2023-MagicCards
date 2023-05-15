@@ -18,18 +18,14 @@ WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 ConfigurationManager config = builder.Configuration;
 
 // Add services to the container.
-builder.Services.AddControllers()
-    .AddFluentValidation(v =>
-    {
-        v.RegisterValidatorsFromAssemblyContaining<CardValidator>();
-    });
+builder.Services.AddControllers();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddSingleton<IMongoClient>(new MongoClient(config.GetConnectionString("MongoDb")));
 builder.Services.AddAutoMapper(typeof(CardProfile));
-builder.Services.AddScoped<IValidator<CardDto>, CardValidator>();
+builder.Services.AddScoped<IValidator<CardInDeckDto>, CardDeckValidator>();
 builder.Services.AddScoped<IDeckRepository, DeckRepository>();
 
 WebApplication app = builder.Build();
