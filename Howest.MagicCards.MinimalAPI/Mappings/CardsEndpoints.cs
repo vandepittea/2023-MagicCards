@@ -37,7 +37,7 @@ namespace Howest.MagicCards.MinimalAPI.Mappings
 
                     deckRepo.AddCardToDeck(cardInDeck);
 
-                    return Results.Ok($"Card with id {cardInDeck.Id} added to deck");
+                    return Results.Ok($"Card with id {cardInDeck.Id} with count {cardInDeck.Count} added to deck");
                 }
                 catch (Exception ex)
                 {
