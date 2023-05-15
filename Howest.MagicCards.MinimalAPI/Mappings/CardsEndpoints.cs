@@ -1,15 +1,5 @@
-﻿using AutoMapper;
-using Howest.MagicCards.DAL.Models;
-using Howest.MagicCards.DAL.Repositories;
-using Howest.MagicCards.Shared.DTO;
-using FluentValidation.AspNetCore;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
-using MongoDB.Bson;
-using System.Text.Json;
+﻿using FluentValidation.Results;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
-using FluentValidation.Results;
-using FluentValidation;
 
 namespace Howest.MagicCards.MinimalAPI.Mappings
 {

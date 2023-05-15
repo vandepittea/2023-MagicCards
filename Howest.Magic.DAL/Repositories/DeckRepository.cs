@@ -1,9 +1,4 @@
-﻿using Howest.MagicCards.DAL.Models;
-using MongoDB.Driver;
-using MongoDB.Bson;
-using System.Collections.Generic;
-using System.Linq;
-using Microsoft.Extensions.Configuration;
+﻿using MongoDB.Bson;
 
 namespace Howest.MagicCards.DAL.Repositories
 {

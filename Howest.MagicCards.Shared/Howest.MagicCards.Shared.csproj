@@ -23,6 +23,7 @@
 
   <ItemGroup>
     <Using Include="AutoMapper" />
+    <Using Include="FluentValidation" />
     <Using Include="Howest.MagicCards.Shared.DTO" />
     <Using Include="Howest.MagicCards.Shared.Mappings" />
     <Using Include="Howest.MagicCards.DAL.Models" />

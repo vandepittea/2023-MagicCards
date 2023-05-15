@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Howest.MagicCards.DAL.Models;
+﻿namespace Howest.MagicCards.DAL.Models;
 
 public partial class Card
 {

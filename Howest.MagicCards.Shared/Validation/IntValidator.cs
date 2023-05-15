@@ -1,6 +1,4 @@
-﻿using FluentValidation;
-
-public class IntValidator : AbstractValidator<int>
+﻿public class IntValidator : AbstractValidator<int>
 {
     public IntValidator()
     {

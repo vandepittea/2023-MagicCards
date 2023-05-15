@@ -1,16 +1,4 @@
-using AutoMapper;
-using FluentValidation;
-using FluentValidation.AspNetCore;
-using Howest.MagicCards.DAL;
-using Howest.MagicCards.DAL.Repositories;
-using Howest.MagicCards.MinimalAPI.Mappings;
-using Howest.MagicCards.Shared.DTO;
-using Howest.MagicCards.Shared.Mappings;
-using Howest.MagicCards.Shared.Validation;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.OpenApi.Models;
-using MongoDB.Driver;
 
 const string commonPrefix = "/api";
 

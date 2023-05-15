@@ -1,6 +1,4 @@
-﻿using FluentValidation;
-
-namespace Howest.MagicCards.Shared.Validation
+﻿namespace Howest.MagicCards.Shared.Validation
 {
     public class CardDeckValidator : AbstractValidator<CardInDeckDto>
     {
