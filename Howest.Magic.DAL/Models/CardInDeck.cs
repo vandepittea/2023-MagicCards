@@ -8,7 +8,7 @@ namespace Howest.MagicCards.DAL.Models
 { 
     public class CardInDeck
     {
-        public int CardId { get; set; }
+        public int _id { get; set; }
         public int Count { get; set; }
     }
 }

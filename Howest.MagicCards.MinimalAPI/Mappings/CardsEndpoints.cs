@@ -28,22 +28,19 @@ namespace Howest.MagicCards.MinimalAPI.Mappings
             .Produces<List<CardInDeck>>(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest);
 
-            app.MapPost($"{urlPrefix}/deck/{{id}}", (IDeckRepository deckRepo, HttpRequest request) =>
+            app.MapPost($"{urlPrefix}/deck/{{card}}", (IDeckRepository deckRepo, CardInDeckDto cardInDeckDto) =>
             {
                 try
                 {
-                    CardInDeckDto? cardInDeckDto = JsonSerializer.Deserialize<CardInDeckDto>(request.Body);
-
-                    if (cardInDeckDto == null)
-                    {
-                        return Results.BadRequest("Invalid card provided");
-                    }
-
                     CardInDeck cardInDeck = mapper.Map<CardInDeck>(cardInDeckDto);
 
                     deckRepo.AddCardToDeck(cardInDeck);
 
-                    return Results.Ok($"Card with id {cardInDeck.CardId} added to deck");
+                    return Results.Ok($"Card with id {cardInDeck._id} added to deck");
+                }
+                catch (ArgumentException ex)
+                {
+                    return Results.NotFound($"Error adding card to deck: {ex.Message}");
                 }
                 catch (Exception ex)
                 {
@@ -51,6 +48,7 @@ namespace Howest.MagicCards.MinimalAPI.Mappings
                 }
             })
             .WithTags("Add a card to the deck")
+            .Accepts<CardInDeckDto>("application/json")
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest);
 
@@ -68,7 +66,7 @@ namespace Howest.MagicCards.MinimalAPI.Mappings
                     CardInDeck cardInDeck = mapper.Map<CardInDeck>(cardInDeckDto);
 
                     deckRepo.IncrementCardCount(cardInDeck);
-                    return Results.Ok($"Card with id {cardInDeck.CardId} is incremented");
+                    return Results.Ok($"Card with id {cardInDeck._id} is incremented");
                 }
                 catch (ArgumentException ex)
                 {

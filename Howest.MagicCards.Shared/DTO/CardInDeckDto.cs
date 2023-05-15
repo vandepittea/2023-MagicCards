@@ -8,7 +8,7 @@ namespace Howest.MagicCards.Shared.DTO
 {
     public class CardInDeckDto
     {
-        public int CardId { get; set; }
+        public int Id { get; set; }
         public int Count { get; set; }
     }
 }

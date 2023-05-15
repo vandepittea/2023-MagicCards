@@ -24,46 +24,46 @@ namespace Howest.MagicCards.DAL.Repositories
 
         public void AddCardToDeck(CardInDeck cardInDeck)
         {
-            CardInDeck foundCard = _deck.Find(x => x.CardId == cardInDeck.CardId).FirstOrDefault();
+            CardInDeck foundCard = _deck.Find(x => x._id == cardInDeck._id).FirstOrDefault();
             if (foundCard == null)
             {
                 _deck.InsertOne(cardInDeck);
             }
             else
             {
-                IncrementCardCount(foundCard);
+                throw new ArgumentException("This card is already in the deck");
             }
         }
 
         public void IncrementCardCount(CardInDeck cardInDeck)
         {
-            CardInDeck foundCard = _deck.Find(x => x.CardId == cardInDeck.CardId).FirstOrDefault();
+            CardInDeck foundCard = _deck.Find(x => x._id == cardInDeck._id).FirstOrDefault();
             if (foundCard != null)
             {
                 foundCard.Count++;
-                FilterDefinition<CardInDeck> filter = Builders<CardInDeck>.Filter.Eq(x => x.CardId, foundCard.CardId);
+                FilterDefinition<CardInDeck> filter = Builders<CardInDeck>.Filter.Eq(x => x._id, foundCard._id);
                 UpdateDefinition<CardInDeck> update = Builders<CardInDeck>.Update.Set(x => x.Count, foundCard.Count);
                 _deck.UpdateOne(filter, update);
             }
             else
             {
-                throw new ArgumentException("This card isn't part of the deck.");
+                throw new ArgumentException("This card isn't part of the deck");
             }
         }
 
         public void RemoveCardFromDeck(int cardId)
         {
-            var cardInDeck = _deck.Find(x => x.CardId == cardId).FirstOrDefault();
+            var cardInDeck = _deck.Find(x => x._id == cardId).FirstOrDefault();
             if (cardInDeck != null)
             {
                 if (cardInDeck.Count == 1)
                 {
-                    _deck.DeleteOne(x => x.CardId == cardId);
+                    _deck.DeleteOne(x => x._id == cardId);
                 }
                 else
                 {
                     cardInDeck.Count--;
-                    FilterDefinition<CardInDeck> filter = Builders<CardInDeck>.Filter.Eq(x => x.CardId, cardId);
+                    FilterDefinition<CardInDeck> filter = Builders<CardInDeck>.Filter.Eq(x => x._id, cardId);
                     UpdateDefinition<CardInDeck> update = Builders<CardInDeck>.Update.Set(x => x.Count, cardInDeck.Count);
                     _deck.UpdateOne(filter, update);
                 }

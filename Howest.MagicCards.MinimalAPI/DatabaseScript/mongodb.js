@@ -6,7 +6,7 @@ db.createCollection("deck");
 
 // Add sample document to deck collection
 db.deck.insertOne({
-    cardId: ObjectId(),
+    _id: ObjectId(),
     count: 1,
     createdAt: ISODate(),
     updatedAt: ISODate()
