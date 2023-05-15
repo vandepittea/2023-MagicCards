@@ -24,7 +24,7 @@ namespace Howest.MagicCards.MinimalAPI.Mappings
                     return Results.BadRequest($"Error getting deck: {ex.Message}");
                 }
             })
-            .WithTags("Get the current deck")
+            .WithTags("Deck actions")
             .Produces<List<CardInDeck>>(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest);
 
@@ -38,16 +38,12 @@ namespace Howest.MagicCards.MinimalAPI.Mappings
 
                     return Results.Ok($"Card with id {cardInDeck._id} added to deck");
                 }
-                catch (ArgumentException ex)
-                {
-                    return Results.NotFound($"Error adding card to deck: {ex.Message}");
-                }
                 catch (Exception ex)
                 {
                     return Results.BadRequest($"Error adding card to deck: {ex.Message}");
                 }
             })
-            .WithTags("Add a card to the deck")
+            .WithTags("Deck actions")
             .Accepts<CardInDeckDto>("application/json")
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest);
@@ -77,7 +73,7 @@ namespace Howest.MagicCards.MinimalAPI.Mappings
                     return Results.BadRequest($"Error updating card count: {ex.Message}");
                 }
             })
-            .WithTags("Update the count of a card in the deck")
+            .WithTags("Deck actions")
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status404NotFound);
@@ -103,7 +99,7 @@ namespace Howest.MagicCards.MinimalAPI.Mappings
                     return Results.BadRequest($"Error removing card: {ex.Message}");
                 }
             })
-            .WithTags("Update the count of a card in the deck")
+            .WithTags("Deck actions")
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status404NotFound);
@@ -120,7 +116,7 @@ namespace Howest.MagicCards.MinimalAPI.Mappings
                     return Results.BadRequest(ex.Message);
                 }
             })
-            .WithTags("Clear the deck")
+            .WithTags("Deck actions")
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest);
         }

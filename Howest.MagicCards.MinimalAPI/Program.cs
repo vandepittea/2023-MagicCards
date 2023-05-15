@@ -28,7 +28,6 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddSingleton<IMongoClient>(new MongoClient(config.GetConnectionString("MongoDb")));
-
 builder.Services.AddAutoMapper(typeof(CardProfile));
 builder.Services.AddScoped<IValidator<CardDto>, CardValidator>();
 builder.Services.AddScoped<IDeckRepository, DeckRepository>();
