@@ -106,12 +106,21 @@ namespace Howest.MagicCards.MinimalAPI.Mappings
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status404NotFound);
 
-            app.MapDelete($"{urlPrefix}/deck/{{id}}", (IDeckRepository deckRepo, int id) =>
+            app.MapDelete($"{urlPrefix}/deck/{{id}}", (IDeckRepository deckRepo, int id, IValidator<int> validator) =>
             {
                 try
                 {
-                    deckRepo.RemoveCardFromDeck(id);
-                    return Results.Ok($"Card with id {id} is deleted");
+                    ValidationResult validationResult = validator.Validate(id);
+
+                    if (validationResult.IsValid)
+                    {
+                        deckRepo.RemoveCardFromDeck(id);
+                        return Results.Ok($"Card with id {id} is deleted");
+                    }
+                    else
+                    {
+                        return Results.BadRequest(BuildModelState(validationResult.Errors));
+                    }
                 }
                 catch (ArgumentException ex)
                 {
