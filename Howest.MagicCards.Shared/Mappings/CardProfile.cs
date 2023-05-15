@@ -18,11 +18,11 @@
                 .ReverseMap();
 
             CreateMap<CardInDeckDto, CardInDeck>()
-                .ForMember(dest => dest._id, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.Count, opt => opt.MapFrom(src => src.Count));
 
             CreateMap<CardInDeck, CardInDeckDto>()
-                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src._id))
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.Count, opt => opt.MapFrom(src => src.Count));
         }
     }

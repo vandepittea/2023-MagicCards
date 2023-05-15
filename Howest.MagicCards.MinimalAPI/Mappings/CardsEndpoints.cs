@@ -3,6 +3,7 @@ using Howest.MagicCards.DAL.Models;
 using Howest.MagicCards.DAL.Repositories;
 using Howest.MagicCards.Shared.DTO;
 using Microsoft.AspNetCore.Mvc;
+using MongoDB.Bson;
 using System.Text.Json;
 
 namespace Howest.MagicCards.MinimalAPI.Mappings
@@ -36,7 +37,7 @@ namespace Howest.MagicCards.MinimalAPI.Mappings
 
                     deckRepo.AddCardToDeck(cardInDeck);
 
-                    return Results.Ok($"Card with id {cardInDeck._id} added to deck");
+                    return Results.Ok($"Card with id {cardInDeck.Id} added to deck");
                 }
                 catch (Exception ex)
                 {
@@ -62,7 +63,7 @@ namespace Howest.MagicCards.MinimalAPI.Mappings
                     CardInDeck cardInDeck = mapper.Map<CardInDeck>(cardInDeckDto);
 
                     deckRepo.IncrementCardCount(cardInDeck);
-                    return Results.Ok($"Card with id {cardInDeck._id} is incremented");
+                    return Results.Ok($"Card with id {cardInDeck.Id} is incremented");
                 }
                 catch (ArgumentException ex)
                 {
@@ -80,9 +81,9 @@ namespace Howest.MagicCards.MinimalAPI.Mappings
 
             app.MapDelete($"{urlPrefix}/deck/{{id}}", (IDeckRepository deckRepo, HttpRequest request) =>
             {
-                try
+                /*try
                 {
-                    if (!int.TryParse(request.RouteValues["id"] as string, out int id))
+                    if (!int.TryParse(request.RouteValues["id"] as string, out ObjectId id))
                     {
                         return Results.BadRequest("Invalid card id provided");
                     }
@@ -97,7 +98,7 @@ namespace Howest.MagicCards.MinimalAPI.Mappings
                 catch (Exception ex)
                 {
                     return Results.BadRequest($"Error removing card: {ex.Message}");
-                }
+                }*/
             })
             .WithTags("Deck actions")
             .Produces(StatusCodes.Status200OK)

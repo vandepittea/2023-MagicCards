@@ -1,4 +1,6 @@
-﻿using System;
+﻿using MongoDB.Bson.Serialization.Attributes;
+using MongoDB.Bson;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,7 +10,9 @@ namespace Howest.MagicCards.DAL.Models
 { 
     public class CardInDeck
     {
-        public int _id { get; set; }
+        [BsonElement("_id")]
+        public int Id { get; set; }
+        [BsonElement("count")]
         public int Count { get; set; }
     }
 }
