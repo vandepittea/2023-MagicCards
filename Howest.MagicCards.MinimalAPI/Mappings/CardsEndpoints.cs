@@ -93,7 +93,7 @@ namespace Howest.MagicCards.MinimalAPI.Mappings
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status404NotFound);
 
-            app.MapDelete("$\"{urlPrefix}/deck/clear", (IDeckRepository deckRepo) =>
+            app.MapDelete($"{urlPrefix}/deck/clear", (IDeckRepository deckRepo) =>
             {
                 try
                 {
