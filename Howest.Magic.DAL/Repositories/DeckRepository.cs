@@ -35,14 +35,13 @@ namespace Howest.MagicCards.DAL.Repositories
             }
         }
 
-        public void IncrementCardCount(CardInDeck cardInDeck)
+        public void UpdateCardCount(CardInDeck cardInDeck)
         {
             CardInDeck foundCard = _deck.Find(x => x.Id == cardInDeck.Id).FirstOrDefault();
             if (foundCard != null)
             {
-                foundCard.Count++;
                 FilterDefinition<CardInDeck> filter = Builders<CardInDeck>.Filter.Eq(x => x.Id, foundCard.Id);
-                UpdateDefinition<CardInDeck> update = Builders<CardInDeck>.Update.Set(x => x.Count, foundCard.Count);
+                UpdateDefinition<CardInDeck> update = Builders<CardInDeck>.Update.Set(x => x.Count, cardInDeck.Count);
                 _deck.UpdateOne(filter, update);
             }
             else

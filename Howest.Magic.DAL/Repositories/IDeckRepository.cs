@@ -12,7 +12,7 @@ namespace Howest.MagicCards.DAL.Repositories
     {
         List<CardInDeck> GetCards();
         void AddCardToDeck(CardInDeck cardInDeck);
-        void IncrementCardCount(CardInDeck cardInDeck);
+        void UpdateCardCount(CardInDeck cardInDeck);
         void RemoveCardFromDeck(int cardId);
         void ClearDeck();
     }

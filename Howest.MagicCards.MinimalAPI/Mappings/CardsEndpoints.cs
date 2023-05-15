@@ -49,21 +49,14 @@ namespace Howest.MagicCards.MinimalAPI.Mappings
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest);
 
-            app.MapPut($"{urlPrefix}/deck/{{id}}", (IDeckRepository deckRepo, HttpRequest request) =>
+            app.MapPut($"{urlPrefix}/deck/{{card}}", (IDeckRepository deckRepo, CardInDeckDto cardInDeckDto) =>
             {
                 try
                 {
-                    CardInDeckDto? cardInDeckDto = JsonSerializer.Deserialize<CardInDeckDto>(request.Body);
-
-                    if (cardInDeckDto == null)
-                    {
-                        return Results.BadRequest("Invalid card provided");
-                    }
-
                     CardInDeck cardInDeck = mapper.Map<CardInDeck>(cardInDeckDto);
 
-                    deckRepo.IncrementCardCount(cardInDeck);
-                    return Results.Ok($"Card with id {cardInDeck.Id} is incremented");
+                    deckRepo.UpdateCardCount(cardInDeck);
+                    return Results.Ok($"Card with id {cardInDeck.Id} has a count of {cardInDeck.Count}");
                 }
                 catch (ArgumentException ex)
                 {
