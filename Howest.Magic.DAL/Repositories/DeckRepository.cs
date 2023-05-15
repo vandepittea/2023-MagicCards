@@ -3,6 +3,7 @@ using MongoDB.Driver;
 using MongoDB.Bson;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.Extensions.Configuration;
 
 namespace Howest.MagicCards.DAL.Repositories
 {
@@ -22,9 +23,15 @@ namespace Howest.MagicCards.DAL.Repositories
             return _deck.Find(new BsonDocument()).ToList();
         }
 
-        public void AddCardToDeck(CardInDeck cardInDeck)
+        public void AddCardToDeck(CardInDeck cardInDeck, int maxCardsInDeck)
         {
-            CardInDeck foundCard = _deck.Find(x => x.Id == cardInDeck.Id).FirstOrDefault();
+            List<CardInDeck> deckCards = GetCards();
+            if (deckCards.Count >= maxCardsInDeck)
+            {
+                throw new InvalidOperationException("The deck is already full. Cannot add more cards.");
+            }
+
+            CardInDeck foundCard = deckCards.FirstOrDefault(x => x.Id == cardInDeck.Id);
             if (foundCard == null)
             {
                 _deck.InsertOne(cardInDeck);

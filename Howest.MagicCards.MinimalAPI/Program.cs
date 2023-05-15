@@ -45,6 +45,6 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.MapCardsEndpoints(urlPrefix, app.Services.GetRequiredService<IMapper>());
+app.MapCardsEndpoints(urlPrefix, app.Services.GetRequiredService<IMapper>(), config);
 
 app.Run();

@@ -3,6 +3,7 @@ using Howest.MagicCards.DAL.Models;
 using Howest.MagicCards.DAL.Repositories;
 using Howest.MagicCards.Shared.DTO;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using MongoDB.Bson;
 using System.Text.Json;
 
@@ -10,7 +11,7 @@ namespace Howest.MagicCards.MinimalAPI.Mappings
 {
     public static class CardsEndpoints
     {
-        public static void MapCardsEndpoints(this WebApplication app, string urlPrefix, IMapper mapper)
+        public static void MapCardsEndpoints(this WebApplication app, string urlPrefix, IMapper mapper, IConfiguration configuration)
         {
             app.MapGet($"{urlPrefix}/deck", (IDeckRepository deckRepo) =>
             {
@@ -35,7 +36,7 @@ namespace Howest.MagicCards.MinimalAPI.Mappings
                 {
                     CardInDeck cardInDeck = mapper.Map<CardInDeck>(cardInDeckDto);
 
-                    deckRepo.AddCardToDeck(cardInDeck);
+                    deckRepo.AddCardToDeck(cardInDeck, configuration.GetValue<int>("AppSettings:MaxCardsDeck"));
 
                     return Results.Ok($"Card with id {cardInDeck.Id} with count {cardInDeck.Count} added to deck");
                 }
