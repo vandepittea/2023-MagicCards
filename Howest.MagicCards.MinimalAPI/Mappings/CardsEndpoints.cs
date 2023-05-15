@@ -2,6 +2,7 @@
 using Howest.MagicCards.DAL.Models;
 using Howest.MagicCards.DAL.Repositories;
 using Howest.MagicCards.Shared.DTO;
+using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
 
 namespace Howest.MagicCards.MinimalAPI.Mappings
@@ -10,7 +11,7 @@ namespace Howest.MagicCards.MinimalAPI.Mappings
     {
         public static void MapCardsEndpoints(this WebApplication app, string urlPrefix, IMapper mapper)
         {
-            app.MapGet($"{urlPrefix}/deck", (DeckRepository deckRepo) =>
+            app.MapGet($"{urlPrefix}/deck", (IDeckRepository deckRepo) =>
             {
                 try
                 {
@@ -27,7 +28,7 @@ namespace Howest.MagicCards.MinimalAPI.Mappings
             .Produces<List<CardInDeck>>(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest);
 
-            app.MapPost($"{urlPrefix}/deck/{{id}}", (DeckRepository deckRepo, HttpRequest request) =>
+            app.MapPost($"{urlPrefix}/deck/{{id}}", (IDeckRepository deckRepo, HttpRequest request) =>
             {
                 try
                 {
@@ -53,7 +54,7 @@ namespace Howest.MagicCards.MinimalAPI.Mappings
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest);
 
-            app.MapPut($"{urlPrefix}/deck/{{id}}", (DeckRepository deckRepo, HttpRequest request) =>
+            app.MapPut($"{urlPrefix}/deck/{{id}}", (IDeckRepository deckRepo, HttpRequest request) =>
             {
                 try
                 {
@@ -83,7 +84,7 @@ namespace Howest.MagicCards.MinimalAPI.Mappings
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status404NotFound);
 
-            app.MapDelete($"{urlPrefix}/deck/{{id}}", (DeckRepository deckRepo, HttpRequest request) =>
+            app.MapDelete($"{urlPrefix}/deck/{{id}}", (IDeckRepository deckRepo, HttpRequest request) =>
             {
                 try
                 {
@@ -109,11 +110,11 @@ namespace Howest.MagicCards.MinimalAPI.Mappings
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status404NotFound);
 
-            app.MapDelete("$\"{urlPrefix}/deck/clear", (IDeckRepository repository) =>
+            app.MapDelete("$\"{urlPrefix}/deck/clear", (IDeckRepository deckRepo) =>
             {
                 try
                 {
-                    repository.ClearDeck();
+                    deckRepo.ClearDeck();
                     return Results.Ok("Deck cleared successfully");
                 }
                 catch (Exception ex)
