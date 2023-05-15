@@ -52,20 +52,10 @@ namespace Howest.MagicCards.DAL.Repositories
 
         public void RemoveCardFromDeck(int cardId)
         {
-            var cardInDeck = _deck.Find(x => x.Id == cardId).FirstOrDefault();
+            CardInDeck cardInDeck = _deck.Find(x => x.Id == cardId).FirstOrDefault();
             if (cardInDeck != null)
             {
-                if (cardInDeck.Count == 1)
-                {
-                    _deck.DeleteOne(x => x.Id == cardId);
-                }
-                else
-                {
-                    cardInDeck.Count--;
-                    FilterDefinition<CardInDeck> filter = Builders<CardInDeck>.Filter.Eq(x => x.Id, cardId);
-                    UpdateDefinition<CardInDeck> update = Builders<CardInDeck>.Update.Set(x => x.Count, cardInDeck.Count);
-                    _deck.UpdateOne(filter, update);
-                }
+                _deck.DeleteOne(x => x.Id == cardId);
             }
             else
             {
