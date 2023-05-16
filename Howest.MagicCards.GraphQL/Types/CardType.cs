@@ -7,7 +7,7 @@ namespace Howest.MagicCards.GraphQL.Types
 {
     public class CardType : ObjectGraphType<Card>
     {
-        public CardType(ICardRepository cardRepository)
+        public CardType(IArtistRepository artistRepository)
         {
             Name = "Card";
 
@@ -55,7 +55,7 @@ namespace Howest.MagicCards.GraphQL.Types
 
             Field<ArtistType>(
                                 "Artist",
-                                resolve: context => cardRepository.GetArtistById(context.Source.ArtistId ?? default)
+                                resolve: context => artistRepository.GetArtistById(context.Source.ArtistId ?? default)
             );
         }
     }

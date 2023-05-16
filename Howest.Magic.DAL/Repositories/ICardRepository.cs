@@ -4,7 +4,6 @@
     {
         Task<IEnumerable<Card>> GetCards();
         Task<Card> GetCardById(long id);
-        Task<Artist> GetArtistById(long id);
         Task<IEnumerable<Card>> GetCardsByArtistId(long artistId);
     }
 }

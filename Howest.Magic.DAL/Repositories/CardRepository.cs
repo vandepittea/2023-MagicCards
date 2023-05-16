@@ -36,11 +36,6 @@ namespace Howest.MagicCards.DAL.Repositories
                 .FirstOrDefaultAsync(c => c.Id == id);
         }
 
-        public async Task<Artist> GetArtistById(long id)
-        {
-            return await _dbContext.Artists.FindAsync(id);
-        }
-
         public async Task<IEnumerable<Card>> GetCardsByArtistId(long artistId)
         {
             return await _dbContext.Cards

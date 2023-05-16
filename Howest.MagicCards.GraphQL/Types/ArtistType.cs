@@ -4,7 +4,6 @@ using Howest.MagicCards.DAL.Repositories;
 using System.Collections.Generic;
 using GraphQL.Types;
 using Amazon.Runtime.Internal.Util;
-using Abp.Threading;
 
 namespace Howest.MagicCards.GraphQL.Types
 {
