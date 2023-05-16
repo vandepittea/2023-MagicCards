@@ -54,5 +54,4 @@ namespace Howest.MagicCards.DAL.Repositories
                .ToListAsync();
         }
     }
-    }
 }
