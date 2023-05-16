@@ -40,5 +40,19 @@ namespace Howest.MagicCards.DAL.Repositories
         {
             return await _dbContext.Artists.FindAsync(id);
         }
+
+        public async Task<IEnumerable<Card>> GetCardsByArtistId(long artistId)
+        {
+            return await _dbContext.Cards
+               .Include(c => c.SetCodeNavigation)
+               .Include(c => c.RarityCodeNavigation)
+               .Include(c => c.CardColors)
+                   .ThenInclude(cc => cc.Color)
+               .Include(c => c.CardTypes)
+                   .ThenInclude(ct => ct.Type)
+               .Where(c => c.ArtistId == artistId)
+               .ToListAsync();
+        }
+    }
     }
 }
