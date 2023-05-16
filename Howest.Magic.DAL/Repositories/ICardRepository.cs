@@ -1,8 +1,9 @@
-﻿namespace Howest.MagicCards.DAL.Repositories
+﻿using System.Threading.Tasks;
+
+namespace Howest.MagicCards.DAL.Repositories
 {
-    public interface ICardRepository
+    public interface IArtistRepository
     {
-        Task<IEnumerable<Card>> GetCards();
-        Task<Card> GetCardById(long id);
+        Task<Artist> GetArtistById(long id);
     }
 }
