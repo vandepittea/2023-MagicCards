@@ -1,5 +1,4 @@
 ﻿using Howest.MagicCards.DAL.Models;
-using HotChocolate.Types;
 using Howest.MagicCards.DAL.Repositories;
 using System.Collections.Generic;
 using GraphQL.Types;
