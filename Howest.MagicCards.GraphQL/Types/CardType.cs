@@ -41,16 +41,6 @@ namespace Howest.MagicCards.GraphQL.Types
 
             Field(c => c.Layout, type: typeof(StringGraphType), nullable: true);
 
-            Field(c => c.MultiverseId, type: typeof(IntGraphType), nullable: true);
-
-            Field(c => c.OriginalImageUrl, type: typeof(StringGraphType), nullable: true);
-
-            Field(c => c.OriginalText, type: typeof(StringGraphType), nullable: true);
-
-            Field(c => c.OriginalType, type: typeof(StringGraphType), nullable: true);
-
-            Field(c => c.MtgId, type: typeof(StringGraphType), nullable: true);
-
             Field(c => c.Variations, type: typeof(StringGraphType), nullable: true);
 
             FieldAsync<ArtistType>(

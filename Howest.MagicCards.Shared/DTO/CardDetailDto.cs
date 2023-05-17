@@ -8,11 +8,6 @@
         public string Power { get; set; }
         public string Toughness { get; set; }
         public string Layout { get; set; }
-        public int? MultiverseId { get; set; }
-        public string OriginalImageUrl { get; set; }
-        public string OriginalText { get; set; }
-        public string OriginalType { get; set; }
-        public string MtgId { get; set; }
         public string Variations { get; set; }
         public string ArtistName { get; set; }
     }

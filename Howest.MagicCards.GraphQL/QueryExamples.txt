@@ -15,11 +15,6 @@
     power
     toughness
     layout
-    multiverseId
-    originalImageUrl
-    originalText
-    originalType
-    mtgId
     variations
     artist {
       id
