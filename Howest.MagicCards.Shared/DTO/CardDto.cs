@@ -4,7 +4,7 @@
     {
         public long Id { get; set; }
         public string Name { get; set; }
-        public string ManaCost { get; set; }
+        public string ConvertedManaCost { get; set; }
         public string Type { get; set; }
         public string SetName { get; set; }
         public string RarityName { get; set; }

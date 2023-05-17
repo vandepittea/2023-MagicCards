@@ -15,7 +15,7 @@ namespace Howest.MagicCards.GraphQL.Types
 
             Field(c => c.Name, type: typeof(StringGraphType));
 
-            Field(c => c.ManaCost, type: typeof(StringGraphType));
+            Field(c => c.ConvertedManaCost, type: typeof(StringGraphType));
 
             Field(c => c.Type, type: typeof(StringGraphType));
 
@@ -36,8 +36,6 @@ namespace Howest.MagicCards.GraphQL.Types
             Field(c => c.Toughness, type: typeof(StringGraphType));
 
             Field(c => c.Layout, type: typeof(StringGraphType), nullable: true);
-
-            Field(c => c.Variations, type: typeof(StringGraphType), nullable: true);
 
             FieldAsync<ArtistType>(
                                 "Artist",

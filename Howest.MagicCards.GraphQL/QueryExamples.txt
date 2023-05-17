@@ -2,7 +2,7 @@
   cards {
     id
     name
-    manaCost
+    convertedManaCost
     type
     setCode
     rarityCode
@@ -13,7 +13,6 @@
     power
     toughness
     layout
-    variations
     artist {
       id
       fullName

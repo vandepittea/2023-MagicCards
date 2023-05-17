@@ -66,13 +66,13 @@ namespace Howest.MagicCards.Shared.Extensions
 
         public static IQueryable<Card> Sort(this IQueryable<Card> cards, string sortOrder)
         {
-            if (string.IsNullOrEmpty(sortOrder))
-            {
-                return cards.OrderBy(c => c.Name);
-            }
+            bool descending = false;
 
-            sortOrder = sortOrder.Trim().ToLower();
-            bool descending = sortOrder.EndsWith("desc");
+            if (!string.IsNullOrEmpty(sortOrder))
+            {
+                sortOrder = sortOrder.Trim().ToLower();
+                descending = sortOrder.EndsWith("desc");
+            }
 
             return descending
                 ? cards.OrderByDescending(c => c.Name)
