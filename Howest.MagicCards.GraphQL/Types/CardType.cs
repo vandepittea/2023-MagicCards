@@ -25,10 +25,6 @@ namespace Howest.MagicCards.GraphQL.Types
 
             Field(c => c.Image, type: typeof(StringGraphType));
 
-            Field(c => c.CardColors, type: typeof(ListGraphType<StringGraphType>));
-
-            Field(c => c.CardTypes, type: typeof(ListGraphType<StringGraphType>));
-
             Field(c => c.Text, type: typeof(StringGraphType), nullable: true);
 
             Field(c => c.Flavor, type: typeof(StringGraphType), nullable: true);

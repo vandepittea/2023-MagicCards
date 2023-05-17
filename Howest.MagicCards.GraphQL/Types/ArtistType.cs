@@ -9,7 +9,7 @@ namespace Howest.MagicCards.GraphQL.Types
 {
     public class ArtistType : ObjectGraphType<Artist>
     {
-        public ArtistType(ICardRepository cardRepository)
+        public ArtistType(ICardColorRepository cardRepository)
         {
             Name = "Artist";
 

@@ -11,7 +11,7 @@ namespace Howest.MagicCards.GraphQL
 {
     public class RootQuery : ObjectGraphType
     {
-        public RootQuery(ICardRepository cardRepository, IArtistRepository artistRepository)
+        public RootQuery(ICardColorRepository cardRepository, IArtistRepository artistRepository)
         {
             Name = "Query";
 
