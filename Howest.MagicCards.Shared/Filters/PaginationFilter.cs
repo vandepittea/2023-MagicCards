@@ -4,17 +4,11 @@ namespace Howest.MagicCards.Shared.Filters
 {
     public class PaginationFilter
     {
-        private readonly int _maxPageSize;
-
         private int _pageSize;
         private int _pageNumber = 1;
 
-        public PaginationFilter(IConfiguration config)
-        {
-            _maxPageSize = int.Parse(config.GetSection("appSettings")["maxPageSize"]);
-        }
-
         [JsonIgnore]
+        public int MaxPageSize { get; set; }
 
         public int PageNumber
         {
@@ -24,8 +18,8 @@ namespace Howest.MagicCards.Shared.Filters
 
         public int PageSize
         {
-            get { return _pageSize > _maxPageSize ? _maxPageSize : _pageSize; }
-            set { _pageSize = value > _maxPageSize || value < 1 ? _maxPageSize : value; }
+            get { return _pageSize > MaxPageSize ? MaxPageSize : _pageSize; }
+            set { _pageSize = value > MaxPageSize || value < 1 ? MaxPageSize : value; }
         }
 
         public string SortBy { get; set; }

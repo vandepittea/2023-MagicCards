@@ -11,17 +11,17 @@ namespace Howest.MagicCards.DAL.Repositories
             _dbContext = dbContext;
         }
 
-        public async Task<IEnumerable<Card>> GetCards()
+        public async Task<IQueryable<Card>> GetCards()
         {
-            return await _dbContext.Cards
+            IQueryable<Card> cardsQuery = _dbContext.Cards
                 .Include(c => c.SetCodeNavigation)
                 .Include(c => c.RarityCodeNavigation)
                 .Include(c => c.CardColors)
                     .ThenInclude(cc => cc.Color)
                 .Include(c => c.CardTypes)
-                    .ThenInclude(ct => ct.Type)
-                .Select(c => c)
-                .ToListAsync();
+                    .ThenInclude(ct => ct.Type);
+
+                return await Task.FromResult(cardsQuery);
         }
 
         public async Task<Card> GetCardById(long id)

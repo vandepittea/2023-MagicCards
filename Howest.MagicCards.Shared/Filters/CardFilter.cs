@@ -2,10 +2,6 @@
 {
     public class CardFilter : PaginationFilter
     {
-        public CardFilter(IConfiguration config) : base(config)
-        {
-        }
-
         public string SetCode { get; set; }
         public string ArtistName { get; set; }
         public string RarityCode { get; set; }
