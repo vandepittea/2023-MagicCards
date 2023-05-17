@@ -4,7 +4,6 @@
     {
         public string Text { get; set; }
         public string Flavor { get; set; }
-        public string Number { get; set; }
         public string Power { get; set; }
         public string Toughness { get; set; }
         public string Layout { get; set; }

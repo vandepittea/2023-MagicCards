@@ -1,12 +1,14 @@
-﻿namespace Howest.MagicCards.Shared.Extensions
+﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
+
+namespace Howest.MagicCards.Shared.Extensions
 {
     public static class CardExtensions
     {
-        public static IQueryable<Card> FilterBySet(this IQueryable<Card> cards, string setCode)
+        public static IQueryable<Card> FilterBySet(this IQueryable<Card> cards, string setName)
         {
-            if (!string.IsNullOrEmpty(setCode))
+            if (!string.IsNullOrEmpty(setName))
             {
-                cards = cards.Where(c => c.SetCode == setCode);
+                cards = cards.Where(c => c.SetCodeNavigation.Name.Contains(setName));
             }
 
             return cards;
@@ -22,21 +24,21 @@
             return cards;
         }
 
-        public static IQueryable<Card> FilterByRarity(this IQueryable<Card> cards, string rarityCode)
+        public static IQueryable<Card> FilterByRarity(this IQueryable<Card> cards, string rarityName)
         {
-            if (!string.IsNullOrEmpty(rarityCode))
+            if (!string.IsNullOrEmpty(rarityName))
             {
-                cards = cards.Where(c => c.RarityCode == rarityCode);
+                cards = cards.Where(c => c.RarityCodeNavigation.Name.Contains(rarityName));
             }
 
             return cards;
         }
 
-        public static IQueryable<Card> FilterByCardType(this IQueryable<Card> cards, string cardType)
+        public static IQueryable<Card> FilterByCardType(this IQueryable<Card> cards, string typeName)
         {
-            if (!string.IsNullOrEmpty(cardType))
+            if (!string.IsNullOrEmpty(typeName))
             {
-                cards = cards.Where(c => c.CardTypes.Any(ct => ct.Type.Type1.ToLower().Contains(cardType.ToLower())));
+                cards = cards.Where(c => c.CardTypes.Any(ct => ct.Type.Name.ToLower().Contains(typeName.ToLower())));
             }
 
             return cards;

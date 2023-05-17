@@ -1,7 +1,9 @@
-﻿using System.Text.Json.Serialization;
+﻿using Microsoft.AspNetCore.Mvc;
+using System.Text.Json.Serialization;
 
 namespace Howest.MagicCards.Shared.Filters
 {
+    [ApiExplorerSettings(IgnoreApi = true)]
     public class PaginationFilter
     {
         private int _pageSize;

@@ -2,10 +2,10 @@
 {
     public class CardFilter : PaginationFilter
     {
-        public string SetCode { get; set; }
+        public string SetName { get; set; }
         public string ArtistName { get; set; }
-        public string RarityCode { get; set; }
-        public string CardType { get; set; }
+        public string RarityName { get; set; }
+        public string TypeName { get; set; }
         public string CardName { get; set; }
         public string CardText { get; set; }
     }

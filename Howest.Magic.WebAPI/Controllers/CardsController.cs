@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Howest.MagicCards.Shared.Extensions;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Caching.Memory;
 using System.Text.Json;
@@ -49,10 +50,10 @@ namespace Howest.MagicCards.WebAPI.Controllers.V1
                 }
 
                 IQueryable<Card> filteredCards = allCards
-                    .FilterBySet(filter.SetCode)
+                    .FilterBySet(filter.SetName)
                     .FilterByArtist(filter.ArtistName)
-                    .FilterByRarity(filter.RarityCode)
-                    .FilterByCardType(filter.CardType)
+                    .FilterByRarity(filter.RarityName)
+                    .FilterByCardType(filter.TypeName)
                     .FilterByCardName(filter.CardName)
                     .FilterByCardText(filter.CardText);
 
@@ -135,10 +136,10 @@ namespace Howest.MagicCards.WebAPI.Controllers.V2
                 }
 
                 IQueryable<Card> filteredCards = allCards
-                    .FilterBySet(filter.SetCode)
+                    .FilterBySet(filter.SetName)
                     .FilterByArtist(filter.ArtistName)
-                    .FilterByRarity(filter.RarityCode)
-                    .FilterByCardType(filter.CardType)
+                    .FilterByRarity(filter.RarityName)
+                    .FilterByCardType(filter.TypeName)
                     .FilterByCardName(filter.CardName)
                     .FilterByCardText(filter.CardText)
                     .Sort(filter.SortBy);

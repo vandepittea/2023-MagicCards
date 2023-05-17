@@ -6,9 +6,13 @@
         {
             CreateMap<Card, CardDto>()
                 .ForMember(dto => dto.CardColors,
-                           opt => opt.MapFrom(c => c.CardColors.Select(cc => cc.Color.Code)))
+                           opt => opt.MapFrom(c => c.CardColors.Select(cc => cc.Color.Name)))
                 .ForMember(dto => dto.CardTypes,
-                           opt => opt.MapFrom(c => c.CardTypes.Select(ct => ct.Type)))
+                           opt => opt.MapFrom(c => c.CardTypes.Select(ct => ct.Type.Name)))
+                .ForMember(dto => dto.SetName,
+                           opt => opt.MapFrom(c => c.SetCodeNavigation.Name))
+                .ForMember(dto => dto.RarityName,
+                           opt => opt.MapFrom(c => c.RarityCodeNavigation.Name))
                 .ReverseMap();
 
             CreateMap<Card, CardDetailDto>()
@@ -24,6 +28,9 @@
             CreateMap<CardInDeck, CardInDeckDto>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.Count, opt => opt.MapFrom(src => src.Count));
+
+            CreateMap<DAL.Models.Type, string>()
+            .ConvertUsing(source => source.Name);
         }
     }
 }
