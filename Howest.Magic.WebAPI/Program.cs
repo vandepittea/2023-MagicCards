@@ -36,11 +36,7 @@ builder.Services.AddDbContext<MtgDbContext>
 
 builder.Services.AddScoped<ICardRepository, CardRepository>();
 
-builder.Services.AddStackExchangeRedisCache(options =>
-{
-    options.Configuration = config.GetConnectionString("Redis");
-    options.InstanceName = "Redis_";
-});
+builder.Services.AddMemoryCache();
 
 builder.Services.AddAutoMapper(typeof(CardProfile));
 

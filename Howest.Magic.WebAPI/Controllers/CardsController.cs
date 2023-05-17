@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.Extensions.Caching.Memory;
 using System.Text.Json;
 
 namespace Howest.MagicCards.WebAPI.Controllers.V1
@@ -10,10 +11,10 @@ namespace Howest.MagicCards.WebAPI.Controllers.V1
     public class CardsController : ControllerBase
     {
         private readonly IDistributedCache _cache;
-        private readonly CardRepository _cardRepository;
+        private readonly ICardRepository _cardRepository;
         private readonly IMapper _mapper;
 
-        public CardsController(CardRepository cardRepository, IMapper mapper, IDistributedCache memoryCache)
+        public CardsController(ICardRepository cardRepository, IMapper mapper, IDistributedCache memoryCache)
         {
             _cardRepository = cardRepository;
             _mapper = mapper;
@@ -97,11 +98,11 @@ namespace Howest.MagicCards.WebAPI.Controllers.V2
     [ApiController]
     public class CardsController : ControllerBase
     {
-        private readonly IDistributedCache _cache;
-        private readonly CardRepository _cardRepository;
+        private readonly IMemoryCache _cache;
+        private readonly ICardRepository _cardRepository;
         private readonly IMapper _mapper;
 
-        public CardsController(CardRepository cardRepository, IMapper mapper, IDistributedCache memoryCache)
+        public CardsController(ICardRepository cardRepository, IMapper mapper, IMemoryCache memoryCache)
         {
             _cardRepository = cardRepository;
             _mapper = mapper;
@@ -117,11 +118,8 @@ namespace Howest.MagicCards.WebAPI.Controllers.V2
             try
             {
                 string cacheKey = $"cards_{JsonSerializer.Serialize(filter)}_{filter.SortBy}";
-                string cachedData = await _cache.GetStringAsync(cacheKey);
-
-                if (cachedData != null)
+                if (_cache.TryGetValue(cacheKey, out PagedResponse<IEnumerable<CardDto>> cachedResponse))
                 {
-                    PagedResponse<IQueryable<CardDto>> cachedResponse = JsonSerializer.Deserialize<PagedResponse<IQueryable<CardDto>>>(cachedData);
                     return Ok(cachedResponse);
                 }
 
@@ -154,14 +152,13 @@ namespace Howest.MagicCards.WebAPI.Controllers.V2
                 int totalPages = (int)Math.Ceiling(totalCount / (double)filter.PageSize);
 
                 PagedResponse<IEnumerable<CardDto>> response = new PagedResponse<IEnumerable<CardDto>>(pagedCards, filter.PageNumber, filter.PageSize, totalCount, totalPages);
-                string responseData = JsonSerializer.Serialize(response);
 
-                DistributedCacheEntryOptions cacheOptions = new DistributedCacheEntryOptions()
+                MemoryCacheEntryOptions cacheOptions = new MemoryCacheEntryOptions()
                 {
                     AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(5)
                 };
 
-                await _cache.SetStringAsync(cacheKey, responseData, cacheOptions);
+                _cache.Set(cacheKey, response, cacheOptions);
 
                 return Ok(response);
             }
@@ -186,11 +183,8 @@ namespace Howest.MagicCards.WebAPI.Controllers.V2
             try
             {
                 string cacheKey = $"card_{id}";
-                string cachedData = await _cache.GetStringAsync(cacheKey);
-
-                if (cachedData != null)
+                if (_cache.TryGetValue(cacheKey, out CardDetailDto cachedCard))
                 {
-                    CardDetailDto cachedCard = JsonSerializer.Deserialize<CardDetailDto>(cachedData);
                     return cachedCard;
                 }
 
@@ -206,14 +200,13 @@ namespace Howest.MagicCards.WebAPI.Controllers.V2
                 }
 
                 CardDetailDto cardDetailDto = _mapper.Map<CardDetailDto>(card);
-                string responseData = JsonSerializer.Serialize(cardDetailDto);
 
-                DistributedCacheEntryOptions cacheOptions = new DistributedCacheEntryOptions()
+                MemoryCacheEntryOptions cacheOptions = new MemoryCacheEntryOptions()
                 {
                     AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(5)
                 };
 
-                await _cache.SetStringAsync(cacheKey, responseData, cacheOptions);
+                _cache.Set(cacheKey, cardDetailDto, cacheOptions);
 
                 return Ok(cardDetailDto);
             }
