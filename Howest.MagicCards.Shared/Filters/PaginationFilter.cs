@@ -15,5 +15,4 @@ namespace Howest.MagicCards.Shared.Filters
 
         public string SortBy { get; set; }
     }
-
 }
