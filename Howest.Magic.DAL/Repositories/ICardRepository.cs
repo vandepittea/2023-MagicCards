@@ -4,6 +4,6 @@
     {
         Task<IEnumerable<Card>> GetCards();
         Task<Card> GetCardById(long id);
-        Task<IEnumerable<Card>> GetCardsByArtistId(long artistId);
+        Task<IEnumerable<Card>> GetCardsByArtistId(long artistId, MtgDbContext dbContext = null);
     }
 }

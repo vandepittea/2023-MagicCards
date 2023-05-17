@@ -36,17 +36,27 @@ namespace Howest.MagicCards.DAL.Repositories
                 .FirstOrDefaultAsync(c => c.Id == id);
         }
 
-        public async Task<IEnumerable<Card>> GetCardsByArtistId(long artistId)
+        public async Task<IEnumerable<Card>> GetCardsByArtistId(long artistId, MtgDbContext dbContext = null)
         {
-            return await _dbContext.Cards
-               .Include(c => c.SetCodeNavigation)
-               .Include(c => c.RarityCodeNavigation)
-               .Include(c => c.CardColors)
-                   .ThenInclude(cc => cc.Color)
-               .Include(c => c.CardTypes)
-                   .ThenInclude(ct => ct.Type)
-               .Where(c => c.ArtistId == artistId)
-               .ToListAsync();
+            IQueryable<Card> query;
+
+            if (dbContext == null)
+            {
+                query = _dbContext.Cards;
+            }
+            else
+            {
+                query = dbContext.Cards;
+            }
+
+            query = query
+                .Include(c => c.SetCodeNavigation)
+                .Include(c => c.RarityCodeNavigation)
+                .Include(c => c.CardColors).ThenInclude(cc => cc.Color)
+                .Include(c => c.CardTypes).ThenInclude(ct => ct.Type)
+                .Where(c => c.ArtistId == artistId);
+
+            return await query.ToListAsync();
         }
     }
 }

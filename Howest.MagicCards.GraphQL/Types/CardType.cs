@@ -1,6 +1,7 @@
 ﻿using Howest.MagicCards.DAL.Models;
 using Howest.MagicCards.DAL.Repositories;
 using GraphQL.Types;
+using Howest.MagicCards.DAL;
 
 namespace Howest.MagicCards.GraphQL.Types
 {
@@ -52,9 +53,15 @@ namespace Howest.MagicCards.GraphQL.Types
 
             Field(c => c.Variations, type: typeof(StringGraphType), nullable: true);
 
-            Field<ArtistType>(
+            FieldAsync<ArtistType>(
                                 "Artist",
-                                resolve: context => artistRepository.GetArtistById(context.Source.ArtistId ?? default)
+                                resolve: async context =>
+                                {
+                                    using (MtgDbContext dbContext = new MtgDbContext())
+                                    {
+                                        return await artistRepository.GetArtistById(context.Source.ArtistId ?? default, dbContext);
+                                    }
+                                }
             );
         }
     }

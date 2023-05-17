@@ -11,14 +11,15 @@ namespace Howest.MagicCards.DAL.Repositories
             _dbContext = dbContext;
         }
 
-        public async Task<Artist> GetArtistById(long id)
-        {
-            return await _dbContext.Artists.FindAsync(id);
-        }
-
         public async Task<IEnumerable<Artist>> GetArtists()
         {
             return await _dbContext.Artists.ToListAsync();
+        }
+
+        public async Task<Artist> GetArtistById(long id, MtgDbContext dbContext = null)
+        {
+            MtgDbContext context = dbContext ?? _dbContext;
+            return await context.Artists.FindAsync(id);
         }
     }
 }

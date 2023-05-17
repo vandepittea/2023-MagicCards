@@ -66,7 +66,7 @@ namespace Howest.MagicCards.GraphQL
                 ),
                 resolve: context =>
                 {
-                    var id = context.GetArgument<long>("id");
+                    long id = context.GetArgument<long>("id");
                     return artistRepository.GetArtistById(id);
                 }
             );

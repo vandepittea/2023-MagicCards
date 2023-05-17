@@ -1,0 +1,89 @@
+﻿query {
+  cards {
+    id
+    name
+    manaCost
+    type
+    setCode
+    rarityCode
+    image
+    cardColors
+    cardTypes
+    text
+    flavor
+    number
+    power
+    toughness
+    layout
+    multiverseId
+    originalImageUrl
+    originalText
+    originalType
+    mtgId
+    variations
+    artist {
+      id
+      fullName
+    }
+  }
+}
+
+query {
+  cards(power: "2", toughness: "3") {
+    id
+    name
+    power
+    toughness
+  }
+}
+
+
+query {
+  cards(power: "2") {
+    id
+    name
+    power
+    toughness
+  }
+}
+
+query {
+  cards(toughness: "3") {
+    id
+    name
+    power
+    toughness
+  }
+}
+
+
+
+query {
+  artists {
+    id
+    fullName
+    cards {
+      id
+      name
+    }
+  }
+}
+
+
+query {
+  artists(limit: 10) {
+    id
+    fullName
+  }
+}
+
+query {
+  artist(id: 1) {
+    id
+    fullName
+    cards {
+      id
+      name
+    }
+  }
+}

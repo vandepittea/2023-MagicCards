@@ -9,6 +9,6 @@ namespace Howest.MagicCards.DAL.Repositories
     public interface IArtistRepository
     {
         Task<IEnumerable<Artist>> GetArtists();
-        Task<Artist> GetArtistById(long id);
+        Task<Artist> GetArtistById(long id, MtgDbContext dbContext = null);
     }
 }

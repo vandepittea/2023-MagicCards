@@ -17,7 +17,8 @@ builder.Services.AddScoped<RootSchema>();
 builder.Services.AddGraphQL()
                 .AddGraphTypes(typeof(RootSchema), ServiceLifetime.Scoped)
                 .AddDataLoader()
-                .AddSystemTextJson();
+                .AddSystemTextJson()
+                .AddErrorInfoProvider(opt => opt.ExposeExceptionStackTrace = true);
 
 var app = builder.Build();
 
