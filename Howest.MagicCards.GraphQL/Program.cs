@@ -10,10 +10,17 @@ ConfigurationManager config = builder.Configuration;
 
 builder.Services.AddDbContext<MtgDbContext>
     (options => options.UseSqlServer(config.GetConnectionString("CardDb")));
-builder.Services.AddScoped<ICardColorRepository, CardRepository>();
+builder.Services.AddScoped<ICardRepository, CardRepository>();
 builder.Services.AddScoped<IArtistRepository, ArtistRepository>();
 
 builder.Services.AddScoped<RootSchema>();
+
+builder.Services.AddStackExchangeRedisCache(options =>
+{
+    options.Configuration = config.GetConnectionString("Redis");
+    options.InstanceName = "RedisGraphql_";
+});
+
 builder.Services.AddGraphQL()
                 .AddGraphTypes(typeof(RootSchema), ServiceLifetime.Scoped)
                 .AddDataLoader()

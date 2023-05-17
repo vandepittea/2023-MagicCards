@@ -7,8 +7,6 @@
     setCode
     rarityCode
     image
-    cardColors
-    cardTypes
     text
     flavor
     number

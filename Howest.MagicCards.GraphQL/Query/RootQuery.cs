@@ -6,12 +6,14 @@ using GraphQL.Types;
 using GraphQL;
 using Howest.MagicCards.DAL.Models;
 using CardType = Howest.MagicCards.GraphQL.Types.CardType;
+using Microsoft.Extensions.Caching.Distributed;
+using System.Text.Json;
 
 namespace Howest.MagicCards.GraphQL
 {
     public class RootQuery : ObjectGraphType
     {
-        public RootQuery(ICardColorRepository cardRepository, IArtistRepository artistRepository)
+        public RootQuery(ICardRepository cardRepository, IArtistRepository artistRepository, IDistributedCache cache, IConfiguration config)
         {
             Name = "Query";
 
@@ -20,12 +22,25 @@ namespace Howest.MagicCards.GraphQL
                 description: "Get all cards",
                 arguments: new QueryArguments(
                     new QueryArgument<StringGraphType> { Name = "power", Description = "Filter cards by power" },
-                    new QueryArgument<StringGraphType> { Name = "toughness", Description = "Filter cards by toughness" }
+                    new QueryArgument<StringGraphType> { Name = "toughness", Description = "Filter cards by toughness" },
+                    new QueryArgument<IntGraphType> { Name = "pageNumber", Description = "Page number" },
+                    new QueryArgument<IntGraphType> { Name = "pageSize", Description = "Page size" }
                 ),
                 resolve: async context =>
                 {
                     string power = context.GetArgument<string>("power");
                     string toughness = context.GetArgument<string>("toughness");
+                    int pageNumber = context.GetArgument<int?>("pageNumber") ?? 1;
+                    int pageSize = context.GetArgument<int?>("pageSize") ?? int.Parse(config.GetSection("appSettings")["maxPageSize"]);
+
+                    string cacheKey = $"cards_{power}_{toughness}_{pageNumber}_{pageSize}";
+                    var cachedData = await cache.GetStringAsync(cacheKey);
+
+                    if (cachedData != null)
+                    {
+                        List<Card> cachedCards = JsonSerializer.Deserialize<List<Card>>(cachedData);
+                        return cachedCards;
+                    }
 
                     IEnumerable<Card> cards = await cardRepository.GetCards();
 
@@ -35,7 +50,16 @@ namespace Howest.MagicCards.GraphQL
                     if (!string.IsNullOrEmpty(toughness))
                         cards = cards.Where(c => c.Toughness == toughness);
 
-                    return cards.ToList();
+                    List<Card> pagedCards = cards.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
+
+                    var cacheOptions = new DistributedCacheEntryOptions
+                    {
+                        AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(5)
+                    };
+                    var serializedData = JsonSerializer.Serialize(pagedCards);
+                    await cache.SetStringAsync(cacheKey, serializedData, cacheOptions);
+
+                    return pagedCards;
                 }
             );
 
