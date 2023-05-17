@@ -2,7 +2,7 @@
 {
     public static class PaginationExtensions
     {
-        public static IQueryable<T> ToPagedList<T>(this IQueryable<T> source, int pageNumber, int pageSize)
+        public static IQueryable<T> ToPagedList<T>(this IQueryable<T> source, int pageNumber, int pageSize, int maxPageSize)
         {
             if (source == null)
             {
@@ -17,6 +17,10 @@
             if (pageSize < 1)
             {
                 throw new ArgumentOutOfRangeException(nameof(pageSize), "Page size cannot be less than 1.");
+            }
+            if (pageSize > maxPageSize)
+            {
+                throw new ArgumentOutOfRangeException(nameof(pageSize), "Page size cannot be more than " + maxPageSize + ".");
             }
 
             return source.Skip((pageNumber - 1) * pageSize).Take(pageSize);

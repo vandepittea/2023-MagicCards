@@ -30,8 +30,6 @@ namespace Howest.MagicCards.WebAPI.Controllers.V1
         {
             try
             {
-                filter.MaxPageSize = int.Parse(config.GetSection("appSettings")["maxPageSize"]);
-
                 string cacheKey = $"cards_{JsonSerializer.Serialize(filter)}_{filter.SortBy}";
                 if (_cache.TryGetValue(cacheKey, out PagedResponse<IEnumerable<CardDto>> cachedResponse))
                 {
@@ -58,7 +56,7 @@ namespace Howest.MagicCards.WebAPI.Controllers.V1
                     .FilterByCardText(filter.CardText);
 
                 IEnumerable<CardDto> pagedCards = filteredCards
-                    .ToPagedList<Card>(filter.PageNumber, filter.PageSize)
+                    .ToPagedList<Card>(filter.PageNumber, filter.PageSize, int.Parse(config.GetSection("appSettings")["maxPageSize"]))
                     .ProjectTo<CardDto>(_mapper.ConfigurationProvider)
                     .ToList();
 
@@ -116,8 +114,6 @@ namespace Howest.MagicCards.WebAPI.Controllers.V2
         {
             try
             {
-                filter.MaxPageSize = int.Parse(config.GetSection("appSettings")["maxPageSize"]);
-
                 string cacheKey = $"cards_{JsonSerializer.Serialize(filter)}_{filter.SortBy}";
                 if (_cache.TryGetValue(cacheKey, out PagedResponse<IEnumerable<CardDto>> cachedResponse))
                 {
@@ -145,7 +141,7 @@ namespace Howest.MagicCards.WebAPI.Controllers.V2
                     .Sort(filter.SortBy);
 
                 IEnumerable<CardDto> pagedCards = filteredCards
-                    .ToPagedList<Card>(filter.PageNumber, filter.PageSize)
+                    .ToPagedList<Card>(filter.PageNumber, filter.PageSize, int.Parse(config.GetSection("appSettings")["maxPageSize"]))
                     .ProjectTo<CardDto>(_mapper.ConfigurationProvider)
                     .ToList();
 
