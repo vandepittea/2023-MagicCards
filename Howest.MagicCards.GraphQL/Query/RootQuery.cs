@@ -8,12 +8,13 @@ using Howest.MagicCards.DAL.Models;
 using CardType = Howest.MagicCards.GraphQL.Types.CardType;
 using Microsoft.Extensions.Caching.Distributed;
 using System.Text.Json;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace Howest.MagicCards.GraphQL
 {
     public class RootQuery : ObjectGraphType
     {
-        public RootQuery(ICardRepository cardRepository, IArtistRepository artistRepository, IDistributedCache cache, IConfiguration config)
+        public RootQuery(ICardRepository cardRepository, IArtistRepository artistRepository, IMemoryCache cache, IConfiguration config)
         {
             Name = "Query";
 
@@ -33,12 +34,9 @@ namespace Howest.MagicCards.GraphQL
                     int pageNumber = context.GetArgument<int?>("pageNumber") ?? 1;
                     int pageSize = context.GetArgument<int?>("pageSize") ?? int.Parse(config.GetSection("appSettings")["maxPageSize"]);
 
-                    string cacheKey = $"cards_{power}_{toughness}_{pageNumber}_{pageSize}";
-                    var cachedData = await cache.GetStringAsync(cacheKey);
-
-                    if (cachedData != null)
+                    string cacheKey = $"cards_{JsonSerializer.Serialize(power)}_{JsonSerializer.Serialize(toughness)}";
+                    if (cache.TryGetValue(cacheKey, out List<Card> cachedCards))
                     {
-                        List<Card> cachedCards = JsonSerializer.Deserialize<List<Card>>(cachedData);
                         return cachedCards;
                     }
 
@@ -52,16 +50,17 @@ namespace Howest.MagicCards.GraphQL
 
                     List<Card> pagedCards = cards.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
 
-                    var cacheOptions = new DistributedCacheEntryOptions
+                    MemoryCacheEntryOptions cacheOptions = new MemoryCacheEntryOptions()
                     {
                         AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(5)
                     };
-                    var serializedData = JsonSerializer.Serialize(pagedCards);
-                    await cache.SetStringAsync(cacheKey, serializedData, cacheOptions);
+
+                    cache.Set(cacheKey, pagedCards, cacheOptions);
 
                     return pagedCards;
                 }
             );
+
 
             FieldAsync<ListGraphType<ArtistType>>(
                 name: "artists",

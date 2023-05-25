@@ -15,11 +15,7 @@ builder.Services.AddScoped<IArtistRepository, ArtistRepository>();
 
 builder.Services.AddScoped<RootSchema>();
 
-builder.Services.AddStackExchangeRedisCache(options =>
-{
-    options.Configuration = config.GetConnectionString("Redis");
-    options.InstanceName = "RedisGraphql_";
-});
+builder.Services.AddMemoryCache();
 
 builder.Services.AddGraphQL()
                 .AddGraphTypes(typeof(RootSchema), ServiceLifetime.Scoped)

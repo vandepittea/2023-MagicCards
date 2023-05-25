@@ -21,6 +21,28 @@
 }
 
 query {
+  cards(pageNumber: "3", pageSize: "5") {
+    id
+    name
+    convertedManaCost
+    type
+    setCode
+    rarityCode
+    image
+    text
+    flavor
+    number
+    power
+    toughness
+    layout
+    artist {
+      id
+      fullName
+    }
+  }
+}
+
+query {
   cards(power: "2", toughness: "3") {
     id
     name
