@@ -78,20 +78,46 @@ namespace Howest.MagicCards.GraphQL
                 name: "artists",
                 description: "Get all artists",
                 arguments: new QueryArguments(
-                    new QueryArgument<IntGraphType> { Name = "limit", Description = "Number of artists to retrieve" }
+                    new QueryArgument<IntGraphType> { Name = "limit", Description = "Number of artists to retrieve" },
+                         new QueryArgument<IntGraphType> { Name = "pageNumber", Description = "Page number" },
+                         new QueryArgument<IntGraphType> { Name = "pageSize", Description = "Page size" },
+                         new QueryArgument<StringGraphType> { Name = "sort", Description = "Sort artists by a specific field" }
                 ),
                 resolve: async context =>
                 {
                     int? limit = context.GetArgument<int?>("limit");
+                    string sort = context.GetArgument<string>("sort");
 
-                    IEnumerable<Artist> artists = await artistRepository.GetArtists();
+                    ArtistFilter filter = new ArtistFilter
+                    {
+                        SortBy = sort,
+                        Limit = limit.HasValue ? (int)limit : int.MaxValue
+                    };
 
-                    if (limit.HasValue)
-                        artists = artists.Take(limit.Value);
+                    string cacheKey = $"artists_{JsonSerializer.Serialize(filter)}";
+                    if (cache.TryGetValue(cacheKey, out List<Artist> cachedArtists))
+                    {
+                        return cachedArtists;
+                    }
 
-                    return artists.ToList();
+                    IQueryable<Artist> query = await artistRepository.GetArtists();
+
+                    query = query.Sort(filter.SortBy)
+                                 .Limit(filter.Limit);
+
+                    List<Artist> artists = query.ToList();
+
+                    MemoryCacheEntryOptions cacheOptions = new MemoryCacheEntryOptions()
+                    {
+                        AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(5)
+                    };
+
+                    cache.Set(cacheKey, artists, cacheOptions);
+
+                    return artists;
                 }
             );
+
 
             Field<ArtistType>(
                 name: "artist",
