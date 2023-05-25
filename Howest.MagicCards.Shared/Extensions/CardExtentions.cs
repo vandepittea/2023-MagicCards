@@ -64,6 +64,26 @@ namespace Howest.MagicCards.Shared.Extensions
             return cards;
         }
 
+        public static IQueryable<Card> FilterByPower(this IQueryable<Card> cards, string power)
+        {
+            if (!string.IsNullOrEmpty(power))
+            {
+                cards = cards.Where(c => c.Power == power);
+            }
+
+            return cards;
+        }
+
+        public static IQueryable<Card> FilterByToughness(this IQueryable<Card> cards, string toughness)
+        {
+            if (!string.IsNullOrEmpty(toughness))
+            {
+                cards = cards.Where(c => c.Toughness == toughness);
+            }
+
+            return cards;
+        }
+
         public static IQueryable<Card> Sort(this IQueryable<Card> cards, string sortOrder)
         {
             bool descending = false;

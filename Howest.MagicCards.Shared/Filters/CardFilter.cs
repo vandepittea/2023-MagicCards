@@ -2,6 +2,8 @@
 {
     public class CardFilter : PaginationFilter
     {
+        public string Power { get; set; }
+        public string Toughness { get; set; }
         public string SetName { get; set; }
         public string ArtistName { get; set; }
         public string RarityName { get; set; }

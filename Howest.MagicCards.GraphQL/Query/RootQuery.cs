@@ -9,6 +9,8 @@ using CardType = Howest.MagicCards.GraphQL.Types.CardType;
 using Microsoft.Extensions.Caching.Distributed;
 using System.Text.Json;
 using Microsoft.Extensions.Caching.Memory;
+using Howest.MagicCards.Shared.Filters;
+using Howest.MagicCards.Shared.Extensions;
 
 namespace Howest.MagicCards.GraphQL
 {
@@ -25,7 +27,8 @@ namespace Howest.MagicCards.GraphQL
                     new QueryArgument<StringGraphType> { Name = "power", Description = "Filter cards by power" },
                     new QueryArgument<StringGraphType> { Name = "toughness", Description = "Filter cards by toughness" },
                     new QueryArgument<IntGraphType> { Name = "pageNumber", Description = "Page number" },
-                    new QueryArgument<IntGraphType> { Name = "pageSize", Description = "Page size" }
+                    new QueryArgument<IntGraphType> { Name = "pageSize", Description = "Page size" },
+                    new QueryArgument<StringGraphType> { Name = "sort", Description = "Sort cards by a specific field" }
                 ),
                 resolve: async context =>
                 {
@@ -33,22 +36,31 @@ namespace Howest.MagicCards.GraphQL
                     string toughness = context.GetArgument<string>("toughness");
                     int pageNumber = context.GetArgument<int?>("pageNumber") ?? 1;
                     int pageSize = context.GetArgument<int?>("pageSize") ?? int.Parse(config.GetSection("appSettings")["maxPageSize"]);
+                    string sort = context.GetArgument<string>("sort");
 
-                    string cacheKey = $"cards_{JsonSerializer.Serialize(power)}_{JsonSerializer.Serialize(toughness)}";
+                    CardFilter filter = new CardFilter
+                    {
+                        Power = power,
+                        Toughness = toughness,
+                        PageNumber = pageNumber,
+                        PageSize = pageSize,
+                        SortBy = sort
+                    };
+
+                    string cacheKey = $"cards_{JsonSerializer.Serialize(filter)}";
                     if (cache.TryGetValue(cacheKey, out List<Card> cachedCards))
                     {
                         return cachedCards;
                     }
 
-                    IEnumerable<Card> cards = await cardRepository.GetCards();
+                    IQueryable<Card> query = await cardRepository.GetCards();
 
-                    if (!string.IsNullOrEmpty(power))
-                        cards = cards.Where(c => c.Power == power);
+                    query = query.FilterByPower(power)
+                                 .FilterByToughness(toughness)
+                                 .Sort(filter.SortBy);
 
-                    if (!string.IsNullOrEmpty(toughness))
-                        cards = cards.Where(c => c.Toughness == toughness);
-
-                    List<Card> pagedCards = cards.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
+                    List<Card> pagedCards = query.ToPagedList(filter.PageNumber, filter.PageSize, int.Parse(config.GetSection("appSettings")["maxPageSize"]))
+                                                .ToList();
 
                     MemoryCacheEntryOptions cacheOptions = new MemoryCacheEntryOptions()
                     {
