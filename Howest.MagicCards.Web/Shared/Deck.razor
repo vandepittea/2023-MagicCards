@@ -55,6 +55,8 @@
 
     public Deck()
     {
+        DeckCardsExtended = new List<CardDetailDto>();
+        DeckCards = new List<CardInDeckDto>();
         jsonOptions = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
     }
 
@@ -127,11 +129,11 @@
                 foreach (CardInDeckDto deckCard in DeckCards)
                 {
                     HttpResponseMessage response2 = await _httpCardClient.GetAsync($"Cards/{deckCard.Id}");
-                    string apiResponse2 = await response.Content.ReadAsStringAsync();
+                    string apiResponse2 = await response2.Content.ReadAsStringAsync();
 
                     if (response.IsSuccessStatusCode)
                     {
-                        CardDetailDto card = JsonSerializer.Deserialize<CardDetailDto>(apiResponse, jsonOptions);
+                        CardDetailDto card = JsonSerializer.Deserialize<CardDetailDto>(apiResponse2, jsonOptions);
 
                         DeckCardsExtended.Add(card);
                     }
@@ -157,12 +159,14 @@
 
     private string GetCardNameById(string cardId)
     {
-        if (long.TryParse(cardId, out long id))
+        if (!long.TryParse(cardId, out long id))
         {
-            CardDetailDto card = DeckCardsExtended.FirstOrDefault(c => c.Id == id);
-            return card?.Name ?? "Card not found";
+            return "Invalid card ID";
         }
 
-        return "Invalid card ID";
+        CardDetailDto card = DeckCardsExtended.SingleOrDefault(c => c.Id == id);
+        Console.WriteLine(card);
+
+        return card?.Name ?? "Card not found";
     }
 }
