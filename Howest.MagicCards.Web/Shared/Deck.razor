@@ -1,0 +1,168 @@
+﻿@inject IHttpClientFactory httpClientFactory
+@using Howest.MagicCards.Shared.DTO
+@using System.Net.Http
+@using System.Net.Http.Json
+@using System.Text.Json;
+@using System.Text;
+
+<div class="card">
+    <div class="card-body">
+        <h5>Deck</h5>
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Image</th>
+                    <th>Count</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (DeckCards != null)
+                {
+                    @foreach (CardInDeckDto deckCard in DeckCards)
+                    {
+                        <tr>
+                            <td>@GetCardNameById(deckCard.Id)</td>
+                            <td>
+                                <span class="card-count" @onclick="() => IncrementCount(deckCard)">@deckCard.Count</span>
+                            </td>
+                            <td><button class="btn btn-danger" @onclick="() => RemoveFromDeck(deckCard.Id)">Remove</button></td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="3">Deck is empty.</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <button class="btn btn-danger" @onclick="ClearDeck">Clear Deck</button>
+    </div>
+</div>
+
+@code {
+    public List<CardDetailDto> DeckCardsExtended { get; set; }
+    public List<CardInDeckDto> DeckCards { get; set; }
+
+    private HttpClient _httpDeckClient;
+    private HttpClient _httpCardClient;
+    private string error;
+    private readonly JsonSerializerOptions jsonOptions;
+
+    public Deck()
+    {
+        jsonOptions = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        _httpCardClient = httpClientFactory.CreateClient("CardAPI");
+        _httpDeckClient = httpClientFactory.CreateClient("DeckAPI");
+
+        await LoadCardDetails();
+    }
+
+    private async Task RemoveFromDeck(string cardId)
+    {
+        try
+        {
+            HttpResponseMessage response = await _httpDeckClient.DeleteAsync($"api/deck/{cardId}");
+            response.EnsureSuccessStatusCode();
+            string result = await response.Content.ReadAsStringAsync();
+        }
+        catch (Exception ex)
+        {
+            error = $"Error removing card from deck: {ex.Message}";
+            Console.WriteLine(error);
+        }
+    }
+
+    private async Task IncrementCount(CardInDeckDto cardInDeckDto)
+    {
+        int count = int.Parse(cardInDeckDto.Count);
+        count++;
+        cardInDeckDto.Count = count.ToString();
+
+        HttpContent content = new StringContent(JsonSerializer.Serialize(cardInDeckDto), Encoding.UTF8, "application/json");
+
+        HttpResponseMessage response = await _httpDeckClient.PutAsync("deck", content);
+
+        if (response.StatusCode != System.Net.HttpStatusCode.Created)
+        {
+            error = "Updating card failed.";
+            Console.WriteLine(error);
+        }
+    }
+
+    private async Task ClearDeck()
+    {
+        try
+        {
+            HttpResponseMessage response = await _httpDeckClient.DeleteAsync("deck/clear");
+            response.EnsureSuccessStatusCode();
+            string result = await response.Content.ReadAsStringAsync();
+        }
+        catch (Exception ex)
+        {
+            error = $"Error clearing deck: {ex.Message}";
+            Console.WriteLine(error);
+        }
+    }
+
+    private async Task LoadCardDetails()
+    {
+        try
+        {
+            HttpResponseMessage response = await _httpDeckClient.GetAsync("deck");
+            string apiResponse = await response.Content.ReadAsStringAsync();
+
+            if (response.IsSuccessStatusCode)
+            {
+                DeckCards = JsonSerializer.Deserialize<List<CardInDeckDto>>(apiResponse, jsonOptions);
+
+                foreach (CardInDeckDto deckCard in DeckCards)
+                {
+                    HttpResponseMessage response2 = await _httpCardClient.GetAsync($"Cards/{deckCard.Id}");
+                    string apiResponse2 = await response.Content.ReadAsStringAsync();
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        CardDetailDto card = JsonSerializer.Deserialize<CardDetailDto>(apiResponse, jsonOptions);
+
+                        DeckCardsExtended.Add(card);
+                    }
+                    else
+                    {
+                        error = $"Error: {response.ReasonPhrase}";
+                        Console.WriteLine(error);
+                    }
+                }
+            }
+            else
+            {
+                error = $"Error: {response.ReasonPhrase}";
+                Console.WriteLine(error);
+            }
+        }
+        catch (Exception ex)
+        {
+            error = ex.Message;
+            Console.WriteLine(error);
+        }
+    }
+
+    private string GetCardNameById(string cardId)
+    {
+        if (long.TryParse(cardId, out long id))
+        {
+            CardDetailDto card = DeckCardsExtended.FirstOrDefault(c => c.Id == id);
+            return card?.Name ?? "Card not found";
+        }
+
+        return "Invalid card ID";
+    }
+}

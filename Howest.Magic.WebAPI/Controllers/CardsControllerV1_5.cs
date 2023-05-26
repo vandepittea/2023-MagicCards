@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -52,9 +53,7 @@ namespace Howest.MagicCards.WebAPI.Controllers.V1_5
 
                 IQueryable<Card> filteredCards = FilterCards(allCards, filter);
 
-                IQueryable<Card> sortedCards = SortCards(filteredCards, filter.SortBy);
-
-                IEnumerable<CardDto> pagedCards = GetPagedCards(sortedCards, filter, config);
+                IEnumerable<CardDto> pagedCards = GetPagedCards(filteredCards, filter, config);
 
                 int totalCount = filteredCards.Count();
                 int totalPages = (int)Math.Ceiling(totalCount / (double)filter.PageSize);
@@ -118,12 +117,8 @@ namespace Howest.MagicCards.WebAPI.Controllers.V1_5
                 .FilterByRarity(filter.RarityName)
                 .FilterByCardType(filter.TypeName)
                 .FilterByCardName(filter.CardName)
-                .FilterByCardText(filter.CardText);
-        }
-
-        private IQueryable<Card> SortCards(IQueryable<Card> cards, string sortBy)
-        {
-            return cards.Sort(sortBy);
+                .FilterByCardText(filter.CardText)
+                .Sort(filter.SortBy);
         }
 
         private IEnumerable<CardDto> GetPagedCards(IQueryable<Card> cards, CardWebFilterV1_5 filter, IConfiguration config)
