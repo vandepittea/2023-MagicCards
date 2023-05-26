@@ -1,0 +1,40 @@
+﻿@using System.Net.Http.Json
+@using Howest.MagicCards.DAL.Models;
+@using Howest.MagicCards.Shared.DTO;
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Type</th>
+            <th>Set</th>
+            <th>Artist</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var card in Cards)
+        {
+            <tr>
+                <td>@card.Name</td>
+                <td>@card.Type</td>
+                <td>@card.SetName</td>
+                <td>@card.ArtistName</td>
+                <td><img src="@card.Image" alt="@card.Name" @onclick="() => AddToDeck(card)" /></td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@code {
+    [Parameter]
+    public List<CardDto> Cards { get; set; }
+
+    [Parameter]
+    public EventCallback<CardDto> OnCardSelected { get; set; }
+
+    private async Task AddToDeck(CardDto card)
+    {
+        await OnCardSelected.InvokeAsync(card);
+    }
+}
