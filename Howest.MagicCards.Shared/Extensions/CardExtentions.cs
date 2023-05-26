@@ -8,7 +8,7 @@ namespace Howest.MagicCards.Shared.Extensions
         {
             if (!string.IsNullOrEmpty(setName))
             {
-                cards = cards.Where(c => c.SetCodeNavigation.Name.Contains(setName));
+                cards = cards.Where(c => c.SetCodeNavigation.Name.ToLower().Contains(setName.ToLower()));
             }
 
             return cards;
@@ -28,21 +28,26 @@ namespace Howest.MagicCards.Shared.Extensions
         {
             if (!string.IsNullOrEmpty(rarityName))
             {
-                cards = cards.Where(c => c.RarityCodeNavigation.Name.Contains(rarityName));
+                cards = cards.Where(c => c.RarityCodeNavigation.Name.ToLower().Contains(rarityName.ToLower()));
             }
 
             return cards;
         }
 
-        public static IQueryable<Card> FilterByCardType(this IQueryable<Card> cards, string typeName)
+        public static IQueryable<Card> FilterByCardType(this IQueryable<Card> cards, string typeNames)
         {
-            if (!string.IsNullOrEmpty(typeName))
+            if (!string.IsNullOrEmpty(typeNames))
             {
-                cards = cards.Where(c => c.CardTypes.Any(ct => ct.Type.Name.ToLower().Contains(typeName.ToLower())));
+                var typeList = typeNames.Split(',', StringSplitOptions.RemoveEmptyEntries)
+                                       .Select(t => t.Trim().ToLower())
+                                       .ToList();
+
+                cards = cards.Where(c => c.CardTypes.Any(ct => typeList.Contains(ct.Type.Name.ToLower())));
             }
 
             return cards;
         }
+
 
         public static IQueryable<Card> FilterByCardName(this IQueryable<Card> cards, string cardName)
         {
