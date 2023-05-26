@@ -1,9 +1,79 @@
 ﻿@page "/"
+@inject HttpClient HttpClient
 
-<PageTitle>Index</PageTitle>
+<MainLayout>
+    <div class="row">
+        <div class="col-md-4">
+            <CardFilterForm OnFilterChanged="FilterChanged" />
+            <CardList Cards="@filteredCards" OnCardSelected="AddToDeck" />
+        </div>
+        <div class="col-md-8">
+            <Deck DeckCards="@deckCards" OnCardRemoved="RemoveFromDeck" OnCardCountChanged="UpdateCardCount" OnClearDeck="ClearDeck" />
+        </div>
+    </div>
+</MainLayout>
 
-<h1>Hello, world!</h1>
+@code {
+    private List<Card> cards = new List<Card>();
+    private List<Card> filteredCards = new List<Card>();
+    private List<DeckCard> deckCards = new List<DeckCard>();
 
-Welcome to your new app.
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadCards();
+    }
 
-<SurveyPrompt Title="How is Blazor working for you?" />
+    private async Task LoadCards()
+    {
+        cards = await HttpClient.GetFromJsonAsync<List<Card>>("https://localhost:7103/api/v1.5/Cards");
+        FilterCards();
+    }
+
+    private void FilterChanged(FilterOptions options)
+    {
+        // Apply filtering logic here
+        FilterCards();
+    }
+
+    private void FilterCards()
+    {
+        // Apply filtering logic based on FilterOptions
+        filteredCards = cards; // Placeholder logic, modify as needed
+    }
+
+    private void AddToDeck(Card card)
+    {
+        var deckCard = deckCards.FirstOrDefault(dc => dc.Card.Id == card.Id);
+        if (deckCard != null)
+        {
+            deckCard.Count++;
+        }
+        else
+        {
+            deckCard = new DeckCard { Card = card, Count = 1 };
+            deckCards.Add(deckCard);
+        }
+    }
+
+    private void RemoveFromDeck(DeckCard deckCard)
+    {
+        if (deckCard.Count > 1)
+        {
+            deckCard.Count--;
+        }
+        else
+        {
+            deckCards.Remove(deckCard);
+        }
+    }
+
+    private void UpdateCardCount(DeckCard deckCard, int count)
+    {
+        deckCard.Count = count;
+    }
+
+    private void ClearDeck()
+    {
+        deckCards.Clear();
+    }
+}
