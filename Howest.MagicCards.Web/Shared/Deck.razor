@@ -1,0 +1,63 @@
+﻿@using System.Net.Http.Json
+@using Howest.MagicCards.Shared.DTO;
+
+<div class="card">
+    <div class="card-body">
+        <h5>Deck</h5>
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Image</th>
+                    <th>Count</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var deckCard in DeckCards)
+                {
+                        <tr>
+                            <td>@deckCard.Card.Name</td>
+                            <td><img src="@deckCard.Card.Image" alt="@deckCard.Card.Name" /></td>
+                            <td>
+                                <span class="card-count" @onclick="() => IncrementCount(deckCard)">@deckCard.Count</span>
+                            </td>
+                            <td><button class="btn btn-danger" @onclick="() => RemoveFromDeck(deckCard)">Remove</button></td>
+                        </tr>
+                }
+            </tbody>
+        </table>
+
+        <button class="btn btn-danger" @onclick="ClearDeck">Clear Deck</button>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public List<CardInDeckDto> DeckCards { get; set; }
+
+    [Parameter]
+    public EventCallback<CardInDeckDto> OnCardRemoved { get; set; }
+
+    [Parameter]
+    public EventCallback<(CardInDeckDto, int)> OnCardCountChanged { get; set; }
+
+    [Parameter]
+    public EventCallback OnClearDeck { get; set; }
+
+    private async Task RemoveFromDeck(CardInDeckDto deckCard)
+    {
+        await OnCardRemoved.InvokeAsync(deckCard);
+    }
+
+    private async Task IncrementCount(CardInDeckDto deckCard)
+    {
+        
+        await OnCardCountChanged.InvokeAsync();
+    }
+
+    private async Task ClearDeck()
+    {
+        await OnClearDeck.InvokeAsync();
+    }
+}
