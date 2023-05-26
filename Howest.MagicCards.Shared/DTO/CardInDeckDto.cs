@@ -2,7 +2,7 @@
 {
     public class CardInDeckDto
     {
-        public int Id { get; set; }
-        public int Count { get; set; }
+        public string Id { get; set; }
+        public string Count { get; set; }
     }
 }
