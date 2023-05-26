@@ -72,7 +72,7 @@
     {
         try
         {
-            HttpResponseMessage response = await _httpDeckClient.DeleteAsync($"api/deck/{cardId}");
+            HttpResponseMessage response = await _httpDeckClient.DeleteAsync($"deck/{cardId}");
             response.EnsureSuccessStatusCode();
             string result = await response.Content.ReadAsStringAsync();
         }
