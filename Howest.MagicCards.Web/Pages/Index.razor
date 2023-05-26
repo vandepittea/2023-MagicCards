@@ -1,4 +1,6 @@
 ﻿@page "/"
+@using Howest.MagicCards.Shared.DTO;
+@using Howest.MagicCards.Shared.Filters;
 @inject HttpClient HttpClient
 
 <MainLayout>
@@ -14,9 +16,9 @@
 </MainLayout>
 
 @code {
-    private List<Card> cards = new List<Card>();
-    private List<Card> filteredCards = new List<Card>();
-    private List<DeckCard> deckCards = new List<DeckCard>();
+    private List<CardDto> cards = new List<CardDto>();
+    private List<CardDto> filteredCards = new List<CardDto>();
+    private List<CardInDeckDto> deckCards = new List<CardInDeckDto>();
 
     protected override async Task OnInitializedAsync()
     {
@@ -29,7 +31,7 @@
         FilterCards();
     }
 
-    private void FilterChanged(FilterOptions options)
+    private void FilterChanged(CardWebFilterV1_5 options)
     {
         // Apply filtering logic here
         FilterCards();
@@ -41,25 +43,25 @@
         filteredCards = cards; // Placeholder logic, modify as needed
     }
 
-    private void AddToDeck(Card card)
+    private void AddToDeck(CardDto card)
     {
-        var deckCard = deckCards.FirstOrDefault(dc => dc.Card.Id == card.Id);
+        var deckCard = deckCards.FirstOrDefault(dc => dc > 1);
         if (deckCard != null)
         {
-            deckCard.Count++;
+            
         }
         else
         {
-            deckCard = new DeckCard { Card = card, Count = 1 };
+            deckCard = new CardInDeckDto { Id = "3", Count = 1 };
             deckCards.Add(deckCard);
         }
     }
 
-    private void RemoveFromDeck(DeckCard deckCard)
+    private void RemoveFromDeck(CardInDeckDto deckCard)
     {
-        if (deckCard.Count > 1)
+        if (1 > 0)
         {
-            deckCard.Count--;
+           
         }
         else
         {
