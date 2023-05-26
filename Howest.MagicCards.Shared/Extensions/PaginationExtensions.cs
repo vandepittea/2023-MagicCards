@@ -1,27 +1,15 @@
-﻿namespace Howest.MagicCards.Shared.Extensions
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace Howest.MagicCards.WebAPI.Extensions
 {
     public static class PaginationExtensions
     {
-        public static IQueryable<T> ToPagedList<T>(this IQueryable<T> source, int pageNumber, int pageSize, int maxPageSize)
+        public static IQueryable<T> ToPagedList<T>(this IQueryable<T> source, int pageNumber, int pageSize, int minPageSize, int maxPageSize)
         {
-            if (source == null)
-            {
-                throw new ArgumentNullException(nameof(source));
-            }
-
-            if (pageNumber < 1)
-            {
-                throw new ArgumentOutOfRangeException(nameof(pageNumber), "Page number cannot be less than 1.");
-            }
-
-            if (pageSize < 1)
-            {
-                throw new ArgumentOutOfRangeException(nameof(pageSize), "Page size cannot be less than 1.");
-            }
-            if (pageSize > maxPageSize)
-            {
-                throw new ArgumentOutOfRangeException(nameof(pageSize), "Page size cannot be more than " + maxPageSize + ".");
-            }
+            pageNumber = Math.Max(1, pageNumber);
+            pageSize = Math.Clamp(pageSize, minPageSize, maxPageSize);
 
             return source.Skip((pageNumber - 1) * pageSize).Take(pageSize);
         }

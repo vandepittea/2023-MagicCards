@@ -1,9 +1,13 @@
-﻿namespace Howest.MagicCards.Shared.Filters
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Howest.MagicCards.Shared.Filters
 {
-    public class CardFilter : PaginationFilter
+    public class CardWebFilterV1_1 : PaginationFilterV1_1
     {
-        public string Power { get; set; }
-        public string Toughness { get; set; }
         public string SetName { get; set; }
         public string ArtistName { get; set; }
         public string RarityName { get; set; }

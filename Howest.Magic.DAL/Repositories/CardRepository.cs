@@ -33,6 +33,7 @@ namespace Howest.MagicCards.DAL.Repositories
                     .ThenInclude(cc => cc.Color)
                 .Include(c => c.CardTypes)
                     .ThenInclude(ct => ct.Type)
+                .Include(c => c.Artist)
                 .FirstOrDefaultAsync(c => c.Id == id);
         }
 

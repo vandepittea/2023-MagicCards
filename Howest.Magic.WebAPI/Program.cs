@@ -14,16 +14,16 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
-    c.SwaggerDoc("v1", new OpenApiInfo
+    c.SwaggerDoc("v1.1", new OpenApiInfo
     {
-        Title = "MTG API version 1",
-        Version = "v1",
+        Title = "MTG API version 1.1",
+        Version = "v1.1",
         Description = "API to manage cards"
     });
-    c.SwaggerDoc("v2", new OpenApiInfo
+    c.SwaggerDoc("v1.5", new OpenApiInfo
     {
-        Title = "MTG API version 2",
-        Version = "v2",
+        Title = "MTG API version 1.5",
+        Version = "v1.5",
         Description = "API to manage cards"
     });
 });
@@ -67,8 +67,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI(c =>
     {
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "MTG API v1");
-        c.SwaggerEndpoint("/swagger/v2/swagger.json", "MTG API v2");
+        c.SwaggerEndpoint("/swagger/v1.1/swagger.json", "MTG API v1.1");
+        c.SwaggerEndpoint("/swagger/v1.5/swagger.json", "MTG API v1.5");
     });
 }
 
