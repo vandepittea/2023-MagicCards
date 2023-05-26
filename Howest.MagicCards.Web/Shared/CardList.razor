@@ -1,32 +1,40 @@
 ﻿@inject NavigationManager NavigationManager
+@inject IHttpClientFactory httpClientFactory
+@inject IMapper mapper;
+@using AutoMapper;
 @using Howest.MagicCards.Shared.DTO
+@using System.Text.Json;
+@using System.Text;
 
 <div class="card-list">
     @foreach (var card in Cards)
     {
-        <div class="card-item" @onclick="() => NavigateToCardDetail((int)card.Id)">
-            <div class="power-container">
-                @if (!string.IsNullOrEmpty(card.Power))
-                {
-                    <div class="power-circle">@card.Power</div>
-                }
-            </div>
-            <div class="card-image">
-                <img src="@card.OriginalImageUrl" alt="@card.Name" />
-            </div>
-            <div class="card-details">
-                <h4>@card.Name</h4>
-                <div class="card-text">
-                    <strong>Text: </strong>@card.Text
+        <div class="card-item">
+            <div @onclick="() => NavigateToCardDetail((int)card.Id)">
+                <div class="power-container">
+                    @if (!string.IsNullOrEmpty(card.Power))
+                    {
+                        <div class="power-circle">@card.Power</div>
+                    }
                 </div>
-                <div class="card-info">
-                    <p><strong>Type: </strong>@card.Type</p>
-                    <p><strong>Set: </strong>@card.SetName</p>
-                    <p><strong>Artist: </strong>@card.ArtistName</p>
-                    <div><strong>Rarity: </strong>@card.RarityName</div>
-                    <div><strong>Card Types: </strong>@string.Join(", ", card.CardTypes)</div>
+                <div class="card-image">
+                    <img src="@card.OriginalImageUrl" alt="@card.Name" />
+                </div>
+                <div class="card-details">
+                    <h4>@card.Name</h4>
+                    <div class="card-text">
+                        <strong>Text: </strong>@card.Text
+                    </div>
+                    <div class="card-info">
+                        <p><strong>Type: </strong>@card.Type</p>
+                        <p><strong>Set: </strong>@card.SetName</p>
+                        <p><strong>Artist: </strong>@card.ArtistName</p>
+                        <div><strong>Rarity: </strong>@card.RarityName</div>
+                        <div><strong>Card Types: </strong>@string.Join(", ", card.CardTypes)</div>
+                    </div>
                 </div>
             </div>
+            <button class="add-to-deck-button" @onclick="() => AddToDeck(card)">Add to Deck</button>
         </div>
     }
 </div>
@@ -46,6 +54,7 @@
         border: 1px solid #ccc;
         border-radius: 5px;
         padding: 1rem;
+        margin-bottom: 1rem;
         width: 18rem;
         background-color: #fff;
         box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.2);
@@ -118,6 +127,29 @@
     .card-info div {
         margin: 0;
     }
+
+    .add-to-deck-button {
+        background-color: #4caf50;
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 14px;
+        margin-top: auto;
+        cursor: pointer;
+        transition-duration: 0.4s;
+        border-radius: 4px;
+        position: absolute;
+        left: 50%;
+        bottom: -1rem;
+        transform: translateX(-50%);
+    }
+
+    .add-to-deck-button:hover {
+        background-color: #45a049;
+    }
 </style>
 
 @code {
@@ -127,9 +159,33 @@
     [Parameter]
     public EventCallback<CardDto> OnCardSelected { get; set; }
 
-    private async Task AddToDeck(CardDto card)
+    private readonly JsonSerializerOptions jsonOptions;
+    private HttpClient _httpDeckClient;
+    string error;
+
+    public CardList()
     {
-        await OnCardSelected.InvokeAsync(card);
+        jsonOptions = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        _httpDeckClient = httpClientFactory.CreateClient("DeckAPI");
+    }
+
+    private async Task AddToDeck(CardDto cardDto)
+    {
+        CardInDeckDto cardInDeckDto = mapper.Map<CardInDeckDto>(cardDto);
+
+        HttpContent content = new StringContent(JsonSerializer.Serialize(cardInDeckDto), Encoding.UTF8, "application/json");
+
+        HttpResponseMessage response = await _httpDeckClient.PostAsync("deck", content);
+
+        if (response.StatusCode != System.Net.HttpStatusCode.Created)
+        {
+            error = "Adding card to deck failed.";
+            Console.WriteLine(error);
+        }
     }
 
     private void NavigateToCardDetail(int cardId)

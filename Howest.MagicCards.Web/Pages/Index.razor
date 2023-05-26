@@ -28,7 +28,6 @@
     private List<CardDetailDto> deckCards = new List<CardDetailDto>();
     private readonly JsonSerializerOptions jsonOptions;
     private HttpClient _httpCardClient;
-    private HttpClient _httpDeckClient;
     private CardWebFilterV1_5 filter = new CardWebFilterV1_5();
 
     public Index()
@@ -39,7 +38,6 @@
     protected override async Task OnInitializedAsync()
     {
         _httpCardClient = httpClientFactory.CreateClient("CardAPI");
-        _httpDeckClient = httpClientFactory.CreateClient("DeckAPI");
         await LoadCards();
     }
 
@@ -74,18 +72,5 @@
     private async Task FilterChanged(CardWebFilterV1_5 filter)
     {
         await LoadCards();
-    }
-
-    private async Task AddToDeck(CardInDeckDto cardInDeckDto)
-    {
-        HttpContent content = new StringContent(JsonSerializer.Serialize(cardInDeckDto), Encoding.UTF8, "application/json");
-
-        HttpResponseMessage response = await _httpDeckClient.PostAsync("deck", content);
-
-        if (response.StatusCode != System.Net.HttpStatusCode.Created)
-        {
-            error = "Adding card to deck failed.";
-            Console.WriteLine(error);
-        }
     }
 }

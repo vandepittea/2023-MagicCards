@@ -29,6 +29,10 @@
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.Count, opt => opt.MapFrom(src => src.Count));
 
+            CreateMap<CardDto, CardInDeckDto>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.Count, opt => opt.MapFrom(src => 1));
+
             CreateMap<DAL.Models.Type, string>()
             .ConvertUsing(source => source.Name);
         }
