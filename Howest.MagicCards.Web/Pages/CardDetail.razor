@@ -1,6 +1,7 @@
 ﻿@page "/card/{id:int}"
 
 @inject IHttpClientFactory httpClientFactory
+@inject NavigationManager NavigationManager
 
 @using Howest.MagicCards.Shared.DTO
 @using System.Net.Http
@@ -39,14 +40,14 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        height: 25rem;
+        height: 22rem;
     }
 
-    .card-image img {
-        max-width: 100%;
-        height: auto;
-        max-height: 100%;
-    }
+        .card-image img {
+            max-width: 100%;
+            height: auto;
+            max-height: 100%;
+        }
 
     .card-info {
         display: grid;
@@ -54,13 +55,13 @@
         gap: 2rem;
     }
 
-    .card-info p {
-        margin: 0;
-    }
+        .card-info p {
+            margin: 0;
+        }
 
-    .card-info strong {
-        font-weight: bold;
-    }
+        .card-info strong {
+            font-weight: bold;
+        }
 
     .power-container {
         position: relative;
@@ -76,6 +77,16 @@
         color: #fff;
         padding: 1rem;
         border-radius: 4px;
+    }
+
+    .back-button {
+        margin-top: 2rem;
+        color: #fff;
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 4px;
+        font-size: 1rem;
+        cursor: pointer;
     }
 </style>
 
@@ -151,6 +162,8 @@ else
             </div>
         </div>
     </div>
+
+    <button class="btn btn-primary back-button" @onclick="GoBack">Back</button>
 }
 
 @code {
@@ -189,5 +202,10 @@ else
             error = $"Error: {response.ReasonPhrase}";
             Console.WriteLine(error);
         }
+    }
+
+    private void GoBack()
+    {
+        NavigationManager.NavigateTo("/");
     }
 }
