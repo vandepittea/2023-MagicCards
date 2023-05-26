@@ -1,41 +1,42 @@
-﻿@using Howest.MagicCards.Shared.Filters;
+﻿@using Howest.MagicCards.Shared.Filters
+
 <div class="card">
     <div class="card-body">
         <h5>Card Filter</h5>
 
         <div class="form-group">
             <label for="setName">Set Name:</label>
-            <input type="text" class="form-control" id="setName" @bind="@FilterOptions.SetName" />
+            <input type="text" class="form-control" id="setName" @bind="@filter.SetName" />
         </div>
 
         <div class="form-group">
             <label for="artistName">Artist Name:</label>
-            <input type="text" class="form-control" id="artistName" @bind="@FilterOptions.ArtistName" />
+            <input type="text" class="form-control" id="artistName" @bind="@filter.ArtistName" />
         </div>
 
         <div class="form-group">
             <label for="rarityName">Rarity Name:</label>
-            <input type="text" class="form-control" id="rarityName" @bind="@FilterOptions.RarityName" />
+            <input type="text" class="form-control" id="rarityName" @bind="@filter.RarityName" />
         </div>
 
         <div class="form-group">
             <label for="typeName">Type Name:</label>
-            <input type="text" class="form-control" id="typeName" @bind="@FilterOptions.TypeName" />
+            <input type="text" class="form-control" id="typeName" @bind="@filter.TypeName" />
         </div>
 
         <div class="form-group">
             <label for="cardName">Card Name:</label>
-            <input type="text" class="form-control" id="cardName" @bind="@FilterOptions.CardName" />
+            <input type="text" class="form-control" id="cardName" @bind="@filter.CardName" />
         </div>
 
         <div class="form-group">
             <label for="cardText">Card Text:</label>
-            <input type="text" class="form-control" id="cardText" @bind="@FilterOptions.CardText" />
+            <input type="text" class="form-control" id="cardText" @bind="@filter.CardText" />
         </div>
 
         <div class="form-group">
             <label for="sortBy">Sort By:</label>
-            <select class="form-control" id="sortBy" @bind="@FilterOptions.SortBy">
+            <select class="form-control" id="sortBy">
                 <option value="">Ascending</option>
                 <option value="desc">Descending</option>
             </select>
@@ -46,13 +47,16 @@
 </div>
 
 @code {
-    private CardWebFilterV1_5 FilterOptions { get; set; } = new CardWebFilterV1_5();
+    private CardWebFilterV1_1 filter{ get; set; } = new CardWebFilterV1_1();
 
     [Parameter]
-    public EventCallback<CardWebFilterV1_5> OnFilterChanged { get; set; }
+    public EventCallback<CardWebFilterV1_1> OnFilterChanged { get; set; }
+
+    [Inject]
+    private HttpClient HttpClient { get; set; }
 
     private async Task Filter()
     {
-        await OnFilterChanged.InvokeAsync(FilterOptions);
+        await OnFilterChanged.InvokeAsync(filter);
     }
 }

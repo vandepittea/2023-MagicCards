@@ -1,81 +1,89 @@
 ﻿@page "/"
-@using Howest.MagicCards.Shared.DTO;
-@using Howest.MagicCards.Shared.Filters;
-@inject HttpClient HttpClient
+@inject IHttpClientFactory httpClientFactory
+@using AutoMapper;
+@using Howest.MagicCards.Shared.DTO
+@using Howest.MagicCards.Shared.Filters
+@using System.Net.Http
+@using System.Net.Http.Json
+@using Howest.MagicCards.Shared.Wrappers
+@using System.Linq
+@using System.Text.Json;
+@using System.Text;
 
-<MainLayout>
-    <div class="row">
-        <div class="col-md-4">
-            <CardFilterForm OnFilterChanged="FilterChanged" />
-            <CardList Cards="@filteredCards" OnCardSelected="AddToDeck" />
-        </div>
-        <div class="col-md-8">
-            <Deck DeckCards="@deckCards" OnCardRemoved="RemoveFromDeck" OnCardCountChanged="UpdateCardCount" OnClearDeck="ClearDeck" />
-        </div>
+<div class="row">
+    <div class="col-md-4">
+        <CardFilter OnFilterChanged="@FilterChanged" />
+        <CardList Cards="@cards" />
     </div>
-</MainLayout>
+    <div class="col-md-8">
+        <Deck />
+    </div>
+</div>
 
 @code {
+    private string error;
     private List<CardDto> cards = new List<CardDto>();
-    private List<CardDto> filteredCards = new List<CardDto>();
-    private List<CardInDeckDto> deckCards = new List<CardInDeckDto>();
+    private List<CardDetailDto> deckCards = new List<CardDetailDto>();
+    private readonly JsonSerializerOptions jsonOptions;
+    private HttpClient _httpCardClient;
+    private HttpClient _httpDeckClient;
+    private CardWebFilterV1_1 filter = new CardWebFilterV1_1();
+
+    public Index()
+    {
+        jsonOptions = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+    }
 
     protected override async Task OnInitializedAsync()
     {
+        _httpCardClient = httpClientFactory.CreateClient("CardAPI");
+        _httpDeckClient = httpClientFactory.CreateClient("DeckAPI");
         await LoadCards();
     }
 
     private async Task LoadCards()
     {
-        cards = await HttpClient.GetFromJsonAsync<List<Card>>("https://localhost:7103/api/v1.5/Cards");
-        FilterCards();
-    }
-
-    private void FilterChanged(CardWebFilterV1_5 options)
-    {
-        // Apply filtering logic here
-        FilterCards();
-    }
-
-    private void FilterCards()
-    {
-        // Apply filtering logic based on FilterOptions
-        filteredCards = cards; // Placeholder logic, modify as needed
-    }
-
-    private void AddToDeck(CardDto card)
-    {
-        var deckCard = deckCards.FirstOrDefault(dc => dc > 1);
-        if (deckCard != null)
+        try
         {
-            
+            string filterJson = JsonSerializer.Serialize(filter);
+            HttpContent content = new StringContent(filterJson, Encoding.UTF8, "application/json");
+            string uri = $"Cards?filter={Uri.EscapeDataString(filterJson)}";
+            HttpResponseMessage response = await _httpCardClient.GetAsync(uri);
+            string apiResponse = await response.Content.ReadAsStringAsync();
+
+            if (response.IsSuccessStatusCode)
+            {
+                PagedResponse<IEnumerable<CardDto>> result = JsonSerializer.Deserialize<PagedResponse<IEnumerable<CardDto>>>(apiResponse, jsonOptions);
+                cards = result.Data.ToList();
+            }
+            else
+            {
+                error = $"Error: {response.ReasonPhrase}";
+                Console.WriteLine(error);
+            }
         }
-        else
+        catch (Exception ex)
         {
-            deckCard = new CardInDeckDto { Id = "3", Count = 1 };
-            deckCards.Add(deckCard);
+            error = ex.Message;
+            Console.WriteLine(error);
         }
     }
 
-    private void RemoveFromDeck(CardInDeckDto deckCard)
+    private async Task FilterChanged(CardWebFilterV1_1 filter)
     {
-        if (1 > 0)
-        {
-           
-        }
-        else
-        {
-            deckCards.Remove(deckCard);
-        }
+        await LoadCards();
     }
 
-    private void UpdateCardCount(DeckCard deckCard, int count)
+    private async Task AddToDeck(CardInDeckDto cardInDeckDto)
     {
-        deckCard.Count = count;
-    }
+        HttpContent content = new StringContent(JsonSerializer.Serialize(cardInDeckDto), Encoding.UTF8, "application/json");
 
-    private void ClearDeck()
-    {
-        deckCards.Clear();
+        HttpResponseMessage response = await _httpDeckClient.PostAsync("deck", content);
+
+        if (response.StatusCode != System.Net.HttpStatusCode.Created)
+        {
+            error = "Adding card to deck failed.";
+            Console.WriteLine(error);
+        }
     }
 }
