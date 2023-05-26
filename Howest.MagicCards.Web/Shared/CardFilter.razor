@@ -36,7 +36,7 @@
 
         <div class="form-group">
             <label for="sortBy">Sort By:</label>
-            <select class="form-control" id="sortBy">
+            <select class="form-control" id="sortBy" @bind="@filter.SortBy">
                 <option value="">Ascending</option>
                 <option value="desc">Descending</option>
             </select>
@@ -47,10 +47,10 @@
 </div>
 
 @code {
-    private CardWebFilterV1_1 filter{ get; set; } = new CardWebFilterV1_1();
+    private CardWebFilterV1_5 filter{ get; set; } = new CardWebFilterV1_5();
 
     [Parameter]
-    public EventCallback<CardWebFilterV1_1> OnFilterChanged { get; set; }
+    public EventCallback<CardWebFilterV1_5> OnFilterChanged { get; set; }
 
     [Inject]
     private HttpClient HttpClient { get; set; }

@@ -1,28 +1,123 @@
 ﻿@using Howest.MagicCards.Shared.DTO
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>Name</th>
-            <th>Type</th>
-            <th>Set</th>
-            <th>Artist</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var card in Cards)
-        {
-            <tr>
-                <td>@card.Name</td>
-                <td>@card.Type</td>
-                <td>@card.SetName</td>
-                <td>@card.ArtistName</td>
-                <td><img src="@card.Image" alt="@card.Name" @onclick="() => AddToDeck(card)" /></td>
-            </tr>
+<div class="card-list">
+    @foreach (var card in Cards)
+    {
+        <div class="card-item">
+            <div class="power-container">
+                @if (!string.IsNullOrEmpty(card.Power))
+                {
+                    <div class="power-circle">@card.Power</div>
+                }
+            </div>
+            <div class="card-image">
+                <img src="@card.OriginalImageUrl" alt="@card.Name" @onclick="() => AddToDeck(card)" />
+            </div>
+            <div class="card-details">
+                <h4>@card.Name</h4>
+                <div class="card-text">
+                    <strong>Text: </strong>@card.Text
+                </div>
+                <div class="card-info">
+                    <p><strong>Type: </strong>@card.Type</p>
+                    <p><strong>Set: </strong>@card.SetName</p>
+                    <p><strong>Artist: </strong>@card.ArtistName</p>
+                    <div><strong>Rarity: </strong>@card.RarityName</div>
+                    <div><strong>Card Types: </strong>@string.Join(", ", card.CardTypes)</div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<style>
+    .card-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        justify-content: center;
+    }
+
+    .card-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        padding: 1rem;
+        width: 18rem;
+        background-color: #fff;
+        box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.2);
+        transition: transform 0.3s ease;
+        position: relative;
+    }
+
+        .card-item:hover {
+            transform: translateY(-5px);
         }
-    </tbody>
-</table>
+
+    .power-container {
+        position: absolute;
+        top: -1.5rem;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1;
+    }
+
+    .power-circle {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 3rem;
+        height: 3rem;
+        border-radius: 50%;
+        background-color: #337ab7;
+        color: #fff;
+        font-size: 1.5rem;
+        font-weight: bold;
+        box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.2);
+    }
+
+    .card-image {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 400px;
+        overflow: hidden;
+    }
+
+        .card-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            cursor: pointer;
+        }
+
+    .card-details {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        padding: 0.5rem;
+    }
+
+        .card-details h4 {
+            margin: 0;
+            font-size: 2rem;
+        }
+
+    .card-text {
+        margin-top: 0;
+    }
+
+    .card-info p,
+    .card-info div {
+        margin: 0;
+    }
+</style>
 
 @code {
     [Parameter]
