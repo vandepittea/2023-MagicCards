@@ -1,0 +1,58 @@
+﻿@using Howest.MagicCards.Shared.Filters;
+<div class="card">
+    <div class="card-body">
+        <h5>Card Filter</h5>
+
+        <div class="form-group">
+            <label for="setName">Set Name:</label>
+            <input type="text" class="form-control" id="setName" @bind="@FilterOptions.SetName" />
+        </div>
+
+        <div class="form-group">
+            <label for="artistName">Artist Name:</label>
+            <input type="text" class="form-control" id="artistName" @bind="@FilterOptions.ArtistName" />
+        </div>
+
+        <div class="form-group">
+            <label for="rarityName">Rarity Name:</label>
+            <input type="text" class="form-control" id="rarityName" @bind="@FilterOptions.RarityName" />
+        </div>
+
+        <div class="form-group">
+            <label for="typeName">Type Name:</label>
+            <input type="text" class="form-control" id="typeName" @bind="@FilterOptions.TypeName" />
+        </div>
+
+        <div class="form-group">
+            <label for="cardName">Card Name:</label>
+            <input type="text" class="form-control" id="cardName" @bind="@FilterOptions.CardName" />
+        </div>
+
+        <div class="form-group">
+            <label for="cardText">Card Text:</label>
+            <input type="text" class="form-control" id="cardText" @bind="@FilterOptions.CardText" />
+        </div>
+
+        <div class="form-group">
+            <label for="sortBy">Sort By:</label>
+            <select class="form-control" id="sortBy" @bind="@FilterOptions.SortBy">
+                <option value="">Ascending</option>
+                <option value="desc">Descending</option>
+            </select>
+        </div>
+
+        <button class="btn btn-primary" @onclick="Filter">Apply Filter</button>
+    </div>
+</div>
+
+@code {
+    private CardWebFilterV1_5 FilterOptions { get; set; } = new CardWebFilterV1_5();
+
+    [Parameter]
+    public EventCallback<CardWebFilterV1_5> OnFilterChanged { get; set; }
+
+    private async Task Filter()
+    {
+        await OnFilterChanged.InvokeAsync(FilterOptions);
+    }
+}

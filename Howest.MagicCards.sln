@@ -19,7 +19,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Howest.MagicCards.Shared", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Howest.MagicCards.Web", "Howest.MagicCards.Web\Howest.MagicCards.Web.csproj", "{608AC155-6FF8-427D-9BCF-F73D121CD33A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Howest.MagicCards.MinimalAPI", "Howest.MagicCards.MinimalAPI\Howest.MagicCards.MinimalAPI.csproj", "{9DFA170D-ED39-4F08-AA37-BC5DFC84E298}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Howest.MagicCards.MinimalAPI", "Howest.MagicCards.MinimalAPI\Howest.MagicCards.MinimalAPI.csproj", "{9DFA170D-ED39-4F08-AA37-BC5DFC84E298}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
