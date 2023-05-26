@@ -1,9 +1,10 @@
-﻿@using Howest.MagicCards.Shared.DTO
+﻿@inject NavigationManager NavigationManager
+@using Howest.MagicCards.Shared.DTO
 
 <div class="card-list">
     @foreach (var card in Cards)
     {
-        <div class="card-item">
+        <div class="card-item" @onclick="() => NavigateToCardDetail((int)card.Id)">
             <div class="power-container">
                 @if (!string.IsNullOrEmpty(card.Power))
                 {
@@ -11,7 +12,7 @@
                 }
             </div>
             <div class="card-image">
-                <img src="@card.OriginalImageUrl" alt="@card.Name" @onclick="() => AddToDeck(card)" />
+                <img src="@card.OriginalImageUrl" alt="@card.Name" />
             </div>
             <div class="card-details">
                 <h4>@card.Name</h4>
@@ -50,6 +51,7 @@
         box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.2);
         transition: transform 0.3s ease;
         position: relative;
+        cursor: pointer;
     }
 
     .card-item:hover {
@@ -93,7 +95,6 @@
         width: 100%;
         height: 100%;
         object-fit: contain;
-        cursor: pointer;
     }
 
     .card-details {
@@ -129,5 +130,10 @@
     private async Task AddToDeck(CardDto card)
     {
         await OnCardSelected.InvokeAsync(card);
+    }
+
+    private void NavigateToCardDetail(int cardId)
+    {
+        NavigationManager.NavigateTo($"/card/{cardId}");
     }
 }
