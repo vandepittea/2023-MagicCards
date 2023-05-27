@@ -70,10 +70,10 @@
             font-size: 1rem;
         }
 
-        .filter-card .form-control:focus {
-            border-color: #80bdff;
-            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
-        }
+            .filter-card .form-control:focus {
+                border-color: #80bdff;
+                box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+            }
 
         .filter-card .filter-button {
             width: 100%;
@@ -85,9 +85,6 @@
 
     [Parameter]
     public EventCallback<CardWebFilterV1_5> OnFilterChanged { get; set; }
-
-    [Inject]
-    private HttpClient HttpClient { get; set; }
 
     private async Task Filter()
     {

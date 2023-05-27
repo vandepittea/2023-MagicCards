@@ -28,7 +28,6 @@
     private List<CardDetailDto> deckCards = new List<CardDetailDto>();
     private readonly JsonSerializerOptions jsonOptions;
     private HttpClient _httpCardClient;
-    private CardWebFilterV1_5 filter = new CardWebFilterV1_5();
 
     public Index()
     {
@@ -41,20 +40,51 @@
         await LoadCards();
     }
 
-    private async Task LoadCards()
+    private async Task LoadCards(CardWebFilterV1_5 filter = null)
     {
         try
         {
-            string filterJson = JsonSerializer.Serialize(filter);
-            HttpContent content = new StringContent(filterJson, Encoding.UTF8, "application/json");
-            string uri = $"Cards?filter={Uri.EscapeDataString(filterJson)}";
+            string uri = "Cards";
+
+            if (filter != null)
+            {
+                var queryParameters = new List<string>();
+
+                if (!string.IsNullOrEmpty(filter.SetName))
+                    queryParameters.Add($"SetName={Uri.EscapeDataString(filter.SetName)}");
+
+                if (!string.IsNullOrEmpty(filter.ArtistName))
+                    queryParameters.Add($"ArtistName={Uri.EscapeDataString(filter.ArtistName)}");
+
+                if (!string.IsNullOrEmpty(filter.RarityName))
+                    queryParameters.Add($"RarityName={Uri.EscapeDataString(filter.RarityName)}");
+
+                if (!string.IsNullOrEmpty(filter.TypeName))
+                    queryParameters.Add($"TypeName={Uri.EscapeDataString(filter.TypeName)}");
+
+                if (!string.IsNullOrEmpty(filter.CardName))
+                    queryParameters.Add($"CardName={Uri.EscapeDataString(filter.CardName)}");
+
+                if (!string.IsNullOrEmpty(filter.CardText))
+                    queryParameters.Add($"CardText={Uri.EscapeDataString(filter.CardText)}");
+
+                if (filter.SortBy == "desc")
+                    queryParameters.Add($"SortBy={Uri.EscapeDataString(filter.SortBy)}");
+
+                if (queryParameters.Any())
+                    uri += "?" + string.Join("&", queryParameters);
+            }
+
             HttpResponseMessage response = await _httpCardClient.GetAsync(uri);
             string apiResponse = await response.Content.ReadAsStringAsync();
+
+            Console.WriteLine(response);
 
             if (response.IsSuccessStatusCode)
             {
                 PagedResponse<IEnumerable<CardDto>> result = JsonSerializer.Deserialize<PagedResponse<IEnumerable<CardDto>>>(apiResponse, jsonOptions);
                 cards = result.Data.ToList();
+                Console.WriteLine(cards.Count);
             }
             else
             {
@@ -71,6 +101,6 @@
 
     private async Task FilterChanged(CardWebFilterV1_5 filter)
     {
-        await LoadCards();
+        await LoadCards(filter);
     }
 }
