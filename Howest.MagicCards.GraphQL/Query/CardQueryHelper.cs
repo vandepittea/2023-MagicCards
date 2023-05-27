@@ -1,13 +1,4 @@
-﻿using Howest.MagicCards.DAL.Repositories;
-using Microsoft.Extensions.Caching.Memory;
-using System.Text.Json;
-using Howest.MagicCards.DAL.Models;
-using Howest.MagicCards.Shared.Filters;
-using Howest.MagicCards.Shared.Extensions;
-using Howest.MagicCards.WebAPI.Helpers;
-using Howest.MagicCards.WebAPI.Extensions;
-
-namespace Howest.MagicCards.GraphQL.Helpers
+﻿namespace Howest.MagicCards.GraphQL.Helpers
 {
     public static class CardQueryHelper
     {

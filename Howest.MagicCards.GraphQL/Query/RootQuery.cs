@@ -1,10 +1,4 @@
-﻿using Howest.MagicCards.DAL.Repositories;
-using Howest.MagicCards.GraphQL.Types;
-using GraphQL.Types;
-using GraphQL;
-using CardType = Howest.MagicCards.GraphQL.Types.CardType;
-using Microsoft.Extensions.Caching.Memory;
-using Howest.MagicCards.GraphQL.Helpers;
+﻿using CardType = Howest.MagicCards.GraphQL.Types.CardType;
 
 namespace Howest.MagicCards.GraphQL
 {

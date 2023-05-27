@@ -1,9 +1,4 @@
-﻿using Howest.MagicCards.DAL.Models;
-using Howest.MagicCards.DAL.Repositories;
-using GraphQL.Types;
-using Howest.MagicCards.DAL;
-
-namespace Howest.MagicCards.GraphQL.Types
+﻿namespace Howest.MagicCards.GraphQL.Types
 {
     public class CardType : ObjectGraphType<Card>
     {

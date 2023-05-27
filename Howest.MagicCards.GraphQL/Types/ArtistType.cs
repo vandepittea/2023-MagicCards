@@ -1,11 +1,4 @@
-﻿using Howest.MagicCards.DAL.Models;
-using Howest.MagicCards.DAL.Repositories;
-using System.Collections.Generic;
-using GraphQL.Types;
-using Amazon.Runtime.Internal.Util;
-using Howest.MagicCards.DAL;
-
-namespace Howest.MagicCards.GraphQL.Types
+﻿namespace Howest.MagicCards.GraphQL.Types
 {
     public class ArtistType : ObjectGraphType<Artist>
     {
