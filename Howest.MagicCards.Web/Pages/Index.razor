@@ -22,12 +22,21 @@
     </div>
 </div>
 
+<div class="pagination">
+    <button class="btn btn-primary" disabled="@IsFirstPage" @onclick="GoToPreviousPage">Previous</button>
+    <button class="btn btn-primary" disabled="@IsLastPage" @onclick="GoToNextPage">Next</button>
+</div>
+
 @code {
     private string error;
     private List<CardDto> cards = new List<CardDto>();
     private List<CardDetailDto> deckCards = new List<CardDetailDto>();
     private readonly JsonSerializerOptions jsonOptions;
     private HttpClient _httpCardClient;
+    private int pageSize = 10;
+    private int pageNumber = 1;
+    private bool IsFirstPage => pageNumber == 1;
+    private bool IsLastPage => cards.Count < pageSize;
 
     public Index()
     {
@@ -44,7 +53,9 @@
     {
         try
         {
-            string uri = "Cards";
+            string uri = $"Cards?PageNumber={pageNumber}&PageSize={pageSize}";
+
+            Console.WriteLine(uri);
 
             if (filter != null)
             {
@@ -72,7 +83,7 @@
                     queryParameters.Add($"SortBy={Uri.EscapeDataString(filter.SortBy)}");
 
                 if (queryParameters.Any())
-                    uri += "?" + string.Join("&", queryParameters);
+                    uri += string.Join("&", queryParameters);
             }
 
             HttpResponseMessage response = await _httpCardClient.GetAsync(uri);
@@ -102,5 +113,23 @@
     private async Task FilterChanged(CardWebFilterV1_5 filter)
     {
         await LoadCards(filter);
+    }
+
+    private async Task GoToPreviousPage()
+    {
+        if (!IsFirstPage)
+        {
+            pageNumber--;
+            await LoadCards();
+        }
+    }
+
+    private async Task GoToNextPage()
+    {
+        if (!IsLastPage)
+        {
+            pageNumber++;
+            await LoadCards();
+        }
     }
 }
