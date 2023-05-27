@@ -181,6 +181,8 @@
 
         HttpResponseMessage response = await _httpDeckClient.PostAsync("deck", content);
 
+        Console.WriteLine(response);
+
         if (response.StatusCode != System.Net.HttpStatusCode.Created)
         {
             error = "Adding card to deck failed.";

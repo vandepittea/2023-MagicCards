@@ -13,7 +13,7 @@ namespace Howest.MagicCards.MinimalAPI.Mappings
                 .Produces<List<CardInDeck>>(StatusCodes.Status200OK)
                 .Produces(StatusCodes.Status400BadRequest);
 
-            app.MapPost($"{urlPrefix}/deck/{{card}}", (IDeckRepository deckRepo, CardInDeckDto cardInDeckDto, IValidator<CardInDeckDto> validator) =>
+            app.MapPost($"{urlPrefix}/deck", (IDeckRepository deckRepo, CardInDeckDto cardInDeckDto, IValidator<CardInDeckDto> validator) =>
                 AddCardToDeck(deckRepo, cardInDeckDto, validator, mapper, configuration))
                 .WithTags("Deck actions")
                 .Accepts<CardInDeckDto>("application/json")
