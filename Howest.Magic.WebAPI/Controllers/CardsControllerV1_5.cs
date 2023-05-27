@@ -1,17 +1,4 @@
-﻿using Howest.MagicCards.Shared.Wrappers;
-using Howest.MagicCards.WebAPI.Extensions;
-using Howest.MagicCards.WebAPI.Helpers;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Caching.Memory;
-using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Text.Json;
-using System.Threading.Tasks;
-
-namespace Howest.MagicCards.WebAPI.Controllers.V1_5
+﻿namespace Howest.MagicCards.WebAPI.Controllers.V1_5
 {
     [ApiVersion("1.5")]
     [Route("api/v{version:apiVersion}/[controller]")]

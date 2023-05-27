@@ -22,6 +22,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Using Include="AutoMapper" />
+    <Using Include="AutoMapper.QueryableExtensions"/>
+    <Using Include="Microsoft.AspNetCore.Mvc"/>
+    <Using Include="Microsoft.Extensions.Caching.Memory"/>
+    <Using Include="System.Text.Json"/>
     <Using Include="Howest.MagicCards.DAL.Models" />
     <Using Include="Howest.MagicCards.DAL.Repositories" />
     <Using Include="Howest.MagicCards.Shared.DTO" />
@@ -30,8 +35,8 @@
     <Using Include="Howest.MagicCards.Shared.Extensions" />
     <Using Include="Howest.MagicCards.Shared.Wrappers" />
     <Using Include="Howest.MagicCards.Shared.Validation" />
-    <Using Include="AutoMapper" />
-    <Using Include="AutoMapper.QueryableExtensions"/>
+    <Using Include="Howest.MagicCards.WebAPI.Extensions"/>
+    <Using Include="Howest.MagicCards.WebAPI.Helpers"/>
   </ItemGroup>
 
 </Project>
