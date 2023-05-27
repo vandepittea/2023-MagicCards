@@ -13,7 +13,7 @@
                 </tr>
             </thead>
             <tbody>
-                @if (deckService.DeckCards != null)
+                @if (deckService.DeckCards.Count != 0)
                 {
                     @foreach (CardInDeckDto deckCard in deckService.DeckCards)
                     {
