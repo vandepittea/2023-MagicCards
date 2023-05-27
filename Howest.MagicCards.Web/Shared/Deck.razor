@@ -1,5 +1,4 @@
-﻿@inject IHttpClientFactory httpClientFactory
-@inject DeckService deckService
+﻿@inject DeckService deckService
 
 @using Howest.MagicCards.Shared.DTO
 @using System.Net.Http
@@ -107,8 +106,7 @@
             return "Invalid card ID";
         }
 
-        CardDetailDto card = deckService.DeckCardsExtended.SingleOrDefault(c => c.Id == id);
-        Console.WriteLine(card);
+        CardDetailDto card = deckService.DeckCardsExtended.FirstOrDefault(c => c.Id == id);
 
         return card?.Name ?? "Card not found";
     }
