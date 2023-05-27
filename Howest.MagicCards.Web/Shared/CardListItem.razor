@@ -1,9 +1,6 @@
 ﻿@inject DeckService deckService
 @inject NavigationManager navigationManager
 
-@using Howest.MagicCards.Shared.DTO;
-@using Howest.MagicCards.Web.Services;
-
 <div class="card-item">
     <div @onclick="() => NavigateToCardDetail((int)Id)">
         <div class="power-container">

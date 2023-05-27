@@ -1,16 +1,4 @@
-﻿using Azure;
-using Howest.MagicCards.DAL.Models;
-using Howest.MagicCards.Shared.DTO;
-using Howest.MagicCards.Shared.Filters;
-using Howest.MagicCards.Shared.Wrappers;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Text.Json;
-using System.Threading.Tasks;
-
-namespace Howest.MagicCards.Web.Services
+﻿namespace Howest.MagicCards.Web.Services
 {
     public class CardService
     {

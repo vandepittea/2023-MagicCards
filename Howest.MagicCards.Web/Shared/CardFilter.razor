@@ -1,9 +1,5 @@
 ﻿@inject CardService cardService
 
-@using Howest.MagicCards.Shared.Filters;
-@using Howest.MagicCards.Web.Services;
-@using System.ComponentModel.DataAnnotations
-
 <EditForm Model="@filter" OnValidSubmit="@Filter">
     <DataAnnotationsValidator />
 

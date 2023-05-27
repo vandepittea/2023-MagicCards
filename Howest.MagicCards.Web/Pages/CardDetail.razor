@@ -3,12 +3,6 @@
 @inject NavigationManager navigationManager
 @inject CardService cardService
 
-@using Howest.MagicCards.Shared.DTO
-@using System.Net.Http
-@using System.Net.Http.Json
-@using System.Text.Json;
-@using Howest.MagicCards.Web.Services;
-
 <h3>Card Detail</h3>
 
 @if (cardService.Card == null || cardService.Error != null)

@@ -1,12 +1,4 @@
-﻿using AutoMapper;
-using Howest.MagicCards.Shared.DTO;
-using System.Net;
-using System.Net.Http;
-using System.Text;
-using System.Text.Json;
-using System.Threading.Tasks;
-
-namespace Howest.MagicCards.Web.Services
+﻿namespace Howest.MagicCards.Web.Services
 {
     public class DeckService
     {

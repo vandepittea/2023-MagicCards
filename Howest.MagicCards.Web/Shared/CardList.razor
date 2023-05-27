@@ -1,11 +1,5 @@
 ﻿@inject CardService cardService
 
-@using AutoMapper;
-@using Howest.MagicCards.Shared.DTO
-@using System.Text.Json;
-@using System.Text;
-@using Howest.MagicCards.Web.Services;
-
 <main class="card-list">
     @if (cardService.IsLoading)
     {

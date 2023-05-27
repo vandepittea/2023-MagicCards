@@ -14,4 +14,13 @@
     <ProjectReference Include="..\Howest.MagicCards.Shared\Howest.MagicCards.Shared.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Using Include="AutoMapper" />
+    <Using Include="System.Text" />
+    <Using Include="System.Text.Json" />
+    <Using Include="Howest.MagicCards.Shared.DTO" />
+    <Using Include="Howest.MagicCards.Shared.Filters" />
+    <Using Include="Howest.MagicCards.Shared.Wrappers" />
+  </ItemGroup>
+
 </Project>
