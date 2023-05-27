@@ -1,7 +1,4 @@
-﻿using MongoDB.Bson.Serialization.Attributes;
-using MongoDB.Bson;
-
-namespace Howest.MagicCards.DAL.Models
+﻿namespace Howest.MagicCards.DAL.Models
 { 
     public class CardInDeck
     {

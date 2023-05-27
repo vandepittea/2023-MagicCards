@@ -1,6 +1,4 @@
-﻿using MongoDB.Bson;
-
-namespace Howest.MagicCards.DAL.Repositories
+﻿namespace Howest.MagicCards.DAL.Repositories
 {
     public class DeckRepository : IDeckRepository
     {

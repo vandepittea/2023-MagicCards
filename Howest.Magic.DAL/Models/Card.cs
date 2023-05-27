@@ -1,6 +1,4 @@
-﻿using System.Text.Json;
-
-namespace Howest.MagicCards.DAL.Models;
+﻿namespace Howest.MagicCards.DAL.Models;
 
 public partial class Card
 {
