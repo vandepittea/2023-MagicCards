@@ -1,8 +1,4 @@
-﻿using FluentValidation.Results;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Newtonsoft.Json;
-
-namespace Howest.MagicCards.MinimalAPI.Mappings
+﻿namespace Howest.MagicCards.MinimalAPI.Mappings
 {
     public static class CardsEndpoints
     {
