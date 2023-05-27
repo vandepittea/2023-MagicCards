@@ -4,6 +4,7 @@ using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Text.Json;
+using System.Threading.Tasks;
 
 namespace Howest.MagicCards.Web.Services
 {
@@ -20,8 +21,8 @@ namespace Howest.MagicCards.Web.Services
 
         public List<CardInDeckDto> DeckCards { get; private set; }
         public List<CardDetailDto> DeckCardsExtended { get; private set; }
-        public string Error { get; private set; }
         public event EventHandler DeckCardsChanged;
+        public event EventHandler<string> ErrorOccurred;
 
         public DeckService(IMapper mapper, CardService cardService, IHttpClientFactory httpClientFactory)
         {
@@ -35,6 +36,11 @@ namespace Howest.MagicCards.Web.Services
         protected virtual void OnDeckCardsChanged()
         {
             DeckCardsChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+        protected virtual void OnErrorOccurred(string error)
+        {
+            ErrorOccurred?.Invoke(this, error);
         }
 
         public async Task LoadDeck()
@@ -59,12 +65,13 @@ namespace Howest.MagicCards.Web.Services
                 }
                 else
                 {
-                    Error = $"Error loading deck: {response.ReasonPhrase}";
+                    string errorMessage = await response.Content.ReadAsStringAsync();
+                    OnErrorOccurred(errorMessage.Trim('"'));
                 }
             }
             catch (Exception ex)
             {
-                Error = ex.Message;
+                Console.WriteLine($"Error loading deck: {ex.Message}");
             }
         }
 
@@ -80,12 +87,13 @@ namespace Howest.MagicCards.Web.Services
 
                 if (!response.IsSuccessStatusCode)
                 {
-                    Error = $"Adding card to deck: {response.ReasonPhrase}";
+                    string errorMessage = await response.Content.ReadAsStringAsync();
+                    OnErrorOccurred(errorMessage.Trim('"'));
                 }
             }
             catch (Exception ex)
             {
-                Error = $"Error adding card to deck: {ex.Message}";
+                Console.WriteLine($"Error adding card to deck: {ex.Message}");
             }
             finally
             {
@@ -95,17 +103,25 @@ namespace Howest.MagicCards.Web.Services
 
         public async Task UpdateCardCount(CardInDeckDto cardInDeckDto)
         {
-            HttpContent content = new StringContent(JsonSerializer.Serialize(cardInDeckDto), Encoding.UTF8, "application/json");
-
-            HttpResponseMessage response = await _httpClient.PutAsync("deck", content);
-
-            if (response.StatusCode != HttpStatusCode.Created)
+            try
             {
-                Error = $"Error updating card: {response.ReasonPhrase}";
+                HttpContent content = new StringContent(JsonSerializer.Serialize(cardInDeckDto), Encoding.UTF8, "application/json");
+
+                HttpResponseMessage response = await _httpClient.PutAsync("deck", content);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    string errorMessage = await response.Content.ReadAsStringAsync();
+                    OnErrorOccurred(errorMessage.Trim('"'));
+                }
+                else
+                {
+                    OnDeckCardsChanged();
+                }
             }
-            else
+            catch (Exception ex)
             {
-                OnDeckCardsChanged();
+                Console.WriteLine($"Error updating card: {ex.Message}");
             }
         }
 
@@ -114,12 +130,14 @@ namespace Howest.MagicCards.Web.Services
             try
             {
                 HttpResponseMessage response = await _httpClient.DeleteAsync($"deck/{cardId}");
+                response.EnsureSuccessStatusCode();
+                string result = await response.Content.ReadAsStringAsync();
 
                 OnDeckCardsChanged();
             }
             catch (Exception ex)
             {
-                Error = $"Error removing card from deck: {ex.Message}";
+                Console.WriteLine($"Error removing card from deck: {ex.Message}");
             }
         }
 
@@ -128,12 +146,14 @@ namespace Howest.MagicCards.Web.Services
             try
             {
                 HttpResponseMessage response = await _httpClient.DeleteAsync("deck/clear");
+                response.EnsureSuccessStatusCode();
+                string result = await response.Content.ReadAsStringAsync();
 
                 OnDeckCardsChanged();
             }
             catch (Exception ex)
             {
-                Error = $"Error clearing deck: {ex.Message}";
+                Console.WriteLine($"Error clearing deck: {ex.Message}");
             }
         }
     }

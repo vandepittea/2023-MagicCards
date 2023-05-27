@@ -1,4 +1,5 @@
-﻿using Howest.MagicCards.DAL.Models;
+﻿using Azure;
+using Howest.MagicCards.DAL.Models;
 using Howest.MagicCards.Shared.DTO;
 using Howest.MagicCards.Shared.Filters;
 using Howest.MagicCards.Shared.Wrappers;
@@ -29,6 +30,7 @@ namespace Howest.MagicCards.Web.Services
         public bool IsFirstPage { get; private set; }
         public bool IsLastPage { get; private set; }
         public event EventHandler CardsChanged;
+        public event EventHandler<string> ErrorOccurred;
 
         public CardService(IHttpClientFactory httpClientFactory)
         {
@@ -41,12 +43,16 @@ namespace Howest.MagicCards.Web.Services
             CardsChanged?.Invoke(this, EventArgs.Empty);
         }
 
+        protected virtual void OnErrorOccurred(string error)
+        {
+            ErrorOccurred?.Invoke(this, error);
+        }
+
         public async Task LoadCards(CardWebFilterV1_5 filter = null)
         {
             try
             {
                 IsLoading = true;
-                Error = null;
 
                 string uri = $"Cards?PageNumber={_pageNumber}&PageSize={_pageSize}";
 
@@ -91,12 +97,13 @@ namespace Howest.MagicCards.Web.Services
                 }
                 else
                 {
-                    Error = $"Error loading cards: {response.ReasonPhrase}";
+                    string errorMessage = await response.Content.ReadAsStringAsync();
+                    OnErrorOccurred(errorMessage.Trim('"'));
                 }
             }
             catch (Exception ex)
             {
-                Error = ex.Message;
+                Console.WriteLine($"Error loading cards: {ex.Message}");
             }
             finally
             {
@@ -136,12 +143,13 @@ namespace Howest.MagicCards.Web.Services
                 }
                 else
                 {
-                    Error = $"Error loading card: {response.ReasonPhrase}";
+                    Error = "Card not found";
                 }
             }
             catch (Exception ex)
             {
-                Error = ex.Message;
+                Error = $"Error loading card: {ex.Message}";
+                Console.WriteLine(Error);
             }
         }
     }

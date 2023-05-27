@@ -11,11 +11,7 @@
 
 <h3>Card Detail</h3>
 
-@if (cardService.Card == null)
-{
-    <p>Loading...</p>
-}
-else if (cardService.Error != null)
+@if (cardService.Card == null || cardService.Error != null)
 {
     <p>An error occurred: @cardService.Error</p>
 }

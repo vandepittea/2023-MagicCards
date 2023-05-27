@@ -1,0 +1,49 @@
+﻿@inject CardService cardService
+@inject DeckService deckService
+
+@using Howest.MagicCards.Web.Services;
+
+@if (!string.IsNullOrEmpty(errorMessage))
+{
+        <div class="error-container">
+            <p>@errorMessage</p>
+        </div>
+}
+
+<style>
+    .error-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        padding: 1rem;
+        background-color: red;
+        color: white;
+        text-align: center;
+        z-index: 1;
+    }
+</style>
+
+@code {
+    private string errorMessage;
+
+    protected override void OnInitialized()
+    {
+        cardService.ErrorOccurred += HandleErrorOccurred;
+        deckService.ErrorOccurred += HandleErrorOccurred;
+    }
+
+    private async void HandleErrorOccurred(object sender, string error)
+    {
+        errorMessage = error;
+        StateHasChanged();
+
+        await Task.Delay(2000);
+
+        await InvokeAsync(() =>
+        {
+            errorMessage = null;
+            StateHasChanged();
+        });
+    }
+}
