@@ -78,7 +78,7 @@ namespace Howest.MagicCards.Web.Services
 
                 HttpResponseMessage response = await _httpClient.PostAsync("deck", content);
 
-                if (response.StatusCode != HttpStatusCode.Created)
+                if (!response.IsSuccessStatusCode)
                 {
                     Error = $"Adding card to deck: {response.ReasonPhrase}";
                 }
@@ -114,8 +114,6 @@ namespace Howest.MagicCards.Web.Services
             try
             {
                 HttpResponseMessage response = await _httpClient.DeleteAsync($"deck/{cardId}");
-                response.EnsureSuccessStatusCode();
-                string result = await response.Content.ReadAsStringAsync();
 
                 OnDeckCardsChanged();
             }
@@ -130,8 +128,6 @@ namespace Howest.MagicCards.Web.Services
             try
             {
                 HttpResponseMessage response = await _httpClient.DeleteAsync("deck/clear");
-                response.EnsureSuccessStatusCode();
-                string result = await response.Content.ReadAsStringAsync();
 
                 OnDeckCardsChanged();
             }
