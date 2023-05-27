@@ -46,7 +46,7 @@
 
                 if (filter != null)
                 {
-                    var queryParameters = new List<string>();
+                    List<string> queryParameters = new List<string>();
 
                     if (!string.IsNullOrEmpty(filter.SetName))
                         queryParameters.Add($"SetName={Uri.EscapeDataString(filter.SetName)}");

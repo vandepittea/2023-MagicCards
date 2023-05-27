@@ -36,7 +36,7 @@
         {
             if (!string.IsNullOrEmpty(typeNames))
             {
-                var typeList = typeNames.Split(',', StringSplitOptions.RemoveEmptyEntries)
+                List<string> typeList = typeNames.Split(',', StringSplitOptions.RemoveEmptyEntries)
                                        .Select(t => t.Trim().ToLower())
                                        .ToList();
 
