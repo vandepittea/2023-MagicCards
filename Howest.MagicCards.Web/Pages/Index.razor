@@ -13,6 +13,10 @@
 <div class="row">
     <div class="col-md-2">
         <CardFilter OnFilterChanged="@FilterChanged" />
+        <div class="pagination">
+            <button class="btn btn-primary" disabled="@IsFirstPage" @onclick="GoToPreviousPage">Previous</button>
+            <button class="btn btn-primary" disabled="@IsLastPage" @onclick="GoToNextPage">Next</button>
+        </div>
     </div>
     <div class="col-md-7">
         <CardList Cards="@cards" />
@@ -22,10 +26,24 @@
     </div>
 </div>
 
-<div class="pagination">
-    <button class="btn btn-primary" disabled="@IsFirstPage" @onclick="GoToPreviousPage">Previous</button>
-    <button class="btn btn-primary" disabled="@IsLastPage" @onclick="GoToNextPage">Next</button>
-</div>
+<style>
+    .pagination {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 1rem;
+    }
+
+    .pagination-button {
+        padding: 0.375rem 0.75rem;
+        font-size: 0.875rem;
+        border-radius: 0.25rem;
+    }
+
+    .pagination-button:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+</style>
 
 @code {
     private string error;
