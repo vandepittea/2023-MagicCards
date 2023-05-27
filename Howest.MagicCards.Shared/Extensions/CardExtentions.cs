@@ -1,6 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
-
-namespace Howest.MagicCards.Shared.Extensions
+﻿namespace Howest.MagicCards.Shared.Extensions
 {
     public static class CardExtensions
     {

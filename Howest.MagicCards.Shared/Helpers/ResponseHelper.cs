@@ -1,7 +1,4 @@
-﻿using Howest.MagicCards.Shared.Wrappers;
-using Microsoft.AspNetCore.Http;
-
-namespace Howest.MagicCards.WebAPI.Helpers
+﻿namespace Howest.MagicCards.WebAPI.Helpers
 {
     public static class ResponseHelper
     {

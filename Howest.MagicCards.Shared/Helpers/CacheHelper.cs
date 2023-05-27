@@ -1,8 +1,4 @@
-﻿using Howest.MagicCards.Shared.Wrappers;
-using Microsoft.Extensions.Caching.Memory;
-using System;
-
-namespace Howest.MagicCards.WebAPI.Helpers
+﻿namespace Howest.MagicCards.WebAPI.Helpers
 {
     public static class CacheHelper
     {

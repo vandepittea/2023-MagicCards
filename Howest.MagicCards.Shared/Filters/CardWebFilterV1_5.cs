@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace Howest.MagicCards.Shared.Filters
+﻿namespace Howest.MagicCards.Shared.Filters
 {
     public class CardWebFilterV1_5 : PaginationFilterV1_5
     {
