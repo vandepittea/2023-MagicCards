@@ -13,8 +13,12 @@ namespace Howest.MagicCards.Web.Services
 {
     public class CardService
     {
+        private static readonly JsonSerializerOptions _jsonOptions = new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true
+        };
+
         private readonly HttpClient _httpClient;
-        private readonly JsonSerializerOptions _jsonOptions;
         private int _pageNumber = 1;
         private int _pageSize = 150;
 
@@ -29,7 +33,6 @@ namespace Howest.MagicCards.Web.Services
         public CardService(IHttpClientFactory httpClientFactory)
         {
             _httpClient = httpClientFactory.CreateClient("CardAPI");
-            _jsonOptions = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
         }
 
         protected virtual void OnCardsChanged()
@@ -80,7 +83,7 @@ namespace Howest.MagicCards.Web.Services
 
                 if (response.IsSuccessStatusCode)
                 {
-                    PagedResponse<IEnumerable<CardDto>> result = JsonSerializer.Deserialize<PagedResponse<IEnumerable<CardDto>>>(apiResponse, _jsonOptions);
+                    PagedResponse<IEnumerable<CardDto>> result = await JsonSerializer.DeserializeAsync<PagedResponse<IEnumerable<CardDto>>>(response.Content.ReadAsStream(), _jsonOptions);
                     Cards = result.Data.ToList();
                     IsFirstPage = result.PageNumber == 1;
                     IsLastPage = result.Data.Count() < result.PageSize;
