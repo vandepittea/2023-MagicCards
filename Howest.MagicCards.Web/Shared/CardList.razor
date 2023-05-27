@@ -8,7 +8,7 @@
 @using System.Text;
 @using Howest.MagicCards.Web.Services;
 
-<div class="card-list">
+<main class="card-list">
     @if (cardService.IsLoading)
     {
         <div class="loading-spinner">
@@ -49,7 +49,7 @@
             </div>
         }
     }
-</div>
+</main>
 
 <style>
     .card-list {

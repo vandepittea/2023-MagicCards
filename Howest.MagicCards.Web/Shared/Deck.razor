@@ -7,7 +7,7 @@
 @using System.Text;
 @using Howest.MagicCards.Web.Services;
 
-<div class="card">
+<aside class="card">
     <div class="card-body">
         <h5>Deck</h5>
 
@@ -46,7 +46,7 @@
 
         <button class="btn btn-danger" @onclick="async () => await deckService.ClearDeck()">Clear Deck</button>
     </div>
-</div>
+</aside>
 
 <style>
     .card-count {
