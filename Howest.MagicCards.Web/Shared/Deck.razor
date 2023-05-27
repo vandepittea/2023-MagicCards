@@ -27,9 +27,9 @@
                         <tr>
                             <td>@GetCardNameById(deckCard.Id)</td>
                             <td>
-                                <span class="card-count" @onclick="() => IncrementCount(deckCard)">+</span>
-                                <span class="card-count">@deckCard.Count</span>
                                 <span class="card-count" @onclick="() => DecrementCount(deckCard)">-</span>
+                                <span class="card-count">@deckCard.Count</span>
+                                <span class="card-count" @onclick="() => IncrementCount(deckCard)">+</span>
                             </td>
                             <td><button class="btn btn-danger" @onclick="async () => await deckService.RemoveFromDeck(deckCard.Id)">Remove</button></td>
                         </tr>
