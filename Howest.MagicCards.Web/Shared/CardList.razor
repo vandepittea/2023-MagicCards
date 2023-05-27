@@ -1,6 +1,4 @@
-﻿@inject NavigationManager navigationManager
-@inject DeckService deckService
-@inject CardService cardService;
+﻿@inject CardService cardService
 
 @using AutoMapper;
 @using Howest.MagicCards.Shared.DTO
@@ -20,33 +18,18 @@
     {
         @foreach (CardDto card in cardService.Cards)
         {
-            <div class="card-item">
-                <div @onclick="() => NavigateToCardDetail((int)card.Id)">
-                    <div class="power-container">
-                        @if (!string.IsNullOrEmpty(card.Power))
-                        {
-                            <div class="power-circle">@card.Power</div>
-                        }
-                    </div>
-                    <div class="card-image">
-                        <img src="@card.OriginalImageUrl" alt="@card.Name" />
-                    </div>
-                    <div class="card-details">
-                        <h4>@card.Name</h4>
-                        <div class="card-text">
-                            <strong>Text: </strong>@card.Text
-                        </div>
-                        <div class="card-info">
-                            <p><strong>Type: </strong>@card.Type</p>
-                            <p><strong>Set: </strong>@card.SetName</p>
-                            <p><strong>Artist: </strong>@card.ArtistName</p>
-                            <div><strong>Rarity: </strong>@card.RarityName</div>
-                            <div><strong>Card Types: </strong>@string.Join(", ", card.CardTypes)</div>
-                        </div>
-                    </div>
-                </div>
-                <button class="add-to-deck-button" @onclick="async () => await deckService.AddToDeck(card)">Add to Deck</button>
-            </div>
+            <CardListItem Id="@card.Id"
+                          Name="@card.Name"
+                          Power="@card.Power"
+                          Text="@card.Text"
+                          Type="@card.Type"
+                          SetName="@card.SetName"
+                          ArtistName="@card.ArtistName"
+                          RarityName="@card.RarityName"
+                          CardTypesString="@string.Join(", ", card.CardTypes)"
+                          ImageUrl="@card.OriginalImageUrl"
+                          CardDto="@card">
+            </CardListItem>
         }
     }
 </main>
@@ -57,122 +40,6 @@
         flex-wrap: wrap;
         gap: 1rem;
         justify-content: center;
-    }
-
-    .card-item {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-        padding: 1rem;
-        margin-top: 1rem;
-        margin-bottom: 1rem;
-        width: 18rem;
-        background-color: #fff;
-        box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.2);
-        transition: transform 0.3s ease;
-        position: relative;
-        cursor: pointer;
-    }
-
-    .card-item:hover {
-        transform: translateY(-5px);
-    }
-
-    .power-container {
-        position: absolute;
-        top: -1.5rem;
-        left: 50%;
-        transform: translateX(-50%);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        z-index: 1;
-    }
-
-    .power-circle {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        width: 3rem;
-        height: 3rem;
-        border-radius: 50%;
-        background-color: #337ab7;
-        color: #fff;
-        font-size: 1.5rem;
-        font-weight: bold;
-        box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.2);
-    }
-
-    .card-image {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 400px;
-        overflow: hidden;
-    }
-
-    .card-image img {
-        width: 100%;
-        height: 100%;
-        object-fit: contain;
-    }
-
-    .card-details {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        gap: 0.5rem;
-        padding: 0.5rem;
-    }
-
-    .card-text {
-        margin-top: 0;
-    }
-
-    .card-info p,
-    .card-info div {
-        margin: 0;
-    }
-
-    .add-to-deck-button {
-        background-color: #4caf50;
-        color: white;
-        border: none;
-        padding: 8px 16px;
-        text-align: center;
-        text-decoration: none;
-        display: inline-block;
-        font-size: 14px;
-        margin-top: auto;
-        cursor: pointer;
-        transition-duration: 0.4s;
-        border-radius: 4px;
-        position: absolute;
-        left: 50%;
-        bottom: -1rem;
-        transform: translateX(-50%);
-    }
-
-    .add-to-deck-button:hover {
-        background-color: #45a049;
-    }
-
-    .loading-spinner {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        margin-top: 2rem;
-    }
-
-    .spinner {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        border: 4px solid rgba(0, 0, 0, 0.1);
-        border-left-color: #000;
-        animation: spin 1s infinite linear;
     }
 </style>
 
@@ -186,10 +53,5 @@
     private void OnCardsChanged(object sender, EventArgs e)
     {
         StateHasChanged();
-    }
-
-    private void NavigateToCardDetail(int cardId)
-    {
-        navigationManager.NavigateTo($"/card/{cardId}");
     }
 }
