@@ -75,6 +75,8 @@
             HttpResponseMessage response = await _httpDeckClient.DeleteAsync($"deck/{cardId}");
             response.EnsureSuccessStatusCode();
             string result = await response.Content.ReadAsStringAsync();
+
+            await LoadCardDetails(); // Refresh deck cards
         }
         catch (Exception ex)
         {
@@ -98,6 +100,10 @@
             error = "Updating card failed.";
             Console.WriteLine(error);
         }
+        else
+        {
+            await LoadCardDetails(); // Refresh deck cards
+        }
     }
 
     private async Task ClearDeck()
@@ -107,6 +113,8 @@
             HttpResponseMessage response = await _httpDeckClient.DeleteAsync("deck/clear");
             response.EnsureSuccessStatusCode();
             string result = await response.Content.ReadAsStringAsync();
+
+            await LoadCardDetails(); // Refresh deck cards
         }
         catch (Exception ex)
         {
@@ -119,6 +127,9 @@
     {
         try
         {
+            DeckCards.Clear();
+            DeckCardsExtended.Clear();
+
             HttpResponseMessage response = await _httpDeckClient.GetAsync("deck");
             string apiResponse = await response.Content.ReadAsStringAsync();
 
