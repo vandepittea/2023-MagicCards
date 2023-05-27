@@ -33,6 +33,7 @@ namespace Howest.MagicCards.Web.Services
         public CardService(IHttpClientFactory httpClientFactory)
         {
             _httpClient = httpClientFactory.CreateClient("CardAPI");
+            Cards = new List<CardDto>();
         }
 
         protected virtual void OnCardsChanged()
@@ -90,7 +91,7 @@ namespace Howest.MagicCards.Web.Services
                 }
                 else
                 {
-                    Error = $"Error: {response.ReasonPhrase}";
+                    Error = $"Error loading cards: {response.ReasonPhrase}";
                 }
             }
             catch (Exception ex)
@@ -135,7 +136,7 @@ namespace Howest.MagicCards.Web.Services
                 }
                 else
                 {
-                    Error = $"Error: {response.ReasonPhrase}";
+                    Error = $"Error loading card: {response.ReasonPhrase}";
                 }
             }
             catch (Exception ex)

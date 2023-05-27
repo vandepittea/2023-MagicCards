@@ -10,88 +10,6 @@
 @using System.Text.Json;
 @using Howest.MagicCards.Web.Services;
 
-<style>
-    .card {
-        border: 1px solid #ccc;
-        border-radius: 5px;
-        padding: 3rem;
-        margin-top: 3rem;
-        background-color: #fff;
-        box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.2);
-    }
-
-    .card-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-
-    .card-header h5 {
-        margin: 0;
-        font-size: 1.5rem;
-        font-weight: bold;
-    }
-
-    .card-body {
-        display: flex;
-        flex-direction: column;
-        gap: 2rem;
-    }
-
-    .card-image {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 22rem;
-    }
-
-        .card-image img {
-            max-width: 100%;
-            height: auto;
-            max-height: 100%;
-        }
-
-    .card-info {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 2rem;
-    }
-
-        .card-info p {
-            margin: 0;
-        }
-
-        .card-info strong {
-            font-weight: bold;
-        }
-
-    .power-container {
-        position: relative;
-    }
-
-    .power-value {
-        position: absolute;
-        top: -9.2rem;
-        right: 0.01rem;
-        font-weight: bold;
-        font-size: 1.5rem;
-        background-color: #e74c3c;
-        color: #fff;
-        padding: 1rem;
-        border-radius: 4px;
-    }
-
-    .back-button {
-        margin-top: 2rem;
-        color: #fff;
-        border: none;
-        padding: 0.75rem 1.5rem;
-        border-radius: 4px;
-        font-size: 1rem;
-        cursor: pointer;
-    }
-</style>
-
 <h3>Card Detail</h3>
 
 @if (cardService.Card == null)
@@ -167,6 +85,88 @@ else
 
     <button class="btn btn-primary back-button" @onclick="GoBack">Back</button>
 }
+
+<style>
+    .card {
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        padding: 3rem;
+        margin-top: 3rem;
+        background-color: #fff;
+        box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.2);
+    }
+
+    .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+        .card-header h5 {
+            margin: 0;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+    .card-body {
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+    }
+
+    .card-image {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 22rem;
+    }
+
+        .card-image img {
+            max-width: 100%;
+            height: auto;
+            max-height: 100%;
+        }
+
+    .card-info {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+    }
+
+        .card-info p {
+            margin: 0;
+        }
+
+        .card-info strong {
+            font-weight: bold;
+        }
+
+    .power-container {
+        position: relative;
+    }
+
+    .power-value {
+        position: absolute;
+        top: -9.2rem;
+        right: 0.01rem;
+        font-weight: bold;
+        font-size: 1.5rem;
+        background-color: #e74c3c;
+        color: #fff;
+        padding: 1rem;
+        border-radius: 4px;
+    }
+
+    .back-button {
+        margin-top: 2rem;
+        color: #fff;
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 4px;
+        font-size: 1rem;
+        cursor: pointer;
+    }
+</style>
 
 @code {
     [Parameter]

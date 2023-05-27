@@ -17,6 +17,7 @@ builder.Services.AddHttpClient("DeckAPI", client =>
 });
 
 builder.Services.AddScoped<CardService>();
+builder.Services.AddScoped<DeckService>();
 
 builder.Services.AddAutoMapper(typeof(CardProfile));
 

@@ -1,5 +1,6 @@
 ﻿@inject NavigationManager navigationManager
 @inject IHttpClientFactory httpClientFactory
+@inject DeckService deckService
 @inject CardService cardService
 @inject IMapper mapper
 
@@ -46,7 +47,7 @@
                         </div>
                     </div>
                 </div>
-                <button class="add-to-deck-button" @onclick="() => AddToDeck(card)">Add to Deck</button>
+                <button class="add-to-deck-button" @onclick="async () => await deckService.AddToDeck(card)">Add to Deck</button>
             </div>
         }
     }
@@ -183,15 +184,6 @@
 </style>
 
 @code {
-    private readonly JsonSerializerOptions jsonOptions;
-    private HttpClient _httpDeckClient;
-    string error;
-
-    protected override void OnInitialized()
-    {
-        _httpDeckClient = httpClientFactory.CreateClient("DeckAPI");
-    }
-
     protected override void OnParametersSet()
     {
         base.OnParametersSet();
@@ -201,28 +193,6 @@
     private void OnCardsChanged(object sender, EventArgs e)
     {
         StateHasChanged();
-    }
-
-    public CardList()
-    {
-        jsonOptions = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-    }
-
-    private async Task AddToDeck(CardDto cardDto)
-    {
-        CardInDeckDto cardInDeckDto = mapper.Map<CardInDeckDto>(cardDto);
-
-        HttpContent content = new StringContent(JsonSerializer.Serialize(cardInDeckDto), Encoding.UTF8, "application/json");
-
-        HttpResponseMessage response = await _httpDeckClient.PostAsync("deck", content);
-
-        Console.WriteLine(response);
-
-        if (response.StatusCode != System.Net.HttpStatusCode.Created)
-        {
-            error = "Adding card to deck failed.";
-            Console.WriteLine(error);
-        }
     }
 
     private void NavigateToCardDetail(int cardId)

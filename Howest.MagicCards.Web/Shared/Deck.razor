@@ -1,9 +1,12 @@
 ﻿@inject IHttpClientFactory httpClientFactory
+@inject DeckService deckService
+
 @using Howest.MagicCards.Shared.DTO
 @using System.Net.Http
 @using System.Net.Http.Json
 @using System.Text.Json;
 @using System.Text;
+@using Howest.MagicCards.Web.Services;
 
 <div class="card">
     <div class="card-body">
@@ -18,9 +21,9 @@
                 </tr>
             </thead>
             <tbody>
-                @if (DeckCards != null)
+                @if (deckService.DeckCards != null)
                 {
-                    @foreach (CardInDeckDto deckCard in DeckCards)
+                    @foreach (CardInDeckDto deckCard in deckService.DeckCards)
                     {
                         <tr>
                             <td>@GetCardNameById(deckCard.Id)</td>
@@ -29,7 +32,7 @@
                                 <span class="card-count">@deckCard.Count</span>
                                 <span class="card-count" @onclick="() => DecrementCount(deckCard)">-</span>
                             </td>
-                            <td><button class="btn btn-danger" @onclick="() => RemoveFromDeck(deckCard.Id)">Remove</button></td>
+                            <td><button class="btn btn-danger" @onclick="async () => await deckService.RemoveFromDeck(deckCard.Id)">Remove</button></td>
                         </tr>
                     }
                 }
@@ -42,7 +45,7 @@
             </tbody>
         </table>
 
-        <button class="btn btn-danger" @onclick="ClearDeck">Clear Deck</button>
+        <button class="btn btn-danger" @onclick="async () => await deckService.ClearDeck()">Clear Deck</button>
     </div>
 </div>
 
@@ -59,50 +62,22 @@
         margin-right: 0.25rem;
     }
 
-        .card-count:hover {
-            background-color: #ccc;
-        }
+    .card-count:hover {
+        background-color: #ccc;
+    }
 </style>
 
 @code {
-    public List<CardDetailDto> DeckCardsExtended { get; set; }
-    public List<CardInDeckDto> DeckCards { get; set; }
-
-    private HttpClient _httpDeckClient;
-    private HttpClient _httpCardClient;
-    private string error;
-    private readonly JsonSerializerOptions jsonOptions;
-
-    public Deck()
-    {
-        DeckCardsExtended = new List<CardDetailDto>();
-        DeckCards = new List<CardInDeckDto>();
-        jsonOptions = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-    }
-
     protected override async Task OnInitializedAsync()
     {
-        _httpCardClient = httpClientFactory.CreateClient("CardAPI");
-        _httpDeckClient = httpClientFactory.CreateClient("DeckAPI");
-
-        await LoadCardDetails();
+        await deckService.LoadDeck();
+        deckService.DeckCardsChanged += OnDeckCardsChanged;
     }
 
-    private async Task RemoveFromDeck(string cardId)
+    private async void OnDeckCardsChanged(object sender, EventArgs e)
     {
-        try
-        {
-            HttpResponseMessage response = await _httpDeckClient.DeleteAsync($"deck/{cardId}");
-            response.EnsureSuccessStatusCode();
-            string result = await response.Content.ReadAsStringAsync();
-
-            await LoadCardDetails(); // Refresh deck cards
-        }
-        catch (Exception ex)
-        {
-            error = $"Error removing card from deck: {ex.Message}";
-            Console.WriteLine(error);
-        }
+        await deckService.LoadDeck();
+        StateHasChanged();
     }
 
     private async Task IncrementCount(CardInDeckDto cardInDeckDto)
@@ -111,100 +86,18 @@
         count++;
         cardInDeckDto.Count = count.ToString();
 
-        await UpdateCardCount(cardInDeckDto);
+        await deckService.UpdateCardCount(cardInDeckDto);
+        await deckService.LoadDeck();
     }
 
     private async Task DecrementCount(CardInDeckDto cardInDeckDto)
     {
         int count = int.Parse(cardInDeckDto.Count);
-        if (count > 0)
-        {
-            count--;
-            cardInDeckDto.Count = count.ToString();
+        count--;
+        cardInDeckDto.Count = count.ToString();
 
-            await UpdateCardCount(cardInDeckDto);
-        }
-    }
-
-    private async Task UpdateCardCount(CardInDeckDto cardInDeckDto)
-    {
-        HttpContent content = new StringContent(JsonSerializer.Serialize(cardInDeckDto), Encoding.UTF8, "application/json");
-
-        HttpResponseMessage response = await _httpDeckClient.PutAsync("deck", content);
-
-        Console.WriteLine(response);
-
-        if (response.StatusCode != System.Net.HttpStatusCode.Created)
-        {
-            error = "Updating card failed.";
-            Console.WriteLine(error);
-        }
-        else
-        {
-            await LoadCardDetails();
-        }
-    }
-
-    private async Task ClearDeck()
-    {
-        try
-        {
-            HttpResponseMessage response = await _httpDeckClient.DeleteAsync("deck/clear");
-            response.EnsureSuccessStatusCode();
-            string result = await response.Content.ReadAsStringAsync();
-
-            await LoadCardDetails();
-        }
-        catch (Exception ex)
-        {
-            error = $"Error clearing deck: {ex.Message}";
-            Console.WriteLine(error);
-        }
-    }
-
-    private async Task LoadCardDetails()
-    {
-        try
-        {
-            DeckCards.Clear();
-            DeckCardsExtended.Clear();
-
-            HttpResponseMessage response = await _httpDeckClient.GetAsync("deck");
-            string apiResponse = await response.Content.ReadAsStringAsync();
-
-            if (response.IsSuccessStatusCode)
-            {
-                DeckCards = JsonSerializer.Deserialize<List<CardInDeckDto>>(apiResponse, jsonOptions);
-
-                foreach (CardInDeckDto deckCard in DeckCards)
-                {
-                    HttpResponseMessage response2 = await _httpCardClient.GetAsync($"Cards/{deckCard.Id}");
-                    string apiResponse2 = await response2.Content.ReadAsStringAsync();
-
-                    if (response.IsSuccessStatusCode)
-                    {
-                        CardDetailDto card = JsonSerializer.Deserialize<CardDetailDto>(apiResponse2, jsonOptions);
-
-                        DeckCardsExtended.Add(card);
-                    }
-                    else
-                    {
-                        error = $"Error: {response.ReasonPhrase}";
-                        Console.WriteLine(error);
-                    }
-                }
-            }
-            else
-            {
-                error = $"Error: {response.ReasonPhrase}";
-                Console.WriteLine(error);
-            }
-        }
-        catch (Exception ex)
-        {
-            error = ex.Message;
-            Console.WriteLine(error);
-        }
+        await deckService.UpdateCardCount(cardInDeckDto);
+        await deckService.LoadDeck();
     }
 
     private string GetCardNameById(string cardId)
@@ -214,7 +107,7 @@
             return "Invalid card ID";
         }
 
-        CardDetailDto card = DeckCardsExtended.SingleOrDefault(c => c.Id == id);
+        CardDetailDto card = deckService.DeckCardsExtended.SingleOrDefault(c => c.Id == id);
         Console.WriteLine(card);
 
         return card?.Name ?? "Card not found";
