@@ -2,52 +2,63 @@
 
 @using Howest.MagicCards.Shared.Filters;
 @using Howest.MagicCards.Web.Services;
+@using System.ComponentModel.DataAnnotations
 
-<aside class="card filter-card">
-    <div class="card-body">
-        <h5 class="card-title">Card Filter</h5>
+<EditForm Model="@filter" OnValidSubmit="@Filter">
+    <DataAnnotationsValidator />
 
-        <div class="form-group">
-            <label for="setName">Set Name:</label>
-            <input type="text" class="form-control" id="setName" @bind="@filter.SetName" />
+    <aside class="card filter-card">
+        <div class="card-body">
+            <h5 class="card-title">Card Filter</h5>
+
+            <div class="form-group">
+                <label for="setName">Set Name:</label>
+                <InputText class="form-control" id="setName" @bind-Value="@filter.SetName" />
+                <ValidationMessage For="@(() => filter.SetName)" />
+            </div>
+
+            <div class="form-group">
+                <label for="artistName">Artist Name:</label>
+                <InputText class="form-control" id="artistName" @bind-Value="@filter.ArtistName" />
+                <ValidationMessage For="@(() => filter.ArtistName)" />
+            </div>
+
+            <div class="form-group">
+                <label for="rarityName">Rarity Name:</label>
+                <InputText class="form-control" id="rarityName" @bind-Value="@filter.RarityName" />
+                <ValidationMessage For="@(() => filter.RarityName)" />
+            </div>
+
+            <div class="form-group">
+                <label for="typeName">Type Name:</label>
+                <InputText class="form-control" id="typeName" @bind-Value="@filter.TypeName" />
+                <ValidationMessage For="@(() => filter.TypeName)" />
+            </div>
+
+            <div class="form-group">
+                <label for="cardName">Card Name:</label>
+                <InputText class="form-control" id="cardName" @bind-Value="@filter.CardName" />
+                <ValidationMessage For="@(() => filter.CardName)" />
+            </div>
+
+            <div class="form-group">
+                <label for="cardText">Card Text:</label>
+                <InputText class="form-control" id="cardText" @bind-Value="@filter.CardText" />
+                <ValidationMessage For="@(() => filter.CardText)" />
+            </div>
+
+            <div class="form-group">
+                <label for="sortBy">Sort By:</label>
+                <select class="form-control" id="sortBy" @bind="@filter.SortBy">
+                    <option value="">Ascending</option>
+                    <option value="desc">Descending</option>
+                </select>
+            </div>
+
+            <button class="btn btn-primary filter-button" type="submit">Apply Filter</button>
         </div>
-
-        <div class="form-group">
-            <label for="artistName">Artist Name:</label>
-            <input type="text" class="form-control" id="artistName" @bind="@filter.ArtistName" />
-        </div>
-
-        <div class="form-group">
-            <label for="rarityName">Rarity Name:</label>
-            <input type="text" class="form-control" id="rarityName" @bind="@filter.RarityName" />
-        </div>
-
-        <div class="form-group">
-            <label for="typeName">Type Name:</label>
-            <input type="text" class="form-control" id="typeName" @bind="@filter.TypeName" />
-        </div>
-
-        <div class="form-group">
-            <label for="cardName">Card Name:</label>
-            <input type="text" class="form-control" id="cardName" @bind="@filter.CardName" />
-        </div>
-
-        <div class="form-group">
-            <label for="cardText">Card Text:</label>
-            <input type="text" class="form-control" id="cardText" @bind="@filter.CardText" />
-        </div>
-
-        <div class="form-group">
-            <label for="sortBy">Sort By:</label>
-            <select class="form-control" id="sortBy" @bind="@filter.SortBy">
-                <option value="">Ascending</option>
-                <option value="desc">Descending</option>
-            </select>
-        </div>
-
-        <button class="btn btn-primary filter-button" @onclick="Filter">Apply Filter</button>
-    </div>
-</aside>
+    </aside>
+</EditForm>
 
 <style>
     .filter-card {

@@ -16,7 +16,7 @@
     <div class="col-md-6">
         <CardList />
     </div>
-    <div class="col-md-4">
+    <div class="col-md-4 sticky-sidebar">
         <Deck />
     </div>
 </div>
@@ -25,7 +25,8 @@
     .sticky-sidebar {
         position: sticky;
         top: 1rem;
-        height: calc(100vh - 1rem);
+        margin-bottom: 1rem;
+        height: calc(100vh - 2rem);
         overflow-y: auto;
     }
 
