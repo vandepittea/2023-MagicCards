@@ -25,7 +25,9 @@
                         <tr>
                             <td>@GetCardNameById(deckCard.Id)</td>
                             <td>
-                                <span class="card-count" @onclick="() => IncrementCount(deckCard)">@deckCard.Count</span>
+                                <span class="card-count" @onclick="() => IncrementCount(deckCard)">+</span>
+                                <span class="card-count">@deckCard.Count</span>
+                                <span class="card-count" @onclick="() => DecrementCount(deckCard)">-</span>
                             </td>
                             <td><button class="btn btn-danger" @onclick="() => RemoveFromDeck(deckCard.Id)">Remove</button></td>
                         </tr>
@@ -91,9 +93,28 @@
         count++;
         cardInDeckDto.Count = count.ToString();
 
+        await UpdateCardCount(cardInDeckDto);
+    }
+
+    private async Task DecrementCount(CardInDeckDto cardInDeckDto)
+    {
+        int count = int.Parse(cardInDeckDto.Count);
+        if (count > 0)
+        {
+            count--;
+            cardInDeckDto.Count = count.ToString();
+
+            await UpdateCardCount(cardInDeckDto);
+        }
+    }
+
+    private async Task UpdateCardCount(CardInDeckDto cardInDeckDto)
+    {
         HttpContent content = new StringContent(JsonSerializer.Serialize(cardInDeckDto), Encoding.UTF8, "application/json");
 
         HttpResponseMessage response = await _httpDeckClient.PutAsync("deck", content);
+
+        Console.WriteLine(response);
 
         if (response.StatusCode != System.Net.HttpStatusCode.Created)
         {
@@ -102,7 +123,7 @@
         }
         else
         {
-            await LoadCardDetails(); // Refresh deck cards
+            await LoadCardDetails();
         }
     }
 
@@ -114,7 +135,7 @@
             response.EnsureSuccessStatusCode();
             string result = await response.Content.ReadAsStringAsync();
 
-            await LoadCardDetails(); // Refresh deck cards
+            await LoadCardDetails();
         }
         catch (Exception ex)
         {
