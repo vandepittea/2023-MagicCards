@@ -7,10 +7,10 @@
 
 <div class="row">
     <div class="col-md-2">
-        <CardFilter />
+        <CardFilter @bind-Filter="filter" />
         <div class="pagination">
-            <button class="btn btn-primary" disabled="@cardService.IsFirstPage" @onclick="cardService.GoToPreviousPage">Previous</button>
-            <button class="btn btn-primary" disabled="@cardService.IsLastPage" @onclick="cardService.GoToNextPage">Next</button>
+            <button class="btn btn-primary" disabled="@cardService.IsFirstPage" @onclick="() => cardService.GoToPreviousPage(filter)">Previous</button>
+            <button class="btn btn-primary" disabled="@cardService.IsLastPage" @onclick="() => cardService.GoToNextPage(filter)">Next</button>
         </div>
     </div>
     <div class="col-md-7">
@@ -41,9 +41,10 @@
 </style>
 
 @code {
+    private CardWebFilterV1_5 filter { get; set; } = new CardWebFilterV1_5();
+
     protected override async Task OnInitializedAsync()
     {
         await cardService.LoadCards();
-        Console.WriteLine(cardService.Cards.Count());
     }
 }

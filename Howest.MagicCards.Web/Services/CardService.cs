@@ -105,21 +105,21 @@ namespace Howest.MagicCards.Web.Services
             }
         }
 
-        public async Task GoToPreviousPage()
+        public async Task GoToPreviousPage(CardWebFilterV1_5 filter)
         {
             if (!IsFirstPage)
             {
                 _pageNumber--;
-                await LoadCards();
+                await LoadCards(filter);
             }
         }
 
-        public async Task GoToNextPage()
+        public async Task GoToNextPage(CardWebFilterV1_5 filter)
         {
             if (!IsLastPage)
             {
                 _pageNumber++;
-                await LoadCards();
+                await LoadCards(filter);
             }
         }
 
