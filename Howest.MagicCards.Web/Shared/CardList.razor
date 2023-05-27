@@ -1,41 +1,54 @@
-﻿@inject NavigationManager NavigationManager
+﻿@inject NavigationManager navigationManager
 @inject IHttpClientFactory httpClientFactory
-@inject IMapper mapper;
+@inject CardService cardService
+@inject IMapper mapper
+
 @using AutoMapper;
 @using Howest.MagicCards.Shared.DTO
 @using System.Text.Json;
 @using System.Text;
+@using Howest.MagicCards.Web.Services;
 
 <div class="card-list">
-    @foreach (var card in Cards)
+    @if (cardService.IsLoading)
     {
-        <div class="card-item">
-            <div @onclick="() => NavigateToCardDetail((int)card.Id)">
-                <div class="power-container">
-                    @if (!string.IsNullOrEmpty(card.Power))
-                    {
-                        <div class="power-circle">@card.Power</div>
-                    }
-                </div>
-                <div class="card-image">
-                    <img src="@card.OriginalImageUrl" alt="@card.Name" />
-                </div>
-                <div class="card-details">
-                    <h4>@card.Name</h4>
-                    <div class="card-text">
-                        <strong>Text: </strong>@card.Text
+        <div class="loading-spinner">
+            <div class="spinner"></div>
+            <p>Loading cards...</p>
+    </div>
+    }
+    else
+    {
+        @foreach (CardDto card in cardService.Cards)
+        {
+            <div class="card-item">
+                <div @onclick="() => NavigateToCardDetail((int)card.Id)">
+                    <div class="power-container">
+                        @if (!string.IsNullOrEmpty(card.Power))
+                        {
+                            <div class="power-circle">@card.Power</div>
+                        }
                     </div>
-                    <div class="card-info">
-                        <p><strong>Type: </strong>@card.Type</p>
-                        <p><strong>Set: </strong>@card.SetName</p>
-                        <p><strong>Artist: </strong>@card.ArtistName</p>
-                        <div><strong>Rarity: </strong>@card.RarityName</div>
-                        <div><strong>Card Types: </strong>@string.Join(", ", card.CardTypes)</div>
+                    <div class="card-image">
+                        <img src="@card.OriginalImageUrl" alt="@card.Name" />
+                    </div>
+                    <div class="card-details">
+                        <h4>@card.Name</h4>
+                        <div class="card-text">
+                            <strong>Text: </strong>@card.Text
+                        </div>
+                        <div class="card-info">
+                            <p><strong>Type: </strong>@card.Type</p>
+                            <p><strong>Set: </strong>@card.SetName</p>
+                            <p><strong>Artist: </strong>@card.ArtistName</p>
+                            <div><strong>Rarity: </strong>@card.RarityName</div>
+                            <div><strong>Card Types: </strong>@string.Join(", ", card.CardTypes)</div>
+                        </div>
                     </div>
                 </div>
+                <button class="add-to-deck-button" @onclick="() => AddToDeck(card)">Add to Deck</button>
             </div>
-            <button class="add-to-deck-button" @onclick="() => AddToDeck(card)">Add to Deck</button>
-        </div>
+        }
     }
 </div>
 
@@ -151,27 +164,48 @@
     .add-to-deck-button:hover {
         background-color: #45a049;
     }
+
+    .loading-spinner {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-top: 2rem;
+    }
+
+    .spinner {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        border: 4px solid rgba(0, 0, 0, 0.1);
+        border-left-color: #000;
+        animation: spin 1s infinite linear;
+    }
 </style>
 
 @code {
-    [Parameter]
-    public List<CardDto> Cards { get; set; }
-
-    [Parameter]
-    public EventCallback<CardDto> OnCardSelected { get; set; }
-
     private readonly JsonSerializerOptions jsonOptions;
     private HttpClient _httpDeckClient;
     string error;
 
+    protected override void OnInitialized()
+    {
+        _httpDeckClient = httpClientFactory.CreateClient("DeckAPI");
+    }
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+        cardService.CardsChanged += OnCardsChanged;
+    }
+
+    private void OnCardsChanged(object sender, EventArgs e)
+    {
+        StateHasChanged();
+    }
+
     public CardList()
     {
         jsonOptions = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-    }
-
-    protected override async Task OnInitializedAsync()
-    {
-        _httpDeckClient = httpClientFactory.CreateClient("DeckAPI");
     }
 
     private async Task AddToDeck(CardDto cardDto)
@@ -193,6 +227,6 @@
 
     private void NavigateToCardDetail(int cardId)
     {
-        NavigationManager.NavigateTo($"/card/{cardId}");
+        navigationManager.NavigateTo($"/card/{cardId}");
     }
 }

@@ -1,12 +1,14 @@
 ﻿@page "/card/{id:int}"
 
 @inject IHttpClientFactory httpClientFactory
-@inject NavigationManager NavigationManager
+@inject NavigationManager navigationManager
+@inject CardService cardService
 
 @using Howest.MagicCards.Shared.DTO
 @using System.Net.Http
 @using System.Net.Http.Json
 @using System.Text.Json;
+@using Howest.MagicCards.Web.Services;
 
 <style>
     .card {
@@ -92,71 +94,71 @@
 
 <h3>Card Detail</h3>
 
-@if (card == null)
+@if (cardService.Card == null)
 {
     <p>Loading...</p>
 }
-else if (error != null)
+else if (cardService.Error != null)
 {
-    <p>An error occurred: @error</p>
+    <p>An error occurred: @cardService.Error</p>
 }
 else
 {
     <div class="card">
         <div class="card-header">
-            <h5>@card.Name</h5>
-            @if (!string.IsNullOrWhiteSpace(card.SetName))
+            <h5>@cardService.Card.Name</h5>
+            @if (!string.IsNullOrWhiteSpace(cardService.Card.SetName))
             {
-                <span><strong>Set:</strong> @card.SetName</span>
+                <span><strong>Set:</strong> @cardService.Card.SetName</span>
             }
         </div>
         <div class="card-body">
-            @if (!string.IsNullOrWhiteSpace(card.OriginalImageUrl))
+            @if (!string.IsNullOrWhiteSpace(cardService.Card.OriginalImageUrl))
             {
                 <div class="card-image">
-                    <img src="@card.OriginalImageUrl" alt="@card.Name" />
-                    @if (!string.IsNullOrWhiteSpace(card.Power))
+                    <img src="@cardService.Card.OriginalImageUrl" alt="@cardService.Card.Name" />
+                    @if (!string.IsNullOrWhiteSpace(cardService.Card.Power))
                     {
                         <p class="power-container">
-                            <span class="power-value">@card.Power</span>
+                            <span class="power-value">@cardService.Card.Power</span>
                         </p>
                     }
                 </div>
             }
             <div class="card-info">
                 <div>
-                    <p><strong>Type:</strong> @card.Type</p>
-                    <p><strong>Rarity:</strong> @card.RarityName</p>
-                    @if (!string.IsNullOrWhiteSpace(card.Toughness))
+                    <p><strong>Type:</strong> @cardService.Card.Type</p>
+                    <p><strong>Rarity:</strong> @cardService.Card.RarityName</p>
+                    @if (!string.IsNullOrWhiteSpace(cardService.Card.Toughness))
                     {
-                        <p><strong>Toughness:</strong> @card.Toughness</p>
+                        <p><strong>Toughness:</strong> @cardService.Card.Toughness</p>
                     }
-                    <p><strong>Converted Mana Cost:</strong> @card.ConvertedManaCost</p>
-                    @if (card.CardColors != null && card.CardColors.Any())
+                    <p><strong>Converted Mana Cost:</strong> @cardService.Card.ConvertedManaCost</p>
+                    @if (cardService.Card.CardColors != null && cardService.Card.CardColors.Any())
                     {
-                        <p><strong>Colors:</strong> @string.Join(", ", card.CardColors)</p>
+                        <p><strong>Colors:</strong> @string.Join(", ", cardService.Card.CardColors)</p>
                     }
                 </div>
                 <div>
-                    @if (!string.IsNullOrWhiteSpace(card.ArtistName))
+                    @if (!string.IsNullOrWhiteSpace(cardService.Card.ArtistName))
                     {
-                        <p><strong>Artist:</strong> @card.ArtistName</p>
+                        <p><strong>Artist:</strong> @cardService.Card.ArtistName</p>
                     }
-                    @if (card.CardTypes != null && card.CardTypes.Any())
+                    @if (cardService.Card.CardTypes != null && cardService.Card.CardTypes.Any())
                     {
-                        <p><strong>Card Types:</strong> @string.Join(", ", card.CardTypes)</p>
+                        <p><strong>Card Types:</strong> @string.Join(", ", cardService.Card.CardTypes)</p>
                     }
-                    @if (!string.IsNullOrWhiteSpace(card.Flavor))
+                    @if (!string.IsNullOrWhiteSpace(cardService.Card.Flavor))
                     {
-                        <p><strong>Flavor Text:</strong> @card.Flavor</p>
+                        <p><strong>Flavor Text:</strong> @cardService.Card.Flavor</p>
                     }
-                    @if (!string.IsNullOrWhiteSpace(card.Layout))
+                    @if (!string.IsNullOrWhiteSpace(cardService.Card.Layout))
                     {
-                        <p><strong>Layout:</strong> @card.Layout</p>
+                        <p><strong>Layout:</strong> @cardService.Card.Layout</p>
                     }
-                    @if (!string.IsNullOrWhiteSpace(card.Text))
+                    @if (!string.IsNullOrWhiteSpace(cardService.Card.Text))
                     {
-                        <p><strong>Card Text:</strong> @card.Text</p>
+                        <p><strong>Card Text:</strong> @cardService.Card.Text</p>
                     }
                 </div>
             </div>
@@ -167,45 +169,16 @@ else
 }
 
 @code {
-    private CardDetailDto card;
-    private string error;
-    private readonly JsonSerializerOptions _jsonOptions;
-    private HttpClient _httpCardClient;
-
     [Parameter]
     public int Id { get; set; }
 
-    public CardDetail()
-    {
-        _jsonOptions = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-    }
-
     protected override async Task OnInitializedAsync()
     {
-        _httpCardClient = httpClientFactory.CreateClient("CardAPI");
-        await LoadCard();
-    }
-
-    private async Task LoadCard()
-    {
-        HttpResponseMessage response = await _httpCardClient.GetAsync($"Cards/{Id}");
-        string apiResponse = await response.Content.ReadAsStringAsync();
-
-        if (response.IsSuccessStatusCode)
-        {
-            CardDetailDto result = JsonSerializer.Deserialize<CardDetailDto>(apiResponse, _jsonOptions);
-
-            card = result;
-        }
-        else
-        {
-            error = $"Error: {response.ReasonPhrase}";
-            Console.WriteLine(error);
-        }
+        await cardService.LoadCard(Id);
     }
 
     private void GoBack()
     {
-        NavigationManager.NavigateTo("/");
+        navigationManager.NavigateTo("/");
     }
 }

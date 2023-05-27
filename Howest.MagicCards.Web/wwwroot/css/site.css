@@ -59,6 +59,12 @@ a, .btn-link {
     color: white;
 }
 
-    .blazor-error-boundary::after {
-        content: "An error has occurred."
+.blazor-error-boundary::after {
+    content: "An error has occurred."
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
     }
+}

@@ -1,4 +1,5 @@
 using Howest.MagicCards.Shared.Mappings;
+using Howest.MagicCards.Web.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,6 +15,8 @@ builder.Services.AddHttpClient("DeckAPI", client =>
 {
     client.BaseAddress = new Uri("https://localhost:7061/api/");
 });
+
+builder.Services.AddScoped<CardService>();
 
 builder.Services.AddAutoMapper(typeof(CardProfile));
 
